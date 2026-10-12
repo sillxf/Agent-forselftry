@@ -6,6 +6,13 @@ from fastapi import FastAPI, HTTPException
 
 from app.schemas.alert import Alert
 
+from app.services.alert_deduplicator import (
+    deduplicate_alerts
+)
+
+from app.services.risk_analyzer import (
+    analyze_alert
+)
 
 app = FastAPI(
     title="AI-SecOps-Agent",
@@ -49,6 +56,17 @@ def list_alerts(
 
     return alerts
 
+@app.get(
+"/alerts/deduplicated",
+response_model=list[Alert]
+)
+def deduplicate():
+
+    alerts = load_alerts()
+
+    return deduplicate_alerts(
+        alerts
+    )
 
 @app.get("/alerts/{alert_id}", response_model=Alert)
 def get_alert(alert_id: str) -> Alert:
@@ -61,3 +79,29 @@ def get_alert(alert_id: str) -> Alert:
         status_code=404,
         detail=f"Alert '{alert_id}' not found",
     )
+
+
+
+@app.get(
+"/alerts/{alert_id}/risk"
+)
+def risk_analysis(
+    alert_id:str
+):
+
+    alerts=load_alerts()
+
+
+    for alert in alerts:
+
+        if alert.id==alert_id:
+
+            return analyze_alert(
+                alert
+            )
+
+
+    return {
+        "error":
+        "not found"
+    }
