@@ -1,18 +1,21 @@
 import json
 from pathlib import Path
 from typing import Literal
-
 from fastapi import FastAPI, HTTPException
-
 from app.schemas.alert import Alert
-
 from app.services.alert_deduplicator import (
     deduplicate_alerts
 )
-
 from app.services.risk_analyzer import (
     analyze_alert
 )
+from fastapi import FastAPI, Query
+from app.rag.vector_store import VectorStore
+from app.rag.embedder import embed_texts
+from app.rag.loader import load_documents
+from app.rag.retriever import KnowledgeRetriever
+
+knowledge_retriever = KnowledgeRetriever()
 
 app = FastAPI(
     title="AI-SecOps-Agent",
@@ -28,12 +31,30 @@ DATA_FILE = (
 
 Severity = Literal["low", "medium", "high", "critical"]
 
-
 def load_alerts() -> list[Alert]:
     """Load and validate the sample alert data."""
     raw_data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     return [Alert.model_validate(item) for item in raw_data]
 
+@app.get("/knowledge/search")
+def search_knowledge(
+    q: str = Query(
+        ...,
+        description="Question or keyword"
+    ),
+    k: int = 3
+):
+
+    results = knowledge_retriever.search(
+        q,
+        k
+    )
+
+
+    return {
+        "query": q,
+        "results": results
+    }
 
 @app.get("/health")
 def health_check() -> dict[str, str]:

@@ -3,3 +3,6 @@ uvicorn[standard]
 pydantic
 pytest
 httpx
+sentence-transformers
+faiss-cpu
+numpy
