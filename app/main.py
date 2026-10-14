@@ -14,8 +14,14 @@ from app.rag.vector_store import VectorStore
 from app.rag.embedder import embed_texts
 from app.rag.loader import load_documents
 from app.rag.retriever import KnowledgeRetriever
+from app.services.investigation_service import (
+    InvestigationService
+)
 
 knowledge_retriever = KnowledgeRetriever()
+investigation_service = InvestigationService(
+    knowledge_retriever
+)
 
 app = FastAPI(
     title="AI-SecOps-Agent",
@@ -126,3 +132,30 @@ def risk_analysis(
         "error":
         "not found"
     }
+
+@app.get(
+    "/investigate/{alert_id}"
+)
+def investigate_alert(
+    alert_id:str
+):
+
+    alerts = load_alerts()
+
+    for alert in alerts:
+
+        if alert.id == alert_id:
+
+            return (
+                investigation_service
+                .investigate(alert)
+            )
+
+
+    raise HTTPException(
+        status_code=404,
+        detail="Alert not found"
+    )
+
+
+

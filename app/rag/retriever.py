@@ -6,10 +6,15 @@ from app.rag.vector_store import VectorStore
 
 class KnowledgeRetriever:
 
-    def __init__(self):
+    def __init__(
+        self,
+        build=True
+    ):
 
-        self.store = None
-        self.build_index()
+        self.store=None
+
+        if build:
+            self.build_index()
 
 
     def build_index(self):
