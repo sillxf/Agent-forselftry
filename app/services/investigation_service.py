@@ -1,7 +1,10 @@
+from app.services.output_parser import parse_analysis
 from app.services.risk_analyzer import (
     analyze_alert
 )
-
+from app.prompts.security_analysis import (
+    SECURITY_ANALYSIS_PROMPT
+)
 from app.rag.retriever import (
     KnowledgeRetriever
 )
@@ -9,22 +12,6 @@ from app.rag.retriever import (
 from app.prompts.security_analysis import (
     SECURITY_ANALYSIS_PROMPT
 )
-
-from app.llm.client import MockLLM
-
-
-class InvestigationService:
-
-    def __init__(
-        self,
-        retriever
-    ):
-
-        self.retriever=retriever
-
-        self.llm=MockLLM()
-
-
 
 
 class InvestigationService:
@@ -39,45 +26,72 @@ class InvestigationService:
 
         self.llm = llm
 
-    def investigate(
+    def build_analysis_context(
         self,
-        alert
+        alert,
+        risk,
+        knowledge
     ):
 
-        risk = analyze_alert(
-            alert
+        knowledge_text = "\n\n".join(
+            [
+                item["content"]
+                for item in knowledge
+            ]
         )
 
 
-        query = self.build_query(
-            alert
+        return SECURITY_ANALYSIS_PROMPT.format(
+            alert=alert.description,
+            risk=risk,
+            knowledge=knowledge_text
+        )
+    
+    def investigate(self, alert):
+
+
+        risk = analyze_alert(alert)
+
+
+        knowledge = self.retriever.search(
+            query=self.build_query(alert),
+            k=2
         )
 
 
-        knowledge = (
-            self.retriever.search(
-                query=query,
-                k=3
-            )
+        llm_context = self.build_analysis_context(
+            alert,
+            risk,
+            knowledge
         )
 
-        analysis_context = (
-            self.build_analysis_context(
-                alert,
-                risk,
-                knowledge
-            )
+
+        raw_analysis = self.llm.generate(
+            llm_context
         )
 
-        analysis = self.llm.generate(
-           analysis_context
-        )
-        
+        try:
+            analysis=parse_analysis(
+                raw_analysis
+            )   
+
+        except Exception:
+
+            analysis={
+                "error":
+                "LLM response invalid"
+            }
+
+
         return {
-            "alert": alert,
-            "risk": risk,
-            "knowledge": knowledge,
-            "analysis": analysis
+
+            "alert":alert,
+
+            "risk":risk,
+
+            "knowledge":knowledge,
+
+            "analysis":analysis
         }
 
 

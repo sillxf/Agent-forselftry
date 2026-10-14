@@ -17,10 +17,21 @@ from app.rag.retriever import KnowledgeRetriever
 from app.services.investigation_service import (
     InvestigationService
 )
+from app.llm.client import LLMClient
+from app.config import *
+
+
+llm = LLMClient(
+    api_key=LLM_API_KEY,
+    base_url=LLM_BASE_URL,
+    model=LLM_MODEL
+)
 
 knowledge_retriever = KnowledgeRetriever()
+
 investigation_service = InvestigationService(
-    knowledge_retriever
+    knowledge_retriever,
+    llm
 )
 
 app = FastAPI(
@@ -133,29 +144,28 @@ def risk_analysis(
         "not found"
     }
 
-@app.get(
-    "/investigate/{alert_id}"
+@app.post(
+    "/analyze/{alert_id}"
 )
-def investigate_alert(
+def analyze_alert_endpoint(
     alert_id:str
 ):
 
     alerts = load_alerts()
 
+
     for alert in alerts:
 
         if alert.id == alert_id:
 
-            return (
-                investigation_service
-                .investigate(alert)
+            result = (
+                investigation_service.investigate(alert)
             )
 
 
+            return result
+
+
     raise HTTPException(
-        status_code=404,
-        detail="Alert not found"
+        status_code=404
     )
-
-
-

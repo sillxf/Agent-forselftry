@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, investigation_service
+from app.llm.client import MockLLM
 
 
 client = TestClient(app)
@@ -47,3 +48,34 @@ def test_missing_alert_returns_404():
     response = client.get("/alerts/NOT-FOUND")
 
     assert response.status_code == 404
+    
+def test_risk_analysis():
+    response = client.get("/alerts/AL-001/risk")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "alert_id": "AL-001",
+        "risk_score": 80,
+        "priority": "normal",
+    }
+
+
+def test_analyze_alert_with_mock(monkeypatch):
+    monkeypatch.setattr(
+        investigation_service,
+        "llm",
+        MockLLM(),
+    )
+
+    response = client.post("/analyze/AL-001")
+
+    assert response.status_code == 200
+
+    result = response.json()
+
+    assert result["alert"]["id"] == "AL-001"
+    assert result["risk"]["risk_score"] == 80
+    assert result["knowledge"]
+    assert result["analysis"]["attack_type"] == "mock_analysis"
+    assert result["analysis"]["confidence"] == 0.0
+    assert "error" not in result["analysis"]

@@ -1,6 +1,6 @@
 SECURITY_ANALYSIS_PROMPT = """
 
-You are an experienced security analyst.
+You are a security analyst.
 
 Analyze this alert.
 
@@ -13,12 +13,15 @@ Risk:
 Knowledge:
 {knowledge}
 
+Return ONLY JSON.
 
-Return:
+Format:
 
-1. Attack type
-2. Evidence
-3. Risk explanation
-4. Recommended actions
+{{
+"attack_type":"",
+"confidence":0.0,
+"evidence":[],
+"recommendations":[]
+}}
 
 """
