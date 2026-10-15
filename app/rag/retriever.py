@@ -3,7 +3,6 @@ from app.rag.chunker import split_text
 from app.rag.embedder import embed_texts
 from app.rag.vector_store import VectorStore
 
-
 class KnowledgeRetriever:
 
     def __init__(
@@ -65,8 +64,10 @@ class KnowledgeRetriever:
     def search(
         self,
         query: str,
-        k: int = 3
+        k: int = 2
     ):
+        if self.store is None:
+            self.build_index()
 
         query_vector = embed_texts(
             [query]

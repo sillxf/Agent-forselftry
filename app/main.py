@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import Literal
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from app.schemas.alert import Alert
 from app.services.alert_deduplicator import (
     deduplicate_alerts
@@ -9,16 +9,21 @@ from app.services.alert_deduplicator import (
 from app.services.risk_analyzer import (
     analyze_alert
 )
-from fastapi import FastAPI, Query
-from app.rag.vector_store import VectorStore
-from app.rag.embedder import embed_texts
-from app.rag.loader import load_documents
 from app.rag.retriever import KnowledgeRetriever
-from app.services.investigation_service import (
-    InvestigationService
-)
 from app.llm.client import LLMClient
 from app.config import *
+from pydantic import ValidationError
+from app.llm.error import (
+    LLMConfigurationError,
+    LLMRequestError,
+    LLMResponseError,
+)
+from app.services.output_parser import AnalysisJSONError
+from app.services.investigation_service import (
+    InvestigationService,
+    ToolCallLimitError,
+)
+
 
 
 llm = LLMClient(
@@ -27,7 +32,9 @@ llm = LLMClient(
     model=LLM_MODEL
 )
 
-knowledge_retriever = KnowledgeRetriever()
+knowledge_retriever = KnowledgeRetriever(
+    build=False
+)
 
 investigation_service = InvestigationService(
     knowledge_retriever,
@@ -119,7 +126,6 @@ def get_alert(alert_id: str) -> Alert:
     )
 
 
-
 @app.get(
 "/alerts/{alert_id}/risk"
 )
@@ -157,14 +163,49 @@ def analyze_alert_endpoint(
     for alert in alerts:
 
         if alert.id == alert_id:
+            try:
+                result = investigation_service.investigate(
+                    alert,
+                    alert_pool=alerts,
+                )
 
-            result = (
-                investigation_service.investigate(alert)
-            )
+            except LLMConfigurationError as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail="LLM service is not configured.",
+                ) from exc
 
+            except LLMRequestError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="LLM service request failed.",
+                ) from exc  
+
+            except LLMResponseError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="LLM service returned an unusable response.",
+                ) from exc
+
+            except AnalysisJSONError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="LLM response was not valid JSON.",
+                ) from exc
+
+            except ValidationError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="LLM response did not match the analysis schema.",
+                ) from exc
+
+            except ToolCallLimitError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="LLM exceeded the tool-call limit.",
+                ) from exc
 
             return result
-
 
     raise HTTPException(
         status_code=404

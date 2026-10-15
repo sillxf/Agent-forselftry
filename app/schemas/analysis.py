@@ -1,12 +1,18 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field, ConfigDict
+
 
 class SecurityAnalysis(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid"
+    )
 
     attack_type: str
 
-    confidence: float
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0
+    )
 
-    evidence: List[str]
+    evidence: list[str]
 
-    recommendations: List[str]
+    recommendations: list[str]
