@@ -21,7 +21,11 @@ Create and activate a Python 3.11+ virtual environment (validated with Python 3.
 
 ## Run tests
 
-    pytest -q
+    python -m pytest -q
+
+PDF/OCR corpus tests are opt-in (models may download on first use):
+
+    python -m pytest -q --rag-models
 
 ## API documentation
 
@@ -128,13 +132,30 @@ listing/filtering/detail, health, deduplication, risk, analysis, HTTP errors and
 analysis output. Tests use local LLM/embedding doubles instead of a removed production
 `MockLLM` or remote services. The runtime explicitly requires Pydantic v2 and python-docx.
 
-The full suite was installed and run in a new isolated Python 3.13 virtual environment:
-`pip install -r requirements.txt`, `pip check`, then `python -m pytest -q` (40 passed).
-Processing tests cover representative sentence/table/list continuations, section
-boundaries, inferred hierarchy, topical/entity grouping and real DOCX ingestion-to-search.
-Markdown/Office/HTML conversion uses real Docling; PDF/picture mapping uses a converter
-fixture. Real scanned-PDF/image OCR still needs representative-file acceptance testing.
-Set `RAG_OCR_ENABLED=false` to disable OCR, not PDF layout/table processing.
+The v1.1 corpus adds 15 checked-in PDF, DOCX, XLSX, PPTX and PNG files with
+checksums, sources and explicit expectations. Four inputs come from NIST/Docling;
+eleven are generated boundary fixtures. See
+[the corpus guide](tests/fixtures/rag_documents/README.md) for provenance, acceptance
+checks and regeneration commands. This is structural regression coverage, not a
+Recall/MRR/NDCG retrieval benchmark.
+
+The four boundary fixes isolate source-image metadata from OCR items, require actual
+list markers before joining cross-page lists, use contextual/layout evidence for
+numbered headings, and align duplicate DOCX paragraphs by source occurrence rather
+than text-key overwrite. Repeated body text with known non-margin coordinates is
+retained. The index pipeline version is now 3, so affected indexes rebuild on load.
+
+The parser requires Docling 2.145+ and pypdfium2 5.14+. Image inputs use full-page OCR.
+PDFs with no native text anywhere use full-page OCR too; text-bearing and mixed PDFs
+retain PDF-aware OCR. Set `RAG_OCR_ENABLED=false` to disable OCR, not PDF layout/table
+processing. The GitHub Actions workflow runs normal regressions, publishes JUnit
+results, and offers a manual full-model run; remote CI execution is separate from
+local validation.
+
+Local Python 3.13 validation: `pip check` passed; `python -m pytest -q` reported
+**55 passed, 8 skipped**; `python -m pytest -q --rag-models` reported **63 passed**
+with cached local Docling/OCR models. Model-enabled coverage includes real scanned
+PDFs and all three image fixtures; skipped tests are not counted as passes.
 
 Deferred: retrieval benchmarks, reranking, VLM/image vectors, neighbour expansion and
 report-level citation evaluation. A single oversized table row stays intact in its

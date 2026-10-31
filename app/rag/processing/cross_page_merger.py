@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 
 from app.rag.models import ContentBlock
-from app.rag.processing.structure_recovery import body_size, entity_anchor, heading_hint, topic_hint
+from app.rag.processing.structure_recovery import CHINESE_NUMBERED, NUMBERED, body_size, entity_anchor, heading_hint, topic_hint
 
 PAGE_NUMBER = re.compile(r"^(?:page\s+\d+(?:\s*(?:of|/)\s*\d+)?|第?\s*\d+\s*页(?:\s*[/共]\s*\d+\s*页?)?|\d+\s*/\s*\d+|[-–—]?\s*\d+\s*[-–—]?)$", re.I)
 CONTINUED = re.compile(r"\s*(?:[（(](?:continued|cont\.?|续|续表)[）)]|continued|续表?)\s*$", re.I)
@@ -108,13 +108,16 @@ class CrossPageMerger:
                 text = block.text.strip()
                 if PAGE_NUMBER.fullmatch(text) and (margin or text == str(block.page_number) or not text.isdecimal()):
                     continue
-                if len(repeats[(block.document_id, normalized(text))]) >= 2 and (margin or not heading_hint(block, typical)):
+                if (len(repeats[(block.document_id, normalized(text))]) >= 2
+                        and (margin or layout.page_height is None and not heading_hint(block, typical))):
                     continue
             clean.append(block)
         return clean
 
     def _continues(self, previous, current):
         left, right = previous.text.rstrip(), current.text.lstrip()
+        if NUMBERED.match(right) or CHINESE_NUMBERED.match(right):
+            return False
         if not left or not right or left.endswith((".", "!", "?", "。", "！", "？")):
             return False
         if entity_anchor(right) and entity_anchor(right) != entity_anchor(left):
@@ -125,7 +128,9 @@ class CrossPageMerger:
         return bool(re.match(r"[a-z\u3400-\u9fff]", right) or left.endswith((",", ":", ";", "-", "，", "：", "；", "、")))
 
     def _same_list(self, previous, current):
-        left, right = previous.list_marker or "-", current.list_marker or "-"
+        left, right = previous.list_marker, current.list_marker
+        if not left or not right:
+            return False
         numbers = [re.fullmatch(r"[（(]?(\d+)[.)、）]?", marker) for marker in (left, right)]
         if all(numbers):
             return int(numbers[1][1]) == int(numbers[0][1]) + 1

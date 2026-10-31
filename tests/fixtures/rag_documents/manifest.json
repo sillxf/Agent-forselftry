@@ -1,0 +1,372 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "file": "pdf/text_based/nist_sp80061r3_pp10-12.pdf",
+      "format": "pdf",
+      "sha256": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+      "origin": {
+        "kind": "official_excerpt",
+        "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf",
+        "version": "SP 800-61 Rev. 3, April 2025",
+        "source_sha256": "e5593d6bb85daecec7e8d9549400c7b3473bcc3f06e469c82218073afa7fba2d",
+        "physical_source_pages": [
+          10,
+          11,
+          12
+        ],
+        "license": "US NIST government publication; original attribution retained"
+      },
+      "requires_models": true,
+      "purpose": [
+        "real_security_document",
+        "headings",
+        "page_provenance"
+      ],
+      "expected": {
+        "contains": [
+          "Introduction",
+          "Cybersecurity Risk Management"
+        ],
+        "pages": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "file": "pdf/cross_page/sentence_continuation.pdf",
+      "format": "pdf",
+      "sha256": "f6a0fa52f99b5e686bbfd5b355af7e908f562705a6f8895a01a2c2ce0c46a4ca",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "cross_page_sentence",
+        "page_furniture"
+      ],
+      "expected": {
+        "merged_text": "The authentication rule checks events, then correlates failed login attempts across accounts.",
+        "merged_pages": [
+          1,
+          2
+        ],
+        "excludes": [
+          "SOC validation manual"
+        ]
+      }
+    },
+    {
+      "file": "pdf/tables/continued_rules.pdf",
+      "format": "pdf",
+      "sha256": "87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "repeated_table_header",
+        "cross_page_table"
+      ],
+      "expected": {
+        "table_values": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "table_count": 1,
+        "merged_pages": [
+          1,
+          2
+        ],
+        "merged_type": "table"
+      }
+    },
+    {
+      "file": "images/no_ocr.png",
+      "format": "png",
+      "sha256": "c2a24bd6a1949f1bb6d13e3bbf4de99ad1770b6cd769b76f043d13682b395e07",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "source_image_metadata",
+        "no_ocr"
+      ],
+      "expected": {
+        "source_image": true
+      }
+    },
+    {
+      "file": "images/ocr_note.png",
+      "format": "png",
+      "sha256": "a13a3582f97ce5bd5dece98155630d37c9341310a4e154511b54cd37fe8e7657",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "source_image_metadata",
+        "ocr_regions"
+      ],
+      "expected": {
+        "source_image": true,
+        "contains": [
+          "IR RESPONSE NOTE",
+          "COLLECT LOGS"
+        ]
+      }
+    },
+    {
+      "file": "images/multi_region_ocr.png",
+      "format": "png",
+      "sha256": "7f87fe0b10b062fcbf1fc68495bb0276dc34c8d2b72eb2e62b6c9022026a0b68",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "source_image_metadata",
+        "ocr_regions"
+      ],
+      "expected": {
+        "source_image": true,
+        "contains": [
+          "COLLECT LOGS",
+          "ISOLATE HOST",
+          "BLOCK SOURCE IP"
+        ]
+      }
+    },
+    {
+      "file": "pdf/scanned/incident_note.pdf",
+      "format": "pdf",
+      "sha256": "e76f37041e562049c8c7fc740104cd1421da69a303320a1c2305531bdaba6012",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "image_only_pdf",
+        "ocr"
+      ],
+      "expected": {
+        "contains": [
+          "IR RESPONSE NOTE",
+          "COLLECT LOGS"
+        ],
+        "pages": [
+          1
+        ]
+      }
+    },
+    {
+      "file": "pdf/cross_page/figure_interrupts_text.pdf",
+      "format": "pdf",
+      "sha256": "edbed3bf37e3e92ed5a89d68d6afa44bf166c93a7f3e4b4993f5c87e9a8262bd",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": true,
+      "purpose": [
+        "picture_between_page_continuations",
+        "known_limitation"
+      ],
+      "expected": {
+        "contains": [
+          "network investigation continues",
+          "illustrated connection path"
+        ],
+        "picture_min_count": 1
+      },
+      "known_limitation": "Page-level candidate matching is deferred: a picture can interrupt paragraph merging."
+    },
+    {
+      "file": "docx/duplicate_paragraphs.docx",
+      "format": "docx",
+      "sha256": "3323e324e11b70a8d96cd388c1d0d8758fe3ae27ed04eb0d4b3b5b7525ba381a",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": false,
+      "purpose": [
+        "duplicate_text_layout"
+      ],
+      "expected": {
+        "layout_occurrences": [
+          {
+            "text": "Detection",
+            "font_sizes": [
+              18,
+              10
+            ],
+            "bold": [
+              true,
+              false
+            ]
+          }
+        ],
+        "contains": [
+          "first occurrence",
+          "second occurrence"
+        ]
+      }
+    },
+    {
+      "file": "docx/numbered_steps.docx",
+      "format": "docx",
+      "sha256": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": false,
+      "purpose": [
+        "heading_false_positive",
+        "numbered_steps"
+      ],
+      "expected": {
+        "not_headings": [
+          "1. Check firewall configuration",
+          "2. Collect authentication logs",
+          "3. Isolate affected hosts",
+          "1. 检查防火墙配置",
+          "2. 收集认证日志",
+          "3. 隔离受影响主机"
+        ],
+        "contains": [
+          "firewall configuration",
+          "收集认证日志"
+        ]
+      }
+    },
+    {
+      "file": "docx/no_heading.docx",
+      "format": "docx",
+      "sha256": "3e941ad833d27216301657b8af351c50dbca8e5c953c0d4788faa9e06a8f65fb",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": false,
+      "purpose": [
+        "layout_headings",
+        "no_native_headings"
+      ],
+      "expected": {
+        "inferred_headings": [
+          "Detection",
+          "Response"
+        ],
+        "contains": [
+          "failed login attempts",
+          "forensic evidence"
+        ]
+      }
+    },
+    {
+      "file": "docx/cross_page_lists.docx",
+      "format": "docx",
+      "sha256": "aa36be2d81752d97caef81b867cff1130207571f9651134508fea87785bf0581",
+      "origin": {
+        "kind": "generated",
+        "generator": "scripts/build_rag_corpus.py"
+      },
+      "requires_models": false,
+      "purpose": [
+        "independent_lists",
+        "explicit_page_break"
+      ],
+      "expected": {
+        "contains": [
+          "authentication logs",
+          "network events"
+        ],
+        "merge_count": 0
+      }
+    },
+    {
+      "file": "xlsx/xlsx_01.xlsx",
+      "format": "xlsx",
+      "sha256": "fd4e67c4474e6d8308b1e9a9006500bd8e055c1aa2a337d54e641c3b1f506cf2",
+      "origin": {
+        "kind": "upstream_fixture",
+        "url": "https://raw.githubusercontent.com/docling-project/docling/764b5d4dc22b03ea87afd4c2207f510300b27a5b/tests/data/xlsx/sources/xlsx_01.xlsx",
+        "commit": "764b5d4dc22b03ea87afd4c2207f510300b27a5b",
+        "license": "MIT; see DOCLING_LICENSE.txt"
+      },
+      "requires_models": false,
+      "purpose": [
+        "upstream_real_file",
+        "tables_and_merged_cells"
+      ],
+      "expected": {
+        "table_min_count": 6,
+        "contains": [
+          "first",
+          "second",
+          "col-1"
+        ]
+      }
+    },
+    {
+      "file": "xlsx/xlsx_05_table_with_title.xlsx",
+      "format": "xlsx",
+      "sha256": "30afc0d53b0db289a45786ce4e9dc8f68bb91f256441cb55fb8e747fae104dbe",
+      "origin": {
+        "kind": "upstream_fixture",
+        "url": "https://raw.githubusercontent.com/docling-project/docling/764b5d4dc22b03ea87afd4c2207f510300b27a5b/tests/data/xlsx/sources/xlsx_05_table_with_title.xlsx",
+        "commit": "764b5d4dc22b03ea87afd4c2207f510300b27a5b",
+        "license": "MIT; see DOCLING_LICENSE.txt"
+      },
+      "requires_models": false,
+      "purpose": [
+        "upstream_real_file",
+        "tables_and_merged_cells"
+      ],
+      "expected": {
+        "table_min_count": 2,
+        "contains": [
+          "Freshwater Ducks",
+          "2024"
+        ]
+      }
+    },
+    {
+      "file": "pptx/powerpoint_sample.pptx",
+      "format": "pptx",
+      "sha256": "24191d47fda511e11984e875f8676506da5ae1fbcaefcc63d81be377d3a3950c",
+      "origin": {
+        "kind": "upstream_fixture",
+        "url": "https://raw.githubusercontent.com/docling-project/docling/764b5d4dc22b03ea87afd4c2207f510300b27a5b/tests/data/pptx/sources/powerpoint_sample.pptx",
+        "commit": "764b5d4dc22b03ea87afd4c2207f510300b27a5b",
+        "license": "MIT; see DOCLING_LICENSE.txt"
+      },
+      "requires_models": false,
+      "purpose": [
+        "upstream_real_file",
+        "slide_layout"
+      ],
+      "expected": {
+        "table_min_count": 1,
+        "pages": [
+          1,
+          2,
+          3
+        ]
+      }
+    }
+  ]
+}

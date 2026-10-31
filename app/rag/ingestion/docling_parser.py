@@ -20,28 +20,51 @@ def file_checksum(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def is_image_only_pdf(path: Path) -> bool:
+    """Choose full-page OCR only when the entire PDF has no native text."""
+    from pypdfium2 import PdfDocument
+
+    with PdfDocument(path) as document:
+        for page in document:
+            text_page = page.get_textpage()
+            has_text = text_page.count_chars() > 0
+            text_page.close()
+            page.close()
+            if has_text:
+                return False
+    return True
+
+
 class DoclingParser:
     def __init__(self, archive_dir=None, image_dir=None, converter=None, ocr_enabled=True):
         self.archive_dir = Path(archive_dir) if archive_dir is not None else None
         self.image_dir = Path(image_dir) if image_dir is not None else None
         self.converter = converter
         self.ocr_enabled = ocr_enabled
+        self._converters = {}
 
-    def _get_converter(self):
-        if self.converter is None:
+    def _get_converter(self, full_page_ocr=False):
+        if self.converter is not None:
+            return self.converter
+        if full_page_ocr not in self._converters:
             from docling.datamodel.base_models import InputFormat
-            from docling.datamodel.pipeline_options import PdfPipelineOptions
+            from docling.datamodel.pipeline_options import OcrMode, PdfPipelineOptions
             from docling.document_converter import DocumentConverter, ImageFormatOption, PdfFormatOption
 
             options = PdfPipelineOptions()
             options.do_ocr = self.ocr_enabled
+            if full_page_ocr:
+                options.ocr_options.mode = OcrMode.FULL_PAGE
             options.do_table_structure = True
             options.generate_picture_images = True
-            self.converter = DocumentConverter(format_options={
+            # Image inputs have no text layer; OCR the whole source.
+            image_options = options.model_copy(deep=True)
+            image_options.ocr_options.mode = OcrMode.FULL_PAGE
+            self._converters[full_page_ocr] = DocumentConverter(format_options={
                 InputFormat.PDF: PdfFormatOption(pipeline_options=options),
-                InputFormat.IMAGE: ImageFormatOption(pipeline_options=options),
+                InputFormat.IMAGE: ImageFormatOption(pipeline_options=image_options),
             })
-        return self.converter
+        return self._converters[full_page_ocr]
 
     def parse(self, file_path: str | Path) -> ParsedDocument:
         path = Path(file_path).resolve(strict=True)
@@ -52,16 +75,19 @@ class DoclingParser:
             document_id=checksum, filename=path.name, file_type=path.suffix.lower().lstrip("."),
             source_path=str(path), checksum=checksum, version=checksum,
         )
-        result = self._get_converter().convert(path)
+        full_page_ocr = (self.converter is None and self.ocr_enabled
+                         and path.suffix.lower() == ".pdf" and is_image_only_pdf(path))
+        result = self._get_converter(full_page_ocr).convert(path)
         status = getattr(result.status, "value", result.status)
         if status != "success":
             raise ValueError(f"Docling conversion failed for {path.name}: {status}")
         doc = result.document
         blocks = []
-        source_layouts = docx_layouts(path)
+        items = list(doc.iterate_items(traverse_pictures=True))
+        source_layouts = docx_layouts(path, items)
         page_cells = {page.page_no: page.cells for page in getattr(result, "pages", [])}
         headings = []
-        for item, _ in doc.iterate_items(traverse_pictures=True):
+        for item, _ in items:
             label = getattr(item.label, "value", item.label)
             text = getattr(item, "text", "") or ""
             kind = label if label in {"page_header", "page_footer"} else "paragraph"
@@ -125,7 +151,7 @@ class DoclingParser:
                 section_path=[text for _, text in headings], table_data=rows, table_columns=columns,
                 image_path=image_path, caption=caption, heading_level=heading_level,
                 list_marker=getattr(item, "marker", None) if kind == "list" else None,
-                layout=source_layouts.get(text.strip()) or item_layout(item, doc, page_cells),
+                layout=source_layouts.get(item.self_ref) or item_layout(item, doc, page_cells),
             ))
         if path.suffix.lower() in IMAGE_EXTENSIONS:
             # Preserve the input even when the OCR backend emits no PictureItem.
@@ -140,12 +166,11 @@ class DoclingParser:
                 block_id=str(uuid5(NAMESPACE_URL, checksum + ":source-image")),
                 document_id=checksum, block_type="image", page_number=1, page_end=1,
                 text="\n".join(b.text for b in blocks) or f"[Image in {path.name}; no extracted text]",
-                image_path=image_path, caption=caption, heading_level=heading_level,
-                list_marker=getattr(item, "marker", None) if kind == "list" else None,
-                layout=source_layouts.get(text.strip()) or item_layout(item, doc, page_cells),
+                image_path=image_path, caption=None, structure_source="unknown",
+                related_block_ids=[block.block_id for block in blocks],
             ))
         for index, block in enumerate(blocks):
-            if block.block_type == "image":
+            if block.block_type == "image" and not block.related_block_ids:
                 block.related_block_ids = [b.block_id for b in blocks[max(0, index - 1):index + 2]
                                            if b.block_id != block.block_id]
         parsed = ParsedDocument(document=record, blocks=blocks,

@@ -61,3 +61,15 @@ def analysis_service(rag_factory):
         "tool_calls": [],
     }
     return InvestigationService(rag_factory(build=False), llm)
+
+
+def pytest_addoption(parser):
+    parser.addoption("--rag-models", action="store_true", help="Run PDF/image corpus tests requiring local Docling/OCR models")
+
+
+def pytest_collection_modifyitems(config, items):
+    if not config.getoption("--rag-models"):
+        skip = pytest.mark.skip(reason="PDF/OCR model tests: run explicitly with --rag-models")
+        for item in items:
+            if "rag_models" in item.keywords:
+                item.add_marker(skip)

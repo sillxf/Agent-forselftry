@@ -1,28 +1,44 @@
 """Keep available source layout signals; do not invent missing font measurements."""
+from collections import Counter
+from difflib import SequenceMatcher
 from pathlib import Path
 from statistics import median
 
 from app.rag.models import BlockLayout
 
 
-def docx_layouts(path: Path) -> dict[str, BlockLayout]:
+def docx_layouts(path: Path, items) -> dict[str, BlockLayout]:
     if path.suffix.lower() != ".docx":
         return {}
     from docx import Document
 
-    layouts = {}
+    paragraphs, layouts = [], []
     for paragraph in Document(path).paragraphs:
         runs = [run for run in paragraph.runs if run.text.strip()]
         sizes = [run.font.size.pt for run in runs if run.font.size is not None]
         if not sizes and paragraph.style.font.size is not None:
             sizes = [paragraph.style.font.size.pt]
         indent = paragraph.paragraph_format.left_indent
-        layouts[paragraph.text.strip()] = BlockLayout(
+        if not paragraph.text.strip():
+            continue
+        paragraphs.append(paragraph.text.strip())
+        layouts.append(BlockLayout(
             font_size=median(sizes) if sizes else None,
             bold=bool(runs) and all(run.bold if run.bold is not None else paragraph.style.font.bold for run in runs),
             indent=indent.pt if indent is not None else None,
-        )
-    return layouts
+        ))
+    text_items = [item for item, _ in items if getattr(item, "text", "").strip()]
+    texts = [item.text.strip() for item in text_items]
+    source_counts, item_counts = Counter(paragraphs), Counter(texts)
+    matched = {}
+    # Align source occurrences in reading order, rather than overwriting duplicate text keys.
+    for match in SequenceMatcher(None, paragraphs, texts, autojunk=False).get_matching_blocks():
+        for offset in range(match.size):
+            source_index, item_index = match.a + offset, match.b + offset
+            text = paragraphs[source_index]
+            if source_counts[text] == item_counts[text]:
+                matched[text_items[item_index].self_ref] = layouts[source_index]
+    return matched
 
 
 def item_layout(item, document, pages) -> BlockLayout:

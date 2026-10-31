@@ -112,3 +112,26 @@ def test_docx_layout_recovery_is_used_by_retrieval(rag_factory):
     assert results[0]["section_path"] == ["Authentication investigation"]
     assert results[0]["structure_source"] == "inferred"
     assert results[0]["source"] == "unheaded.docx"
+
+
+def test_unknown_list_markers_do_not_establish_list_continuity():
+    items = [block("First independent checklist", 1, "list"),
+             block("Second independent checklist", 2, "list"),
+             block("Known bullet", 3, "list", list_marker="-")]
+    assert len(CrossPageMerger().merge(items)) == 3
+    assert all(item.merge_reason is None for item in CrossPageMerger().merge(items))
+
+
+def test_numbering_alone_does_not_promote_operational_steps():
+    steps = [block(text) for text in ["1. 检查防火墙配置", "2. 收集认证日志", "3. 隔离受影响主机",
+                                      "1. Check firewall configuration", "2. Collect authentication logs"]]
+    recovered = StructureRecovery().recover(steps)
+    assert all(item.block_type == "paragraph" for item in recovered)
+    assert all(item.section_path == [] for item in recovered)
+
+
+def test_repeated_edge_body_text_with_layout_is_not_page_furniture():
+    layout = BlockLayout(top=100, bottom=120, page_height=800)
+    blocks = [block("A genuine repeated body statement.", 1, layout=layout),
+              block("A genuine repeated body statement.", 2, layout=layout)]
+    assert len(CrossPageMerger().merge(blocks)) == 2

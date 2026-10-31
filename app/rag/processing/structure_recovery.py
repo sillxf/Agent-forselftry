@@ -9,7 +9,7 @@ CHINESE_NUMBERED = re.compile(r"^(?:第[一二三四五六七八九十百\d]+[�
 KEYWORD_HEADINGS = {
     "概述", "背景", "原理", "检测", "检测方法", "检测规则", "告警分析", "调查步骤", "应急响应",
     "处置建议", "修复建议", "影响范围", "风险评估", "漏洞分析", "总结", "overview", "definition",
-    "detection", "response", "mitigation", "investigation", "prevention", "containment", "remediation", "conclusion",
+    "detection", "evidence", "introduction", "response", "mitigation", "investigation", "prevention", "containment", "remediation", "conclusion",
 }
 TOPICS = {
     "检测与调查": ("检测", "告警", "日志", "调查", "排查", "detect", "investigat", "indicator", "failed login"),
@@ -26,7 +26,7 @@ def body_size(blocks: list[ContentBlock]) -> float | None:
     return median(sizes) if sizes else None
 
 
-def heading_hint(block: ContentBlock, typical_size=None):
+def heading_hint(block: ContentBlock, typical_size=None, following=None):
     """Return (level, confidence, reason), or leave an ambiguous paragraph alone."""
     text = block.text.strip()
     if block.block_type != "paragraph" or len(text) > 90 or not text:
@@ -34,12 +34,21 @@ def heading_hint(block: ContentBlock, typical_size=None):
     if text.endswith(("。", "！", "？", ".", "!", "?", ";", "；")):
         return None
     numbered = NUMBERED.match(text)
-    if numbered:
-        return numbered[1].count(".") + 1, .9, "numbering"
-    if CHINESE_NUMBERED.match(text):
-        return 1, .9, "numbering"
-    if re.match(r"^[（(][一二三四五六七八九十]+[）)]", text):
-        return 2, .9, "numbering"
+    chinese = CHINESE_NUMBERED.match(text) or re.match(r"^[（(][一二三四五六七八九十]+[）)]", text)
+    if numbered or chinese:
+        label = numbered[2].strip() if numbered else text[chinese.end():].strip()
+        # Numbering alone is also common in operational steps, not just headings.
+        if re.match(r"^(?:检查|收集|隔离|封禁|执行|打开|确认|重置|check\b|collect\b|isolate\b|inspect\b|run\b|execute\b|enable\b|block\b)", label, re.I):
+            return None
+        size = block.layout.font_size or block.layout.line_height
+        visual = block.layout.bold or bool(size and typical_size and size >= typical_size * 1.15)
+        has_body = (following is not None and following.block_type == "paragraph"
+                    and len(following.text) >= 40 and not NUMBERED.match(following.text.strip()))
+        confidence = .5 + .25 * visual + .15 * has_body + .35 * (label.rstrip(":：").casefold() in KEYWORD_HEADINGS)
+        level = numbered[1].count(".") + 1 if numbered else (2 if text.startswith(("(", "（")) else 1)
+        if numbered and "." in numbered[1]:
+            confidence += .1
+        return (level, min(confidence, .99), "numbering") if confidence >= .85 else None
     size = block.layout.font_size or block.layout.line_height
     if size and typical_size and size >= typical_size * 1.15:
         return (1 if size >= typical_size * 1.45 else 2), .9, "font_size"
@@ -69,7 +78,7 @@ class StructureRecovery:
         recovered = []
         stack = []
         typical = body_size(blocks)
-        for source in blocks:
+        for index, source in enumerate(blocks):
             block = source.model_copy(deep=True)
             if block.block_type == "heading":
                 # Native section paths are authoritative; inferred children must not overwrite them.
@@ -88,7 +97,8 @@ class StructureRecovery:
                         heading_level=stack[-1].heading_level + 1 if stack else 1,
                         structure_source="inferred", structure_reason="entity_anchor", structure_confidence=.85,
                     ))
-                hint = heading_hint(block, typical)
+                following = blocks[index + 1] if index + 1 < len(blocks) else None
+                hint = heading_hint(block, typical, following)
                 if hint is None:
                     if stack:
                         block.section_path = [heading.text for heading in stack]

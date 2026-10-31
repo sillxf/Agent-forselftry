@@ -1,3 +1,4 @@
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -106,3 +107,32 @@ def test_pdf_provenance_tables_and_picture_links_via_converter_contract(tmp_path
     assert "continues on next page." in evidence.content
     assert set([parsed.blocks[1].block_id, parsed.blocks[2].block_id]) <= set(evidence.block_ids)
     assert evidence.page_start == 4 and evidence.page_end == 5
+
+
+@pytest.mark.parametrize("texts", [[], ["COLLECT LOGS"], ["COLLECT LOGS", "ISOLATE HOST", "BLOCK SOURCE IP"]])
+def test_image_source_metadata_is_independent_of_ocr_items(tmp_path, texts):
+    path = Path(__file__).parent / "fixtures/rag_documents/images/no_ocr.png"
+    items = [SimpleNamespace(label="section_header", self_ref=f"ocr-{index}", text=text, level=3,
+                              prov=[SimpleNamespace(page_no=1)], formatting=SimpleNamespace(bold=True))
+             for index, text in enumerate(texts)]
+    converter = Mock()
+    converter.convert.return_value = SimpleNamespace(status="success", document=SimpleNamespace(
+        iterate_items=lambda **kwargs: [(item, 1) for item in items],
+        export_to_markdown=lambda: "\n".join(texts), export_to_dict=lambda: {}))
+    parsed = DoclingParser(converter=converter, image_dir=tmp_path).parse(path)
+    source = parsed.blocks[0]
+    assert source.block_type == "image" and source.image_path
+    assert source.caption is None and source.heading_level is None and source.list_marker is None
+    assert not source.layout.bold and source.layout.font_size is None
+    assert source.structure_source == "unknown"
+    assert source.related_block_ids == [block.block_id for block in parsed.blocks[1:]]
+    assert all(text in source.text for text in texts)
+
+
+def test_failed_image_conversion_does_not_create_a_source_record(tmp_path):
+    path = Path(__file__).parent / "fixtures/rag_documents/images/no_ocr.png"
+    converter = Mock()
+    converter.convert.return_value = SimpleNamespace(status="failure")
+    with pytest.raises(ValueError, match="conversion failed"):
+        DoclingParser(converter=converter, image_dir=tmp_path).parse(path)
+    assert not list(tmp_path.iterdir())
