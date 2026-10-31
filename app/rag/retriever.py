@@ -22,6 +22,8 @@ from app.rag.indexing.vector_store import FaissVectorStore, VectorStoreInterface
 from app.rag.ingestion.docling_parser import DoclingParser, file_checksum
 from app.rag.loader import discover_documents
 from app.rag.models import DocumentRecord, ParentChunk
+from app.rag.processing.cross_page_merger import CrossPageMerger
+from app.rag.processing.structure_recovery import StructureRecovery
 
 
 def tokenize(text: str) -> list[str]:
@@ -47,7 +49,7 @@ def reciprocal_rank_fusion(dense_results, sparse_results, rank_constant=60):
 
 
 class KnowledgeRetriever:
-    INDEX_VERSION = 1
+    INDEX_VERSION = 2
 
     def __init__(
         self, build=True, *, knowledge_dir=None, storage_dir=None, parser=None,
@@ -128,7 +130,9 @@ class KnowledgeRetriever:
                 parsed = self.parser.parse(path)
                 seen.add(checksum)
                 documents.append(parsed.document)
-                new_parents = parent_chunker.split(parsed.blocks, parsed.document)
+                blocks = CrossPageMerger().merge(parsed.blocks)
+                blocks = StructureRecovery().recover(blocks)
+                new_parents = parent_chunker.split(blocks, parsed.document)
                 parents.extend(new_parents)
                 for parent in new_parents:
                     children.extend(child_chunker.split(parent, parsed.document.filename, parsed.document.file_type))

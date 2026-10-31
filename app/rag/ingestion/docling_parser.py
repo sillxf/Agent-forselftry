@@ -6,6 +6,7 @@ from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from app.rag.models import ContentBlock, DocumentRecord, ParsedDocument
+from app.rag.ingestion.layout import docx_layouts, item_layout
 
 SUPPORTED_EXTENSIONS = frozenset({
     ".md", ".markdown", ".pdf", ".docx", ".xlsx", ".pptx", ".html", ".htm",
@@ -57,18 +58,20 @@ class DoclingParser:
             raise ValueError(f"Docling conversion failed for {path.name}: {status}")
         doc = result.document
         blocks = []
+        source_layouts = docx_layouts(path)
+        page_cells = {page.page_no: page.cells for page in getattr(result, "pages", [])}
         headings = []
         for item, _ in doc.iterate_items(traverse_pictures=True):
             label = getattr(item.label, "value", item.label)
-            if label in {"page_header", "page_footer"}:
-                continue
             text = getattr(item, "text", "") or ""
-            kind = "paragraph"
+            kind = label if label in {"page_header", "page_footer"} else "paragraph"
+            heading_level = None
             columns, rows, image_path = [], None, None
             caption = None
             if label in {"title", "section_header"}:
                 kind = "heading"
                 level = 0 if label == "title" else getattr(item, "level", 1)
+                heading_level = level
                 while headings and headings[-1][0] >= level:
                     headings.pop()
                 headings.append((level, text))
@@ -120,7 +123,9 @@ class DoclingParser:
                 document_id=checksum, block_type=kind, text=text,
                 page_number=min(pages) if pages else None, page_end=max(pages) if pages else None,
                 section_path=[text for _, text in headings], table_data=rows, table_columns=columns,
-                image_path=image_path, caption=caption,
+                image_path=image_path, caption=caption, heading_level=heading_level,
+                list_marker=getattr(item, "marker", None) if kind == "list" else None,
+                layout=source_layouts.get(text.strip()) or item_layout(item, doc, page_cells),
             ))
         if path.suffix.lower() in IMAGE_EXTENSIONS:
             # Preserve the input even when the OCR backend emits no PictureItem.
@@ -135,7 +140,9 @@ class DoclingParser:
                 block_id=str(uuid5(NAMESPACE_URL, checksum + ":source-image")),
                 document_id=checksum, block_type="image", page_number=1, page_end=1,
                 text="\n".join(b.text for b in blocks) or f"[Image in {path.name}; no extracted text]",
-                image_path=image_path, caption=caption,
+                image_path=image_path, caption=caption, heading_level=heading_level,
+                list_marker=getattr(item, "marker", None) if kind == "list" else None,
+                layout=source_layouts.get(text.strip()) or item_layout(item, doc, page_cells),
             ))
         for index, block in enumerate(blocks):
             if block.block_type == "image":

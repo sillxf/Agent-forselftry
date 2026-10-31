@@ -62,7 +62,8 @@ class ChildChunker:
                         section_path=parent.section_path, chunk_type=kind,
                         table_columns=group[0].table_columns if kind == "table" else [],
                         table_data=[group[0].table_data[row_index]] if kind == "table" and group[0].table_data else None,
-                        block_ids=list(dict.fromkeys(b.block_id for b in group)),
+                        block_ids=list(dict.fromkeys(source_id for b in group
+                                                    for source_id in (b.source_block_ids or [b.block_id]))),
                         image_paths=[b.image_path for b in group if b.image_path],
                         entities=list(dict.fromkeys(m.group() for m in ENTITY_PATTERN.finditer(piece))),
                         structure_source=("inferred" if any(b.structure_source == "inferred" for b in group)

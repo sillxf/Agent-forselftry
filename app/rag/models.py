@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-BlockType = Literal["heading", "paragraph", "table", "image", "list", "code"]
+BlockType = Literal["heading", "paragraph", "table", "image", "list", "code", "page_header", "page_footer"]
 StructureSource = Literal["original", "inferred", "unknown"]
 
 
@@ -16,6 +16,16 @@ class DocumentRecord(BaseModel):
     checksum: str
     title: str | None = None
     version: str = ""
+
+
+class BlockLayout(BaseModel):
+    font_size: float | None = None
+    line_height: float | None = None
+    bold: bool = False
+    indent: float | None = None
+    top: float | None = None
+    bottom: float | None = None
+    page_height: float | None = None
 
 
 class ContentBlock(BaseModel):
@@ -32,6 +42,13 @@ class ContentBlock(BaseModel):
     caption: str | None = None
     related_block_ids: list[str] = Field(default_factory=list)
     structure_source: StructureSource = "original"
+    heading_level: int | None = None
+    list_marker: str | None = None
+    layout: BlockLayout = Field(default_factory=BlockLayout)
+    source_block_ids: list[str] = Field(default_factory=list)
+    merge_reason: str | None = None
+    structure_reason: str | None = None
+    structure_confidence: float | None = None
 
 
 class ParsedDocument(BaseModel):

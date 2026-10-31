@@ -92,3 +92,17 @@ def test_pdf_provenance_tables_and_picture_links_via_converter_contract(tmp_path
     assert image.image_path and image.related_block_ids == [table.block_id]
     assert Image.open(image.image_path).size == (4, 4)
     assert parsed.blocks[2].section_path == ["Detection"]
+
+    from app.rag.chunking.child_chunker import ChildChunker
+    from app.rag.chunking.parent_chunker import ParentChunker
+    from app.rag.processing.cross_page_merger import CrossPageMerger
+    from app.rag.processing.structure_recovery import StructureRecovery
+    from conftest import CharacterTokenizer
+
+    blocks = StructureRecovery().recover(CrossPageMerger().merge(parsed.blocks))
+    parents = ParentChunker(CharacterTokenizer()).split(blocks, parsed.document)
+    children = [child for parent in parents for child in ChildChunker(CharacterTokenizer(), 240, 20).split(parent, path.name)]
+    evidence = next(child for child in children if "Investigation starts," in child.content)
+    assert "continues on next page." in evidence.content
+    assert set([parsed.blocks[1].block_id, parsed.blocks[2].block_id]) <= set(evidence.block_ids)
+    assert evidence.page_start == 4 and evidence.page_end == 5

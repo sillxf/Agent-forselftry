@@ -43,3 +43,21 @@ def rag_factory(tmp_path):
     create.knowledge = knowledge
     create.storage = storage
     return create
+
+
+@pytest.fixture
+def analysis_service(rag_factory):
+    import json
+    from unittest.mock import Mock
+    from app.services.investigation_service import InvestigationService
+
+    (rag_factory.knowledge / "brute_force.md").write_text(
+        "# Brute Force\n\nMultiple failed login attempts. Block suspicious IP and enable MFA.", encoding="utf-8")
+    llm = Mock()
+    llm.chat.return_value = {
+        "content": json.dumps({"attack_type": "mock_analysis", "confidence": 0.0,
+                               "evidence": ["Multiple failed login attempts"],
+                               "recommendations": ["Enable MFA"]}),
+        "tool_calls": [],
+    }
+    return InvestigationService(rag_factory(build=False), llm)
