@@ -77,6 +77,14 @@ class Dataset:
         ids = [q.id for q in self.questions]
         if not ids or len(ids) != len(set(ids)):
             raise ValueError("Dataset must be nonempty with unique question IDs")
+        fact_locations = {}
+        for question in self.questions:
+            for evidence in question.relevant_evidence:
+                locations = {(a.document_id, normalize(a.text_quote)) for a in evidence.anchors()}
+                previous = fact_locations.get(evidence.evidence_id)
+                if previous is not None and not previous & locations:
+                    raise ValueError(f"Evidence ID refers to different facts: {evidence.evidence_id}")
+                fact_locations[evidence.evidence_id] = locations | (previous or set())
         self.pending_count = sum(q.review_status != "approved" for q in self.questions)
         if require_reviewed and self.pending_count:
             raise ValueError(f"{self.pending_count} questions still need human review")

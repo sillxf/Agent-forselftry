@@ -24,6 +24,12 @@ def summarize(rows):
                        "p95": float(np.percentile([r["latency_ms"] for r in rows], 95))},
         "mean_candidate_count": mean(r["candidate_count"] for r in rows),
         "no_result_rate": mean(not r["children"] for r in rows),
+        "coverage_diagnostics": {
+            "child_hit_parent_miss_questions": sum(bool(r["diagnostics"]["child_only_facts"]) for r in answerable),
+            "parent_hit_child_miss_questions": sum(bool(r["diagnostics"]["parent_only_facts"]) for r in answerable),
+            "missing_child_evidence_questions": sum(bool(r["diagnostics"]["missing_child_facts"]) for r in answerable),
+            "nonrelevant_top_k_child_results": sum(len(r["diagnostics"]["nonrelevant_child_ranks"]) for r in answerable),
+        },
         "unanswerable_stats": {
             "questions": len(unanswerable),
             "returned_context_count": sum(bool(r["parents"]) for r in unanswerable),
@@ -48,6 +54,7 @@ def build_report(output, config, rows):
     failures = [row for row in rows if row["failure_types"]]
     write_json(output / "metrics.json", metrics)
     write_json(output / "failures.json", failures)
+    write_json(output / "diagnostics.json", [{"question_id": r["question_id"], **r["diagnostics"]} for r in rows])
     overall = metrics["overall"]
     k = config["retrieval"]["top_k"]
     lines = [f"# {config['retrieval']['strategy']} retrieval baseline", "",

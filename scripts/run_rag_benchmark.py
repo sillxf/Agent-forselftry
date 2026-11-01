@@ -154,12 +154,15 @@ def main():
         lines = ["# Candidate retrieval comparison", "",
                  f"Annotation status: **{base['annotation_status']}**. Do not treat pending labels as human-reviewed acceptance.",
                  "All strategies share the same corpus, index, embedding and chunking configuration.", "",
-                 "| Strategy | Child Recall@K | Child Precision@K | Child MRR@K | Child NDCG@K | Parent Recall@K |",
-                 "| --- | ---: | ---: | ---: | ---: | ---: |"]
-        for strategy, summary in comparison.items():
-            child = summary["child"]
-            values = [child[key] for key in ("recall", "precision", "mrr", "ndcg")] + [summary["parent"]["recall"]]
-            lines.append(f"| {strategy} | " + " | ".join(f"{value:.4f}" if value is not None else "N/A" for value in values) + " |")
+                 "K is identical, but Child and Parent are separate result universes.", ""]
+        for unit in ("child", "parent"):
+            lines += [f"## {unit.title()} Retrieval Metrics", "",
+                      "| Strategy | Recall@K | Precision@K | MRR@K | NDCG@K |",
+                      "| --- | ---: | ---: | ---: | ---: |"]
+            for strategy, summary in comparison.items():
+                values = [summary[unit][key] for key in ("recall", "precision", "mrr", "ndcg")]
+                lines.append(f"| {strategy} | " + " | ".join(f"{value:.4f}" if value is not None else "N/A" for value in values) + " |")
+            lines.append("")
         lines += ["", f"K={args.top_k}. Recall is unique evidence coverage within K child or K unique-parent ranks.",
                   "Metric definitions changed from candidate v0.1. Do not interpret score differences as retrieval improvements.",
                   "Precision/NDCG use derived result-level qrels (contract result-qrels-v2); Recall covers unique facts. Unknown cases are excluded.",

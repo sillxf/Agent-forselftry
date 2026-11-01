@@ -32,6 +32,9 @@ def render_review(dataset, notes):
                   f"参考答案：{question.expected_answer}", f"依据：{question.rationale}",
                   f"来源审查：{note['source_audit_note']}",
                   f"人工状态：`{question.review_status}`；审核人：`{question.reviewer}`", ""]
+        if note.get("phase2_fact_review"):
+            lines += [f"本轮事实检查：{note['phase2_fact_review']}",
+                      f"所需证据范围：`{note['requested_evidence_scope']}`", ""]
         for evidence in question.relevant_evidence:
             lines += [f"### 事实 `{evidence.evidence_id}`（grade={evidence.relevance_grade}）", ""]
             for index, anchor in enumerate(evidence.anchors()):

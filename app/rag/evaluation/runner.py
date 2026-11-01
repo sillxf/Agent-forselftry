@@ -58,6 +58,30 @@ def derive_qrels(question, units):
     return qrels
 
 
+def ranking_diagnostics(question, children, parents, qrels):
+    """Body-evidence coverage only; a returned neighbour is not a generated answer."""
+    required = {e.evidence_id for e in question.relevant_evidence if e.relevance_grade > 0}
+    child_hits = {key for r in children for key in r["matched_evidence"]} & required
+    parent_hits = {key for r in parents for key in r["matched_evidence"]} & required
+    return {
+        "child_only_facts": sorted(child_hits - parent_hits),
+        "parent_only_facts": sorted(parent_hits - child_hits),
+        "missing_child_facts": sorted(required - child_hits),
+        "missing_parent_facts": sorted(required - parent_hits),
+        "positive_children_outside_top_k": sorted(set(qrels["children"]) - {r["chunk_id"] for r in children}),
+        "positive_parents_outside_top_k": sorted(set(qrels["parents"]) - {r["parent_id"] for r in parents}),
+        "nonrelevant_child_ranks": [r["rank"] for r in children if not required & set(r["matched_evidence"])],
+        "nonrelevant_parent_ranks": [r["rank"] for r in parents if not required & set(r["matched_evidence"])],
+        "unanswerable_assessment": None if question.answerable else {
+            "returned_neighbour_context": bool(children or parents),
+            "answer_support_in_frozen_corpus": False,
+            "false_analogy_risk": "requires_case_review" if children or parents else "no_context_returned",
+            "knowledge_gap_detection": "not_evaluated",
+            "incorrect_answer_or_refusal": "not_evaluated_retrieval_only",
+        },
+    }
+
+
 def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
     if top_k <= 0:
         raise ValueError("top_k must be positive")
@@ -109,6 +133,7 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
             "child_metrics": child_metrics, "parent_metrics": parent_metrics, "derived_qrels": qrels,
             "parent_context_characters": sum(len(r["content"]) for r in parent),
             "error": error, "failure_types": failures,
+            "diagnostics": ranking_diagnostics(question, child, parent, qrels),
         })
     return rows
 

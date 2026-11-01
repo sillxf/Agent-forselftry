@@ -2,7 +2,7 @@
 
 **来源核对由 AI 完成，不等于人工相关性批准。所有待审核状态保持不变。**
 
-数据集：`rag-benchmark-v0.2-source-audited-candidate`。JSONL 是标签的唯一事实来源。
+数据集：`rag-benchmark-v0.3-fact-audited-candidate`。JSONL 是标签的唯一事实来源。
 一个 evidence_id 表示一项事实；alternatives 是相同事实的 OR 位置，不增加 Recall 分母。
 确认问题、答案、所有有效来源、分级、实际页码/章节后，由真实审核人填写 reviewer 并批准。
 
@@ -92,10 +92,13 @@ Which OWASP WSTG test identifier covers SQL injection?
 
 参考答案：Critical；Isolate。
 依据：The expected row appears in the merged table; a different row must not count.
-来源审查：PDF 第一页的 R002 行为 Critical / Isolate；合并表的索引页范围为 1–2。
+来源审查：R002 / Critical / Isolate 是独立表格规则，事实 ID 改为 continued_rules-r002；同表 R003、R004 不等价。
 人工状态：`pending`；审核人：`None`
 
-### 事实 `continued_rules-b1-1`（grade=3）
+本轮事实检查：R002 / Critical / Isolate 是独立表格规则，事实 ID 改为 continued_rules-r002；同表 R003、R004 不等价。
+所需证据范围：`reference_knowledge`
+
+### 事实 `continued_rules-r002`（grade=3）
 
 - 主位置：`continued_rules.pdf`；索引页范围：1–2
   - Document ID：`87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd`
@@ -215,6 +218,9 @@ What kinds of observable occurrences are considered events in the NIST incident-
 来源审查：本地 brute_force.md Response 的三个动作均已标注；保留中文问题与英文语料，不改写为更容易检索的问法。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：问题问完整本地处置清单：三项动作均必要；冻结 brute_force.md 只有英文处置清单，无等价中文位置。不凭外部翻译虚构 alternatives。
+所需证据范围：`reference_knowledge`
+
 ### 事实 `brute_force-b10-1`（grade=3）
 
 - 主位置：`brute_force.md`；索引页范围：None–None
@@ -250,6 +256,9 @@ According to the malware response checklist, how should compromised credentials 
 依据：Two separate response items supply the requested actions.
 来源审查：malware.md 直接列出重置受损凭证与从干净备份恢复两项措施。
 人工状态：`pending`；审核人：`None`
+
+本轮事实检查：问题同时询问凭据和备份，两项独立动作都必要；不添加隔离、扫描等未问及的清单项。属于一般处置知识，不代表当前凭据确实失陷。
+所需证据范围：`reference_knowledge`
 
 ### 事实 `malware-b17-1`（grade=3）
 
@@ -298,6 +307,9 @@ What immediate network containment action does the malware response checklist re
 来源审查：本地 SQL 注入文件列出 prepared statements、input validation、least privilege；链接到其他指南不等于其内容已入库。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：问题问完整本地预防清单：预编译语句、输入验证、最小权限均必要。冻结 sql_injection.md 无中文重复条目，不虚构 alternatives。
+所需证据范围：`reference_knowledge`
+
 ### 事实 `sql_injection-b9-1`（grade=3）
 
 - 主位置：`sql_injection.md`；索引页范围：None–None
@@ -334,6 +346,9 @@ Why should lessons learned during incident response be shared before recovery ha
 来源审查：旧引用只重复“及时分享”的要求，不能完整解释原因；保留该时机主张，补充现代事件复杂性与持续改进两项解释性事实。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：保留三个事实：及时共享的建议、现代事件恢复的复杂性和时长、持续改进的必要性。后两项是 why 的理由，第一项是被解释的建议；请人工确认三者是否均应计入召回分母，未为提高 Recall 删除。
+所需证据范围：`reference_knowledge`
+
 ### 事实 `nist_sp80061r3_pp10-12-b38-1`（grade=3）
 
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：3–3
@@ -362,6 +377,7 @@ Why should lessons learned during incident response be shared before recovery ha
 注意：解析章节可能错误；此字段是来源核对，不冒充当前索引已修复。
 
 - [ ] 人工确认：确认时机主张及两项原因是否均为本题必要事实，并核准分级相关性；不能把图中的旧版生命周期结论当作现代建议。
+- [ ] 人工确认：确认 why 问题的三个事实是否均为必要答案内容；此次未删除任何事实。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
 
 ## rag_016 — tables_steps
@@ -370,10 +386,13 @@ For detection rule R004, what severity and response are specified?
 
 参考答案：High; Block.
 依据：This row originated on the second page of the continued table.
-来源审查：R004 在 PDF 第二页，High / Block；该表原始跨页来源可追溯，合并后的字段仅提供 1–2 范围。
+来源审查：R004 / High / Block 是独立表格规则，事实 ID 改为 continued_rules-r004；共同表格来源不能共用事实 ID。
 人工状态：`pending`；审核人：`None`
 
-### 事实 `continued_rules-b1-1`（grade=3）
+本轮事实检查：R004 / High / Block 是独立表格规则，事实 ID 改为 continued_rules-r004；共同表格来源不能共用事实 ID。
+所需证据范围：`reference_knowledge`
+
+### 事实 `continued_rules-r004`（grade=3）
 
 - 主位置：`continued_rules.pdf`；索引页范围：1–2
   - Document ID：`87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd`
@@ -390,10 +409,13 @@ Which rule has Medium severity and what response does it require?
 
 参考答案：R003; Review.
 依据：Requires the relevant table row rather than shared table provenance.
-来源审查：R003 在第二页，Medium / Review；不是任意命中同一表都可作答。
+来源审查：R003 / Medium / Review 是独立表格规则，事实 ID 改为 continued_rules-r003；保留原问答和完整行证据。
 人工状态：`pending`；审核人：`None`
 
-### 事实 `continued_rules-b1-1`（grade=3）
+本轮事实检查：R003 / Medium / Review 是独立表格规则，事实 ID 改为 continued_rules-r003；保留原问答和完整行证据。
+所需证据范围：`reference_knowledge`
+
+### 事实 `continued_rules-r003`（grade=3）
 
 - 主位置：`continued_rules.pdf`；索引页范围：1–2
   - Document ID：`87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd`
@@ -411,6 +433,9 @@ What are the three numbered actions in the response checklist, in order?
 依据：The checklist repeats the same three ordered actions in English and Chinese. Each translated item is an alternative location for one required action, not a fourth/fifth/sixth fact.
 来源审查：同一 DOCX 的中英文编号列表重复相同三步；新增三个中文替代位置，每个事实仍只计一次。
 人工状态：`pending`；审核人：`None`
+
+本轮事实检查：三项有序动作；中英各一处为同一动作的 OR 位置，不是六项必要事实。
+所需证据范围：`reference_knowledge`
 
 ### 事实 `numbered_steps-b1-1`（grade=3）
 
@@ -503,6 +528,9 @@ How do inband, out-of-band and blind SQL injection differ in the way information
 依据：Three channel definitions are separate facts. The later out-of-band technique definition supports the same out-of-band fact and is an OR alternative, not an additional requirement.
 来源审查：三类信息获取方式定义均有来源；后面的 Out-of-band technique 描述是相同事实的另一位置，已作为 OR 替代。
 人工状态：`pending`；审核人：`None`
+
+本轮事实检查：三个独立 SQL 注入信息通道；两个英文 out-of-band 定义是同一事实的替代位置，不是中英翻译，也不是额外第四项。
+所需证据范围：`reference_knowledge`
 
 ### 事实 `owasp_wstg_v4_2_sql_injection-b15-1`（grade=3）
 
@@ -604,6 +632,9 @@ What cross-account authentication indicators and matching response actions are l
 来源审查：跨账户/高频失败在 Detection，三个措施在 Response，共五个必要事实，跨两个 Parent。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：两项跨账户相关检测信号与三项处置动作分属 Detection/Response；每项都在问题范围内。它们是参考知识，不证明某次告警真的出现这些信号或已执行这些动作。
+所需证据范围：`reference_knowledge`
+
 ### 事实 `brute_force-b6-1`（grade=3）
 
 - 主位置：`brute_force.md`；索引页范围：None–None
@@ -656,6 +687,9 @@ What does the valid-accounts description say about both bypassing access control
 来源审查：两个 ATT&CK 段落分别支持访问控制绕过和跨账户权限提升；去掉引用标记而未删语义条件。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：绕过访问控制与跨 local/domain/cloud 账户提升权限是两个必要事实；引用 ATT&CK 说明潜在能力，不声称当前事件已使用有效账户或已提权。
+所需证据范围：`reference_knowledge`
+
 ### 事实 `mitre_attack_v17_1-b34-1`（grade=3）
 
 - 主位置：`mitre_attack_v17_1.md`；索引页范围：None–None
@@ -684,6 +718,9 @@ What is the exact production API key for the fictional Acme SOC deployment?
 来源审查：冻结语料是公开指引与合成样例，没有 Acme 生产密钥或部署记录。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：无部署配置、密钥清单或 Acme 私有凭据；公开指导及示例字符串不能作为指定生产 API key。
+所需证据范围：`deployment_private_data`
+
 - [ ] 人工确认：人工确认整个冻结语料不能回答；不能把示例密码或 SQL 测试字符串当作生产密钥。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
 
@@ -695,6 +732,9 @@ What indicators of compromise are documented for the fictional CVE-2099-99999?
 依据：This fictional identifier and its indicators do not occur in the frozen corpus.
 来源审查：虚构 CVE-2099-99999 及专属 IOC 不在冻结知识库。
 人工状态：`pending`；审核人：`None`
+
+本轮事实检查：冻结语料没有 CVE-2099-99999 或对应 IOC；相似漏洞、示例 IP/域名不是该指定漏洞的真实指标。
+所需证据范围：`reference_knowledge`
 
 - [ ] 人工确认：确认不可回答标签；相似攻击知识不是该虚构编号的 IOC。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
@@ -708,6 +748,9 @@ What indicators of compromise are documented for the fictional CVE-2099-99999?
 来源审查：语料不包含 2026-10-31 的生产登录遥测或告警账户事实。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：未包含 2026-10-31 的认证日志/告警事件记录；ATT&CK 的账户类型和示例不是攻击者实际登录的账户清单。
+所需证据范围：`observed_event`
+
 - [ ] 人工确认：该问题要求 observed_event，不能用 reference_knowledge 推断实际登录账户。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
 
@@ -720,6 +763,9 @@ Which vendor firmware command disables the fictional QuantumShield X900 audit en
 来源审查：没有 QuantumShield X900 厂商手册或固件命令。
 人工状态：`pending`；审核人：`None`
 
+本轮事实检查：无 QuantumShield X900 的厂商固件手册或 audit engine 命令；一般安全知识不能推断私有命令。
+所需证据范围：`reference_knowledge`
+
 - [ ] 人工确认：确认整个语料没有可支持该专属命令的依据。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
 
@@ -731,6 +777,9 @@ What exact financial loss did the fictional ACME incident cause on 2026-10-31?
 依据：No ACME incident records or financial-loss data are in the corpus.
 来源审查：没有 ACME 该日期事件的损失记录。
 人工状态：`pending`；审核人：`None`
+
+本轮事实检查：无 ACME 于 2026-10-31 的事件或财务记录；NIST 的一般损害描述不能给出该事件确切损失。
+所需证据范围：`observed_event`
 
 - [ ] 人工确认：人工确认不可回答；不能从一般损害描述推算具体金额。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。

@@ -9,7 +9,7 @@ import pytest
 from app.rag.evaluation.dataset import Dataset, Evidence, SourceAnchor
 from app.rag.evaluation.report import build_report
 from app.rag.evaluation.retrieval_metrics import retrieval_metrics
-from app.rag.evaluation.runner import map_evidence, portable_record, ranking_fingerprint, run_benchmark
+from app.rag.evaluation.runner import derive_qrels, ranking_diagnostics, map_evidence, portable_record, ranking_fingerprint, run_benchmark
 
 
 @pytest.mark.parametrize("ranks,grades,ideal,k,recall,precision,mrr", [
@@ -110,6 +110,10 @@ def test_runner_reuses_actual_retriever_separates_parent_and_keeps_unknown_resul
     assert rows[0]["derived_qrels"]["children"] and rows[0]["derived_qrels"]["parents"]
     assert rows[0]["child_metrics"]["ndcg"] == 1
     assert rows[1]["children"] and rows[1]["child_metrics"]["recall"] is None
+    unknown = rows[1]["diagnostics"]["unanswerable_assessment"]
+    assert unknown["returned_neighbour_context"] is True
+    assert unknown["knowledge_gap_detection"] == "not_evaluated"
+    assert unknown["incorrect_answer_or_refusal"] == "not_evaluated_retrieval_only"
     assert [call.args[0] for call in retriever.search_rankings.call_args_list] == [q.question for q in dataset.questions]
     assert original("failed login", 2)["parents"] == retriever.search("failed login", 2)
     assert original("", 2) == dict(children=[], parents=[], candidate_count=0)
@@ -169,4 +173,50 @@ def test_dataset_rejects_broken_annotations(tmp_path, change):
     (tmp_path / "dataset.json").write_text(json.dumps(original.metadata), encoding="utf-8")
     (tmp_path / "questions.jsonl").write_text("\n".join(json.dumps(q) for q in records), encoding="utf-8")
     with pytest.raises(ValueError):
+        Dataset(tmp_path / "questions.jsonl")
+
+
+def test_multiple_alternatives_and_parent_units_do_not_multiply_facts():
+    from app.rag.evaluation.dataset import Question
+    a = Evidence(evidence_id="a", document_id="d", source="test.md", source_block_ids=["a1"],
+                 section_path=[], text_quote="first", relevance_grade=3,
+                 alternatives=[SourceAnchor(document_id="d", source="test.md", source_block_ids=[key],
+                     section_path=[], text_quote=quote) for key, quote in [("a2", "第一"), ("a3", "premier")]])
+    b = Evidence(evidence_id="b", document_id="d", source="test.md", source_block_ids=["b"],
+                 section_path=[], text_quote="second", relevance_grade=2)
+    q = Question(id="q", question="two facts?", category="test", difficulty="easy", answerable=True,
+                 expected_answer="first and second", relevant_evidence=[a, b], rationale="two independent facts")
+    children = [dict(chunk_id=key, document_id="d", source_block_ids=[key], content=text)
+                for key, text in [("a1", "first"), ("a2", "第一"), ("b", "second")]]
+    parents = [dict(parent_id="p", document_id="d", source_block_ids=["a1", "b"], content="first second")]
+    qrels = derive_qrels(q, {"children": children, "parents": parents})
+    assert qrels == {"children": {"a1": 3, "a2": 3, "b": 2}, "parents": {"p": 3}}
+    child_matches = [map_evidence(r, q.relevant_evidence) for r in children]
+    parent_matches = [map_evidence(r, q.relevant_evidence) for r in parents]
+    for k, expected_recall in [(1, .5), (2, .5), (3, 1)]:
+        child = retrieval_metrics(child_matches, {"a": 3, "b": 2}, k, ideal_result_grades=list(qrels["children"].values()))
+        parent = retrieval_metrics(parent_matches, {"a": 3, "b": 2}, k, ideal_result_grades=list(qrels["parents"].values()))
+        assert child["recall"] == expected_recall
+        assert parent["recall"] == parent["ndcg"] == 1
+        assert child["ndcg"] == 1
+        assert parent["precision"] == 1 / k
+    cr = [dict(r, rank=i, matched_evidence=child_matches[i-1]) for i, r in enumerate(children[:2], 1)]
+    pr = [dict(parents[0], rank=1, matched_evidence=["a", "b"])]
+    diagnostic = ranking_diagnostics(q, cr, pr, qrels)
+    assert diagnostic["parent_only_facts"] == ["b"]
+    assert diagnostic["positive_children_outside_top_k"] == ["b"]
+    assert ranking_diagnostics(q, cr, [], qrels)["child_only_facts"] == ["a"]
+
+
+def test_dataset_rejects_shared_id_for_different_table_rules(tmp_path):
+    source = Path(__file__).parent / "rag_benchmark/dataset"
+    records = [json.loads(line) for line in (source / "questions.jsonl").read_text(encoding="utf8").splitlines()]
+    rules = [q for q in records if q["id"] in {"rag_005", "rag_016", "rag_017"}]
+    assert {q["relevant_evidence"][0]["evidence_id"] for q in rules} == {
+        "continued_rules-r002", "continued_rules-r003", "continued_rules-r004"}
+    for q in rules:
+        q["relevant_evidence"][0]["evidence_id"] = "same-table-not-same-fact"
+    (tmp_path / "dataset.json").write_bytes((source / "dataset.json").read_bytes())
+    (tmp_path / "questions.jsonl").write_text("\n".join(json.dumps(q) for q in records), encoding="utf8")
+    with pytest.raises(ValueError, match="different facts"):
         Dataset(tmp_path / "questions.jsonl")
