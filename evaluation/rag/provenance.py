@@ -37,7 +37,7 @@ def model_state(name):
     digest = hashlib.sha256(str(model).encode())
     for key, tensor in sorted(model.state_dict().items()):
         digest.update(key.encode())
-        digest.update(tensor.detach().cpu().contiguous().numpy().tobytes())
+        digest.update(memoryview(tensor.detach().cpu().contiguous().numpy()).cast("B"))
     tokenizer = model.tokenizer
     tokenizer_definition = json.loads(tokenizer.backend_tokenizer.to_str())
     # encode() changes these transient execution settings; they are not the tokenizer definition.

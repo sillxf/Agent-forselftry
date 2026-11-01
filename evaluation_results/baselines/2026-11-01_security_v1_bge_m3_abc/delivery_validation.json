@@ -1,0 +1,29 @@
+{
+  "questions_per_arm": 100,
+  "B_query_errors": 0,
+  "C_query_errors": 0,
+  "model": "BAAI/bge-m3",
+  "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+  "dimensions": 1024,
+  "chunks": 301,
+  "shared_B_C_vectors_verified": true,
+  "frozen_chunk_bytes_equal_A": true,
+  "original_benchmark_and_all_historical_artifact_hashes_verified": true,
+  "english_identity_B_C_rankings_equal": true,
+  "english_bm25_only_verified": true,
+  "C_dense_route_deduplication": {
+    "2_routes": 40,
+    "3_routes": 60
+  },
+  "metrics_recomputed_from_all_raw_rows": true,
+  "tests": {
+    "passed": 90,
+    "skipped": 10
+  },
+  "generation_or_refusal_evaluated": false,
+  "source_files_changed": [
+    "evaluation/rag/model_comparison.py",
+    "evaluation/rag/provenance.py",
+    "evaluation/rag/comparison_report.py"
+  ]
+}
