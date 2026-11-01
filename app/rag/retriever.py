@@ -74,7 +74,7 @@ class KnowledgeRetriever:
         self.store: VectorStoreInterface | None = None
         self.parents = {}
         self.documents = []
-        self._tokens = []
+        self._postings = {}
         self._bm25 = None
         self._lock = RLock()
         if build:
@@ -150,9 +150,13 @@ class KnowledgeRetriever:
         self._build_sparse()
 
     def _build_sparse(self):
-        self._tokens = [tokenize(record["search_text"]) for record in self.store.records]
+        tokens = [tokenize(record["search_text"]) for record in self.store.records]
         # BM25+ avoids zero/negative IDF for identifiers in tiny knowledge bases.
-        self._bm25 = BM25Plus([tokens or ["__empty__"] for tokens in self._tokens]) if self._tokens else None
+        self._bm25 = BM25Plus([terms or ["__empty__"] for terms in tokens]) if tokens else None
+        self._postings = {}
+        for index, terms in enumerate(tokens):
+            for term in set(terms):
+                self._postings.setdefault(term, []).append(index)
 
     def _save(self, signature, store, documents, parents):
         root = self.storage_dir / "indexes"
@@ -196,10 +200,14 @@ class KnowledgeRetriever:
 
     def _sparse_search(self, query, limit):
         tokens = tokenize(query)
-        scores = self._bm25.get_scores(tokens)
-        matches = [i for i, terms in enumerate(self._tokens) if set(tokens) & set(terms)]
-        matches.sort(key=lambda i: -float(scores[i]))
-        return [{**self.store.records[i], "sparse_score": float(scores[i])} for i in matches[:limit]]
+        # Keep corpus order before the stable score sort, including tied scores.
+        matches = sorted({index for term in set(tokens) for index in self._postings.get(term, ())})
+        if not matches:
+            return []
+        scores = self._bm25.get_batch_scores(tokens, matches)
+        ranked = sorted(zip(matches, scores), key=lambda item: -item[1])
+        return [{**self.store.records[index], "sparse_score": float(score)}
+                for index, score in ranked[:limit]]
 
     def _rank_children(self, query, k, strategy="hybrid"):
         if strategy not in {"dense", "bm25", "hybrid"}:

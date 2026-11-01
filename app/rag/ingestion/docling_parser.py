@@ -7,7 +7,7 @@ from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from app.rag.models import ContentBlock, DocumentRecord, ParsedDocument
-from app.rag.ingestion.layout import docx_layouts, item_layout
+from app.rag.ingestion.layout import docx_layouts, item_layout, page_cell_geometry
 from app.rag.ingestion.pdf_order import order_pdf_columns
 from app.rag.processing.structure_recovery import sentence_like_heading
 
@@ -91,7 +91,7 @@ class DoclingParser:
         if path.suffix.lower() == ".pdf":
             items = order_pdf_columns(items, doc)
         source_layouts = docx_layouts(path, items)
-        page_cells = {page.page_no: page.cells for page in getattr(result, "pages", [])}
+        page_cells = page_cell_geometry(doc, getattr(result, "pages", []))
         headings = []
         for item, _ in items:
             label = getattr(item.label, "value", item.label)

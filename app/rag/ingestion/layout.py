@@ -41,6 +41,23 @@ def docx_layouts(path: Path, items) -> dict[str, BlockLayout]:
     return matched
 
 
+def page_cell_geometry(document, parsed_pages):
+    """Convert each cell once, instead of once per item on the same page."""
+    pages = getattr(document, "pages", {})
+    geometry = {}
+    for parsed_page in parsed_pages:
+        page = pages.get(parsed_page.page_no)
+        if page is None:
+            continue
+        cells = []
+        for cell in parsed_page.cells:
+            box = cell.rect.to_bounding_box().to_top_left_origin(page_height=page.size.height)
+            cells.append(((box.l + box.r) / 2, (box.t + box.b) / 2,
+                          box.height, getattr(cell, "font_name", "").lower()))
+        geometry[parsed_page.page_no] = cells
+    return geometry
+
+
 def item_layout(item, document, pages) -> BlockLayout:
     formatting = getattr(item, "formatting", None)
     label = getattr(item.label, "value", item.label)
@@ -63,12 +80,10 @@ def item_layout(item, document, pages) -> BlockLayout:
     layout.top, layout.bottom = box.t, box.b
     layout.indent, layout.page_height = box.l, page.size.height
     heights, fonts = [], []
-    for cell in pages.get(prov.page_no, []):
-        cell_box = cell.rect.to_bounding_box().to_top_left_origin(page_height=page.size.height)
-        x, y = (cell_box.l + cell_box.r) / 2, (cell_box.t + cell_box.b) / 2
+    for x, y, height, font in pages.get(prov.page_no, []):
         if box.l <= x <= box.r and box.t <= y <= box.b:
-            heights.append(cell_box.height)
-            fonts.append(getattr(cell, "font_name", "").lower())
+            heights.append(height)
+            fonts.append(font)
     if heights:
         layout.line_height = median(heights)
     if fonts:

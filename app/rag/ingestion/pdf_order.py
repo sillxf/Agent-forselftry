@@ -13,12 +13,17 @@ def order_pdf_columns(items, document):
     """
     output = list(items)
     pages = getattr(document, "pages", {})
+    items_by_page = {page_no: [] for page_no in pages}
+    for index, (item, _) in enumerate(items):
+        prov = getattr(item, "prov", [])
+        if len(prov) == 1 and prov[0].page_no in items_by_page:
+            items_by_page[prov[0].page_no].append((index, item))
     for page_no, page in pages.items():
         entries = []
-        for index, (item, _) in enumerate(items):
-            prov = getattr(item, "prov", [])
+        for index, item in items_by_page[page_no]:
+            prov = item.prov
             label = getattr(item.label, "value", item.label)
-            if len(prov) != 1 or prov[0].page_no != page_no or label in {"page_header", "page_footer"}:
+            if label in {"page_header", "page_footer"}:
                 continue
             box = prov[0].bbox.to_top_left_origin(page_height=page.size.height)
             if item_layout(item, document, {}).container_type:
