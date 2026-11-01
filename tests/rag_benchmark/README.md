@@ -55,7 +55,7 @@ report.md
 ```
 
 The run root also contains `comparison.json`, `comparison.md` and an exact
-`source_snapshot.zip` of app/scripts Python code plus requirements (never `.env`,
+`source_snapshot.zip` of app/evaluation/scripts Python code plus requirements (never `.env`,
 credentials or model weights). This makes uncommitted-code experiments auditable:
 commit, dirty flag, implementation hash and snapshot hash are explicit.
 Dataset/corpus hashes, model weight/tokenizer hashes, cached model revision if
@@ -239,3 +239,42 @@ Current regular validation is 81 passed / 10 intentional model skips. The full
 model run has 91 passed assertions and exit 0 **but printed a Windows native
 access-violation diagnostic**; an isolated nine-test PDF rerun is clean. The issue
 is not claimed fixed. All logs and the still-open human acceptance gate are saved.
+
+
+## 实际答案对照（检索 + 评测专用生成）
+
+原来的 `dataset/review.md` 只用于审核问题、参考答案及来源，不是实际回答记录。
+要逐题比较真实输出，可以运行：
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_rag_answer_review.py --offline-models --generate --top-k 3 `
+  --output-dir evaluation_results/new-http-answer-review
+```
+
+- 显式将本进程知识库设为 9 份固定测试文档，不修改默认 API 的三个 Markdown 或 `.env`。
+- 通过 FastAPI TestClient 调用真实 `/knowledge/search` 路由，不替换检索器、Embedding 或返回结果；这不是对已经运行的网络服务实例发请求。
+- Top-K 默认 3，与接口默认值一致。当前可复用 `app/storage/benchmark-phase2` 的真实索引，也可用 `--storage-dir` 指定新索引目录。
+- `--generate` 使用现有 LLM 配置，将实际返回的完整片段生成答案。这是评测脚本增加的生成步骤，不是 `/knowledge/search` 已有的功能。
+- 生成提示只含问题及检索片段，不含参考答案、相关性标注、可回答标签或审核意见。
+- `--offline-models` 仅限制 Embedding/解析模型；生成仍访问 `.env` 配置的 LLM 服务。每题生成默认超时 120 秒，不自动重试。
+- 输出 `review.html`（左右对照）、`review.md`、`results.jsonl`（原始 HTTP JSON、生成提示及返回）、`run.json`、标注快照和源码快照。
+- 证据覆盖不等于答案正确。此前署名人工审核已撤销；候选对比无需逐题审批，不能把旧的通过状态沿用为当前结论。
+- 这是探索性运行，不使用 `--require-reviewed`，不能取代尚未放行的正式基线。输出目录不得覆盖已有结果。
+
+2026-11-01 的实际输出见：
+[`review.html`](../../evaluation_results/baselines/2026-11-01_http_answer_review_candidate_v2/review.html) ·
+[`review.md`](../../evaluation_results/baselines/2026-11-01_http_answer_review_candidate_v2/review.md)。
+
+本次运行已作为后续迭代的开发参考：宏平均 Parent Evidence Recall@3 为 92%，
+完整证据覆盖 23/25，按题累计事实召回为 37/43。不是最终答案正确率。
+此前署名人工审核已撤销，当前数据集不保留其批准状态；历史原始快照仅用于追溯。
+具体口径、已知失败与后续比较方法见
+[开发参考基准](../../docs/rag_retrieval_reference.md)。
+
+## 代码位置与依赖边界
+
+评测实现已从 `app/rag/evaluation/` 移到顶层 `evaluation/rag/`；
+`retrieval_metrics.py` 改名为 `metrics.py`，指标定义不变。
+`run_rag_benchmark.py`、`run_rag_answer_review.py` 等原命令保留为薄入口。
+源码归档包含新 `evaluation/` 包，旧封存结果与输入数据没有改写。
+完整分工见 [评测目录说明](../../evaluation/README.md)。

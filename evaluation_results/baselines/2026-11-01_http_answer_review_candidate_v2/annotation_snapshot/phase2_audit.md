@@ -1,0 +1,52 @@
+# Dataset Audit Report — Phase 2
+
+**本报告由 AI 做来源/标注检查，不是人工批准。30 题保持 pending，reviewer 全部为空。**
+
+数据版本：`rag-benchmark-v0.3-fact-audited-candidate`。
+旧 Dataset SHA-256：`070cda0b190aa3b41f2ad058ecf9a28f1190e6d11c693fcb5f776646cbb38cbf`。
+新 Dataset SHA-256：`348ab0951186a1c873a7209cf3c378e13af215d74f31d8f6df141e7b4d1adbfc`。
+
+## 实际修改
+
+| Question | Before evidence_id | After evidence_id | 原因 |
+| --- | --- | --- | --- |
+| rag_005 | continued_rules-b1-1 | continued_rules-r002 | 同一张表中的不同规则不是同一事实 |
+| rag_016 | continued_rules-b1-1 | continued_rules-r004 | 同一张表中的不同规则不是同一事实 |
+| rag_017 | continued_rules-b1-1 | continued_rules-r003 | 同一张表中的不同规则不是同一事实 |
+
+除上述 ID 外，问题、答案、证据原文、等级、来源范围和必要事实数量均未改变。修改仅修复 ID 冲突，不构成检索提升。
+原始语料未变；旧 Dataset Snapshot 和实验结果保留。
+
+## 检查后保留的事实粒度及等价证据
+
+- **rag_011**：问题问完整本地处置清单：三项动作均必要；冻结 brute_force.md 只有英文处置清单，无等价中文位置。不凭外部翻译虚构 alternatives。
+- **rag_012**：问题同时询问凭据和备份，两项独立动作都必要；不添加隔离、扫描等未问及的清单项。属于一般处置知识，不代表当前凭据确实失陷。
+- **rag_014**：问题问完整本地预防清单：预编译语句、输入验证、最小权限均必要。冻结 sql_injection.md 无中文重复条目，不虚构 alternatives。
+- **rag_015**：保留三个事实：及时共享的建议、现代事件恢复的复杂性和时长、持续改进的必要性。后两项是 why 的理由，第一项是被解释的建议；请人工确认三者是否均应计入召回分母，未为提高 Recall 删除。
+- **rag_018**：三项有序动作；中英各一处为同一动作的 OR 位置，不是六项必要事实。
+- **rag_021**：三个独立 SQL 注入信息通道；两个英文 out-of-band 定义是同一事实的替代位置，不是中英翻译，也不是额外第四项。
+- **rag_024**：两项跨账户相关检测信号与三项处置动作分属 Detection/Response；每项都在问题范围内。它们是参考知识，不证明某次告警真的出现这些信号或已执行这些动作。
+- **rag_025**：绕过访问控制与跨 local/domain/cloud 账户提升权限是两个必要事实；引用 ATT&CK 说明潜在能力，不声称当前事件已使用有效账户或已提权。
+- **rag_026**：无部署配置、密钥清单或 Acme 私有凭据；公开指导及示例字符串不能作为指定生产 API key。
+- **rag_027**：冻结语料没有 CVE-2099-99999 或对应 IOC；相似漏洞、示例 IP/域名不是该指定漏洞的真实指标。
+- **rag_028**：未包含 2026-10-31 的认证日志/告警事件记录；ATT&CK 的账户类型和示例不是攻击者实际登录的账户清单。
+- **rag_029**：无 QuantumShield X900 的厂商固件手册或 audit engine 命令；一般安全知识不能推断私有命令。
+- **rag_030**：无 ACME 于 2026-10-31 的事件或财务记录；NIST 的一般损害描述不能给出该事件确切损失。
+
+## 尚需人工确认
+
+- 每个必要事实、完整答案、grade、是否漏标其他有效来源；特别是 rag_015 的 why 问题边界。
+- 正文证据和 section metadata 的计分范围；result-qrels-v2 本轮不变。
+- rag_026–030：缺少指定对象/事件资料，而非“检索出来的邻近参考知识等于事件答案”。
+- 题单、审核理由和勾选项见 review.md；人工批准前不能生成正式验收基线。
+- 后续 PDF 结构修复若改变解析路径，只更新来源定位并单列变更，不能修改证据语义或文档内容。
+
+## PDF 结构修复后的定位更新
+
+最终数据版本：`rag-benchmark-v0.3.1-structure-corrected-candidate`。最终 Dataset SHA-256：`04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7`。
+
+rag_010、rag_015（3 个事实）、rag_022（2 个事实）共 6 个来源位置更新。
+只修改 section_path；原始页范围、Block ID、引用、事实数量、相关等级及问答完全不变。
+详情见 phase2_structure_location_changes.json。历史错误路径仍在旧快照中保留，未覆盖。
+
+审核说明的历史/当前缺陷区分另有 phase2_review_notes_changes.json；只更新审核文字，不重评指标、不授予人工批准。

@@ -1,5 +1,5 @@
 """Only experiment routing/fusion is new; production retrieval is left unchanged."""
-from app.rag.evaluation.crosslingual import fuse_query_rankings, rank_experiment
+from evaluation.rag.crosslingual import fuse_query_rankings, rank_experiment
 
 
 def test_query_fusion_deduplicates_without_using_incomparable_raw_scores():

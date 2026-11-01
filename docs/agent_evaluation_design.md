@@ -61,3 +61,9 @@ knowledge、analysis。`SecurityAnalysis` 目前只有 attack_type/confidence/ev
 无指定日期事件记录、相似 IOC 不等于同一事件、处置建议不等于已执行、工具无结果。
 每例单独列 observed_event、reference_knowledge、允许推断、未验证假设、禁止结论与缺口。
 这些是未来人工评价所需输入，**不是已经跑通的 Agent 自动测试**。
+
+## 7. 实现归属
+
+未来的 Agent 评测执行器、Judge 和指标实现统一放在 `evaluation/agent/`，
+不能放进生产 `app/`。目前该目录仅明确边界，以上三个模块尚未实现。
+RAG 评测已独立到 `evaluation/rag/`，不因此宣称完整 Agent 评测已经完成。

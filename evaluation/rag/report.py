@@ -4,8 +4,8 @@ from statistics import mean
 
 import numpy as np
 
-from app.rag.evaluation.runner import write_json
-from app.rag.evaluation.retrieval_metrics import METRIC_CONTRACT
+from evaluation.rag.runner import write_json
+from evaluation.rag.metrics import METRIC_CONTRACT
 
 
 def summarize(rows):

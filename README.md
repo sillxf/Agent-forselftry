@@ -220,3 +220,23 @@ Historical v0.1/v0.2 experiment directories remain unchanged. Their differing
 annotation/metric conventions are recorded in their own reports; do not interpret
 old score-definition changes as retrieval improvements. The latest report records
 actual test/CI results and explicitly distinguishes skipped PDF/OCR tests.
+
+
+For a question-by-question comparison of reference answers, actual HTTP-route
+retrieval and gold-blind LLM-generated answers, see the
+[actual answer review](evaluation_results/baselines/2026-11-01_http_answer_review_candidate_v2/review.md).
+This exploratory evaluation adds generation in its script; `/knowledge/search`
+itself remains a retrieval-only endpoint. Prior named human approvals have been
+withdrawn; development comparisons do not require manually approving each label.
+
+The current development reference is documented in
+[the retrieval reference](docs/rag_retrieval_reference.md): Parent Evidence
+Recall@3 is 92% on 25 answerable questions. This is not generated-answer accuracy.
+
+## Production / evaluation boundary
+
+Production parsing, indexing and retrieval live in `app/rag/`. Dataset runners,
+metrics, experiments and evaluation-only answer generation live in
+[`evaluation/`](evaluation/README.md). The application never imports that package.
+Existing scripts remain CLI entry points. Agent evaluation has its own reserved
+`evaluation/agent/` package; its runner/judges/metrics are not implemented yet.

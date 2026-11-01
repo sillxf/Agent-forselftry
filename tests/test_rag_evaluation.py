@@ -6,10 +6,10 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.rag.evaluation.dataset import Dataset, Evidence, SourceAnchor
-from app.rag.evaluation.report import build_report
-from app.rag.evaluation.retrieval_metrics import retrieval_metrics
-from app.rag.evaluation.runner import derive_qrels, ranking_diagnostics, map_evidence, portable_record, ranking_fingerprint, run_benchmark
+from evaluation.rag.dataset import Dataset, Evidence, SourceAnchor
+from evaluation.rag.report import build_report
+from evaluation.rag.metrics import retrieval_metrics
+from evaluation.rag.runner import derive_qrels, ranking_diagnostics, map_evidence, portable_record, ranking_fingerprint, run_benchmark
 
 
 @pytest.mark.parametrize("ranks,grades,ideal,k,recall,precision,mrr", [
@@ -177,7 +177,7 @@ def test_dataset_rejects_broken_annotations(tmp_path, change):
 
 
 def test_multiple_alternatives_and_parent_units_do_not_multiply_facts():
-    from app.rag.evaluation.dataset import Question
+    from evaluation.rag.dataset import Question
     a = Evidence(evidence_id="a", document_id="d", source="test.md", source_block_ids=["a1"],
                  section_path=[], text_quote="first", relevance_grade=3,
                  alternatives=[SourceAnchor(document_id="d", source="test.md", source_block_ids=[key],

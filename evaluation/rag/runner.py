@@ -3,8 +3,8 @@ import hashlib
 import json
 import time
 
-from app.rag.evaluation.dataset import normalize
-from app.rag.evaluation.retrieval_metrics import retrieval_metrics
+from evaluation.rag.dataset import normalize
+from evaluation.rag.metrics import retrieval_metrics
 
 
 def map_evidence(result, evidence):
