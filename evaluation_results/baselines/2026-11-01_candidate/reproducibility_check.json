@@ -1,0 +1,41 @@
+{
+  "scope": "Same-machine independent index rebuild; timings and storage-local image prefixes excluded",
+  "strategies": {
+    "dense": {
+      "questions": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "a1e3a6b890bb406e8e22a2bf8a4074d1",
+      "ranking_sha256": "b271dc2af8f761df94fbca7d5136e9f678fa7eba83af887e1cd8c3ea50830881",
+      "identical_child_parent_rankings_scores_and_metrics": true,
+      "identical_model_tokenizer_fingerprints": true,
+      "identical_portable_chunk_fingerprint": true,
+      "identical_vector_index_hash": true,
+      "raw_chunk_file_identical": false,
+      "note": "Raw chunk bytes differ only in storage-local image paths; portable fingerprints and vector bytes match."
+    },
+    "bm25": {
+      "questions": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "a1e3a6b890bb406e8e22a2bf8a4074d1",
+      "ranking_sha256": "2269424bc08fe412447e3f98deced5f3dae019f4a7abbcf3934d1f96c2d1df67",
+      "identical_child_parent_rankings_scores_and_metrics": true,
+      "identical_model_tokenizer_fingerprints": true,
+      "identical_portable_chunk_fingerprint": true,
+      "identical_vector_index_hash": true,
+      "raw_chunk_file_identical": false,
+      "note": "Raw chunk bytes differ only in storage-local image paths; portable fingerprints and vector bytes match."
+    },
+    "hybrid": {
+      "questions": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "a1e3a6b890bb406e8e22a2bf8a4074d1",
+      "ranking_sha256": "d9ac36c1e5073954851d9808491789f752b793cf0708b0b761ab50f7cc803f9c",
+      "identical_child_parent_rankings_scores_and_metrics": true,
+      "identical_model_tokenizer_fingerprints": true,
+      "identical_portable_chunk_fingerprint": true,
+      "identical_vector_index_hash": true,
+      "raw_chunk_file_identical": false,
+      "note": "Raw chunk bytes differ only in storage-local image paths; portable fingerprints and vector bytes match."
+    }
+  }
+}

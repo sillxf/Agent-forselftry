@@ -1,0 +1,147 @@
+"""Focused checks for rank semantics, source mapping and the real retrieval adapter."""
+import json
+from math import log2
+from pathlib import Path
+from unittest.mock import Mock
+
+import pytest
+
+from app.rag.evaluation.dataset import Dataset, Evidence
+from app.rag.evaluation.report import build_report
+from app.rag.evaluation.retrieval_metrics import retrieval_metrics
+from app.rag.evaluation.runner import map_evidence, portable_record, ranking_fingerprint, run_benchmark
+
+
+@pytest.mark.parametrize("ranks,grades,k,recall,precision,mrr", [
+    ([["a"], ["b"]], {"a": 3, "b": 2}, 2, 1, 1, 1),
+    ([[], ["a"], ["a"], ["b"]], {"a": 3, "b": 2}, 3, .5, 1/3, .5),
+    ([], {"a": 3}, 5, 0, 0, 0),
+    ([["a"]], {"a": 3}, 5, 1, .2, 1),
+    ([["a", "b"]], {"a": 3, "b": 2}, 2, 1, .5, 1),
+    ([["not_relevant"]], {"not_relevant": 0, "a": 1}, 1, 0, 0, 0),
+])
+def test_metrics_preserve_empty_duplicate_and_short_result_slots(ranks, grades, k, recall, precision, mrr):
+    metrics = retrieval_metrics(ranks, grades, k)
+    assert metrics["recall"] == recall
+    assert metrics["precision"] == precision
+    assert metrics["mrr"] == mrr
+    assert 0 <= metrics["ndcg"] <= 1
+
+
+def test_ndcg_uses_graded_gain_and_does_not_reward_duplicate_evidence():
+    grades = {"a": 3, "b": 1}
+    expected = (1 + 7 / log2(4)) / (7 + 1 / log2(3))
+    assert retrieval_metrics([["b"], ["b"], ["a"]], grades, 3)["ndcg"] == pytest.approx(expected)
+    assert retrieval_metrics([], {}, 5) == dict(recall=None, precision=None, mrr=None, ndcg=None)
+    with pytest.raises(ValueError):
+        retrieval_metrics([], {}, 0)
+
+
+def test_mapping_requires_document_identity_block_and_actual_text():
+    evidence = Evidence(evidence_id="rule-r004", document_id="document", source="rules.pdf",
+                        source_block_ids=["table"], section_path=[], text_quote="Rule ID: R004", relevance_grade=3)
+    result = dict(document_id="document", source_block_ids=["table"], content="Rule ID: R001")
+    assert map_evidence(result, [evidence]) == []  # same table, wrong row
+    result["content"] = "Rule ID: R004"
+    assert map_evidence(result, [evidence]) == ["rule-r004"]
+    assert map_evidence(dict(result, document_id="other"), [evidence]) == []
+    assert map_evidence(dict(result, source_block_ids=["other"]), [evidence]) == []
+
+
+def test_checked_in_dataset_and_corpus_are_consistent_and_review_status_is_enforced():
+    dataset = Dataset(Path(__file__).parent / "rag_benchmark/dataset/questions.jsonl")
+    dataset.validate_corpus()
+    assert len(dataset.questions) == 30
+    assert sum(q.answerable for q in dataset.questions) == 25
+    assert len({q.category for q in dataset.questions}) == 6
+    assert dataset.pending_count == sum(q.review_status != "approved" for q in dataset.questions)
+    if dataset.pending_count:
+        with pytest.raises(ValueError, match="human review"):
+            Dataset(dataset.path, require_reviewed=True)
+
+
+def make_dataset(tmp_path, retriever):
+    root = tmp_path / "benchmark"
+    root.mkdir()
+    data = root / "dataset"
+    data.mkdir()
+    document = retriever.documents[0]
+    parent = next(iter(retriever.parents.values()))
+    block = next(b for b in parent.blocks if "failed login" in b.text)
+    question = dict(id="q1", question="failed login", category="semantic", difficulty="easy", answerable=True,
+        expected_answer="Investigate failed logins", rationale="Source paragraph contains the detection evidence.",
+        relevant_evidence=[dict(evidence_id="logins", document_id=document.document_id, source=document.filename,
+            source_block_ids=block.source_block_ids or [block.block_id], section_path=block.section_path,
+            page_number=block.page_number, page_end=block.page_end, text_quote="failed login", relevance_grade=3)])
+    unknown = dict(question, id="q2", question="unavailable appliance password", answerable=False,
+                   relevant_evidence=[], expected_answer="Insufficient knowledge", rationale="No appliance credentials are included.")
+    (data / "questions.jsonl").write_text("\n".join(json.dumps(q) for q in [question, unknown]), encoding="utf-8")
+    (data / "dataset.json").write_text(json.dumps(dict(schema_version=1, version="test", documents_dir=str(retriever.knowledge_dir))), encoding="utf-8")
+    manifest = retriever.knowledge_dir.parent / "manifest.json"
+    manifest.write_text(json.dumps(dict(version="test", documents=[dict(file=document.filename, sha256=document.checksum)])), encoding="utf-8")
+    return Dataset(data / "questions.jsonl")
+
+
+def test_runner_reuses_actual_retriever_separates_parent_and_keeps_unknown_results(rag_factory, tmp_path):
+    (rag_factory.knowledge / "manual.md").write_text("# Detection\n\nRepeated failed login attempts require investigation.", encoding="utf-8")
+    retriever = rag_factory()
+    dataset = make_dataset(tmp_path, retriever)
+    original = retriever.search_rankings
+    retriever.search_rankings = Mock(wraps=original)
+    rows = run_benchmark(dataset, retriever, top_k=5)
+    assert rows[0]["child_metrics"]["recall"] == rows[0]["parent_metrics"]["recall"] == 1
+    assert rows[1]["children"] and rows[1]["child_metrics"]["recall"] is None
+    assert [call.args[0] for call in retriever.search_rankings.call_args_list] == [q.question for q in dataset.questions]
+    assert original("failed login", 2)["parents"] == retriever.search("failed login", 2)
+    assert original("", 2) == dict(children=[], parents=[], candidate_count=0)
+    retriever.embedding_fn = Mock(side_effect=AssertionError("BM25 must not embed a query"))
+    assert original("failed login", 2, "bm25")["children"]
+    with pytest.raises(ValueError, match="strategy"):
+        original("failed login", 2, "invalid")
+
+    output = tmp_path / "reports"
+    output.mkdir()
+    config = dict(retrieval=dict(top_k=5,strategy="hybrid"), annotation_status="provisional",
+                  dataset=dict(version="test",sha256=dataset.sha256), code=dict(commit="test",dirty=True,source_sha256="test"))
+    metrics = build_report(output, config, rows)
+    assert metrics["overall"]["answerable"] == 1
+    assert metrics["overall"]["unanswerable_stats"]["returned_context_count"] == 1
+    assert metrics["overall"]["unanswerable_stats"]["correct_refusal_rate"] is None
+    assert "provisional" in (output / "report.md").read_text(encoding="utf-8")
+    import copy
+    assert portable_record({"image_paths": ["D:/old-location/doc-hash/image.png"]}) == portable_record(
+        {"image_paths": ["X:/new-location/doc-hash/image.png"]})
+    assert ranking_fingerprint(rows) == ranking_fingerprint([dict(r, latency_ms=99) for r in rows])
+    changed = copy.deepcopy(rows)
+    changed[0]["children"][0]["rank"] = 2
+    assert ranking_fingerprint(rows) != ranking_fingerprint(changed)
+    retriever.search_rankings = Mock(side_effect=RuntimeError("test query failure"))
+    failed = run_benchmark(dataset, retriever, top_k=5)
+    assert failed[0]["child_metrics"]["recall"] == 0
+    assert failed[0]["failure_types"] == ["retrieval_error"]
+
+    dataset.questions[0].relevant_evidence[0].source_block_ids = ["stale-block"]
+    with pytest.raises(ValueError, match="Unresolved"):
+        dataset.validate_index(retriever)
+    (rag_factory.knowledge / "manual.md").write_text("Changed corpus", encoding="utf-8")
+    with pytest.raises(ValueError, match="manifest"):
+        dataset.validate_corpus()
+
+
+@pytest.mark.parametrize("change", ["duplicate_id", "invalid_grade", "unknown_without_rationale", "approved_without_reviewer"])
+def test_dataset_rejects_broken_annotations(tmp_path, change):
+    original = Dataset(Path(__file__).parent / "rag_benchmark/dataset/questions.jsonl")
+    records = [q.model_dump() for q in original.questions]
+    if change == "duplicate_id":
+        records[1]["id"] = records[0]["id"]
+    elif change == "invalid_grade":
+        records[0]["relevant_evidence"][0]["relevance_grade"] = 4
+    elif change == "unknown_without_rationale":
+        records[-1]["rationale"] = ""
+    else:
+        records[0]["review_status"] = "approved"
+        records[0]["reviewer"] = None
+    (tmp_path / "dataset.json").write_text(json.dumps(original.metadata), encoding="utf-8")
+    (tmp_path / "questions.jsonl").write_text("\n".join(json.dumps(q) for q in records), encoding="utf-8")
+    with pytest.raises(ValueError):
+        Dataset(tmp_path / "questions.jsonl")

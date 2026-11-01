@@ -188,3 +188,30 @@ Recommendation:
 Block IP
 Enable MFA
 Investigate account
+
+## RAG retrieval benchmark (candidate v0.1)
+
+A separate retrieval benchmark reuses the existing index and Dense/BM25/RRF scoring:
+
+```powershell
+python scripts/run_rag_benchmark.py --retriever all --top-k 5
+# When Sentence Transformers and Docling models are already cached:
+python scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline
+```
+
+It indexes nine frozen documents and evaluates 30 candidate queries, separately
+reporting Child evidence retrieval and Parent context coverage. Each run saves code,
+dataset/corpus/model/configuration fingerprints, raw ranks and provenance, category
+metrics and failures. Existing knowledge-search API behaviour is unchanged.
+
+**The candidate labels still require human review.** They are not a certified
+benchmark; `--require-reviewed` enforces that acceptance boundary. Generation quality
+and refusal correctness are not evaluated by this retrieval-only run.
+
+See [the benchmark guide](tests/rag_benchmark/README.md),
+[annotation checklist](tests/rag_benchmark/dataset/README.md) and
+[source attribution](tests/rag_benchmark/SOURCES.md).
+
+Benchmark implementation validation: normal suite **69 passed, 8 skipped**; full
+PDF/OCR suite **77 passed**. The candidate baseline and independent rebuild check
+are saved under `evaluation_results/baselines/`. Remote CI remains unverified.

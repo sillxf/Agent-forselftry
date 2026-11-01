@@ -1,0 +1,452 @@
+{
+  "overall": {
+    "questions": 30,
+    "answerable": 25,
+    "unanswerable": 5,
+    "pending_human_review": 30,
+    "errors": 0,
+    "child": {
+      "recall": 0.84,
+      "precision": 0.192,
+      "mrr": 0.6833333333333333,
+      "ndcg": 0.6638412680532018
+    },
+    "parent": {
+      "recall": 0.84,
+      "precision": 0.17600000000000002,
+      "mrr": 0.69,
+      "ndcg": 0.6413414020513692
+    },
+    "latency_ms": {
+      "mean": 2.7992100003757514,
+      "p50": 2.498199999536155,
+      "p95": 4.943325001295307
+    },
+    "mean_candidate_count": 18.1,
+    "no_result_rate": 0.03333333333333333,
+    "unanswerable_stats": {
+      "questions": 5,
+      "returned_context_count": 4,
+      "no_result_count": 1,
+      "correct_refusal_rate": null,
+      "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+    },
+    "mean_parent_context_characters": 8121.466666666666
+  },
+  "groups": {
+    "category": {
+      "context": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": 1.0,
+          "precision": 0.32,
+          "mrr": 0.8,
+          "ndcg": 0.6318837379553642
+        },
+        "parent": {
+          "recall": 1.0,
+          "precision": 0.24000000000000002,
+          "mrr": 0.8,
+          "ndcg": 0.4931984572319101
+        },
+        "latency_ms": {
+          "mean": 2.6035399991087615,
+          "p50": 2.591500000562519,
+          "p95": 2.7107799949590117
+        },
+        "mean_candidate_count": 20,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 9314.4
+      },
+      "exact_identifier": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": 0.8,
+          "precision": 0.16,
+          "mrr": 0.4666666666666667,
+          "ndcg": 0.5523719014285831
+        },
+        "parent": {
+          "recall": 0.8,
+          "precision": 0.16,
+          "mrr": 0.5,
+          "ndcg": 0.5785578521428745
+        },
+        "latency_ms": {
+          "mean": 3.251619999355171,
+          "p50": 2.0538000026135705,
+          "p95": 5.9061799955088645
+        },
+        "mean_candidate_count": 16.4,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 6924.4
+      },
+      "response": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": 0.6,
+          "precision": 0.12000000000000001,
+          "mrr": 0.6,
+          "ndcg": 0.5226294385530916
+        },
+        "parent": {
+          "recall": 0.6,
+          "precision": 0.12000000000000001,
+          "mrr": 0.6,
+          "ndcg": 0.5226294385530916
+        },
+        "latency_ms": {
+          "mean": 3.32374000136042,
+          "p50": 2.50909999886062,
+          "p95": 4.8871200036956
+        },
+        "mean_candidate_count": 16.2,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 4292.8
+      },
+      "semantic": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.75,
+          "ndcg": 0.8123212623289702
+        },
+        "parent": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.75,
+          "ndcg": 0.8123212623289702
+        },
+        "latency_ms": {
+          "mean": 2.599400001054164,
+          "p50": 2.5642000036896206,
+          "p95": 3.0033200018806383
+        },
+        "mean_candidate_count": 20,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 10842.4
+      },
+      "tables_steps": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": 0.8,
+          "precision": 0.16,
+          "mrr": 0.8,
+          "ndcg": 0.8
+        },
+        "parent": {
+          "recall": 0.8,
+          "precision": 0.16,
+          "mrr": 0.8,
+          "ndcg": 0.8
+        },
+        "latency_ms": {
+          "mean": 2.3870800010627136,
+          "p50": 2.3285999996005557,
+          "p95": 2.6807000031112693
+        },
+        "mean_candidate_count": 20,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 9183
+      },
+      "unanswerable": {
+        "questions": 5,
+        "answerable": 0,
+        "unanswerable": 5,
+        "pending_human_review": 5,
+        "errors": 0,
+        "child": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null
+        },
+        "parent": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null
+        },
+        "latency_ms": {
+          "mean": 2.6298800003132783,
+          "p50": 2.2468999959528446,
+          "p95": 4.3842799990670756
+        },
+        "mean_candidate_count": 16,
+        "no_result_rate": 0.2,
+        "unanswerable_stats": {
+          "questions": 5,
+          "returned_context_count": 4,
+          "no_result_count": 1,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 8171.8
+      }
+    },
+    "difficulty": {
+      "easy": {
+        "questions": 8,
+        "answerable": 8,
+        "unanswerable": 0,
+        "pending_human_review": 8,
+        "errors": 0,
+        "child": {
+          "recall": 0.875,
+          "precision": 0.17500000000000002,
+          "mrr": 0.6666666666666666,
+          "ndcg": 0.7202324383928644
+        },
+        "parent": {
+          "recall": 0.875,
+          "precision": 0.17500000000000002,
+          "mrr": 0.6875,
+          "ndcg": 0.7365986575892965
+        },
+        "latency_ms": {
+          "mean": 2.8458749993660604,
+          "p50": 2.1489499995368533,
+          "p95": 5.52403999645321
+        },
+        "mean_candidate_count": 17.75,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 5907.875
+      },
+      "hard": {
+        "questions": 10,
+        "answerable": 5,
+        "unanswerable": 5,
+        "pending_human_review": 10,
+        "errors": 0,
+        "child": {
+          "recall": 1.0,
+          "precision": 0.32,
+          "mrr": 0.8,
+          "ndcg": 0.6318837379553642
+        },
+        "parent": {
+          "recall": 1.0,
+          "precision": 0.24000000000000002,
+          "mrr": 0.8,
+          "ndcg": 0.4931984572319101
+        },
+        "latency_ms": {
+          "mean": 2.61670999971102,
+          "p50": 2.5242500014428515,
+          "p95": 3.918184996655325
+        },
+        "mean_candidate_count": 18,
+        "no_result_rate": 0.1,
+        "unanswerable_stats": {
+          "questions": 5,
+          "returned_context_count": 4,
+          "no_result_count": 1,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 8743.1
+      },
+      "medium": {
+        "questions": 12,
+        "answerable": 12,
+        "unanswerable": 0,
+        "pending_human_review": 12,
+        "errors": 0,
+        "child": {
+          "recall": 0.75,
+          "precision": 0.15000000000000002,
+          "mrr": 0.6458333333333334,
+          "ndcg": 0.6395627920341924
+        },
+        "parent": {
+          "recall": 0.75,
+          "precision": 0.15000000000000002,
+          "mrr": 0.6458333333333334,
+          "ndcg": 0.6395627920341924
+        },
+        "latency_ms": {
+          "mean": 2.920183334936155,
+          "p50": 2.538450004067272,
+          "p95": 4.718280004090047
+        },
+        "mean_candidate_count": 18.416666666666668,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 9079.166666666666
+      }
+    },
+    "document_types": {
+      "docx": {
+        "questions": 1,
+        "answerable": 1,
+        "unanswerable": 0,
+        "pending_human_review": 1,
+        "errors": 0,
+        "child": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0
+        },
+        "parent": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0
+        },
+        "latency_ms": {
+          "mean": 2.3285999996005557,
+          "p50": 2.3285999996005557,
+          "p95": 2.3285999996005557
+        },
+        "mean_candidate_count": 20,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 8476
+      },
+      "md": {
+        "questions": 17,
+        "answerable": 17,
+        "unanswerable": 0,
+        "pending_human_review": 17,
+        "errors": 0,
+        "child": {
+          "recall": 0.8235294117647058,
+          "precision": 0.18823529411764706,
+          "mrr": 0.6519607843137255,
+          "ndcg": 0.604216208478901
+        },
+        "parent": {
+          "recall": 0.8235294117647058,
+          "precision": 0.17647058823529413,
+          "mrr": 0.6617647058823529,
+          "ndcg": 0.5891619112046019
+        },
+        "latency_ms": {
+          "mean": 2.941511764862191,
+          "p50": 2.569600001152139,
+          "p95": 5.270020001626107
+        },
+        "mean_candidate_count": 18.88235294117647,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 8184.235294117647
+      },
+      "pdf": {
+        "questions": 7,
+        "answerable": 7,
+        "unanswerable": 0,
+        "pending_human_review": 7,
+        "errors": 0,
+        "child": {
+          "recall": 1.0,
+          "precision": 0.2285714285714286,
+          "mrr": 0.8571428571428571,
+          "ndcg": 0.9034794510269611
+        },
+        "parent": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.8571428571428571,
+          "ndcg": 0.8596832229722856
+        },
+        "latency_ms": {
+          "mean": 2.641800001064049,
+          "p50": 2.4873000002116896,
+          "p95": 3.5244800012151236
+        },
+        "mean_candidate_count": 17.428571428571427,
+        "no_result_rate": 0,
+        "unanswerable_stats": {
+          "questions": 0,
+          "returned_context_count": 0,
+          "no_result_count": 0,
+          "correct_refusal_rate": null,
+          "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+        },
+        "mean_parent_context_characters": 7882.428571428572
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "version": "rag-benchmark-v0.1-candidate",
+  "documents_dir": "../documents",
+  "annotation_status": "AI-prepared; all 30 questions pending human review",
+  "corpus_version": "corpus-v1"
+}
