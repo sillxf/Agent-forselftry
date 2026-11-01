@@ -1,7 +1,7 @@
 {
-  "schema_version": 1,
-  "version": "rag-benchmark-v0.1-candidate",
+  "schema_version": 2,
+  "version": "rag-benchmark-v0.2-source-audited-candidate",
   "documents_dir": "../documents",
-  "annotation_status": "AI-prepared; all 30 questions pending human review",
+  "annotation_status": "AI source audit and evidence corrections complete; all 30 questions pending human relevance review",
   "corpus_version": "corpus-v1"
 }

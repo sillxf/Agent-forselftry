@@ -1,0 +1,140 @@
+{
+  "dense": {
+    "fixed_queries_index_rankings_and_scores": true,
+    "v01_labels_v01_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.192,
+        "mrr": 0.6913333333333334,
+        "ndcg": 0.6451122830959446
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.7933333333333333,
+        "ndcg": 0.7106798184078771
+      }
+    },
+    "v01_labels_v2_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.20800000000000002,
+        "mrr": 0.6913333333333334,
+        "ndcg": 0.7309126110427249
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.7933333333333333,
+        "ndcg": 0.8274283709334206
+      }
+    },
+    "v02_labels_v2_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.224,
+        "mrr": 0.6913333333333334,
+        "ndcg": 0.7296113303822916
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.7933333333333333,
+        "ndcg": 0.8274283709334206
+      }
+    },
+    "interpretation": "Column 1->2 changes metric definitions only; 2->3 changes annotations only. Neither changes retrieval."
+  },
+  "bm25": {
+    "fixed_queries_index_rankings_and_scores": true,
+    "v01_labels_v01_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.192,
+        "mrr": 0.6833333333333333,
+        "ndcg": 0.6638412680532018
+      },
+      "parent": {
+        "recall": 0.84,
+        "precision": 0.17600000000000002,
+        "mrr": 0.69,
+        "ndcg": 0.6413414020513692
+      }
+    },
+    "v01_labels_v2_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.20800000000000002,
+        "mrr": 0.6833333333333333,
+        "ndcg": 0.7224265412622825
+      },
+      "parent": {
+        "recall": 0.84,
+        "precision": 0.17600000000000002,
+        "mrr": 0.69,
+        "ndcg": 0.731150069181918
+      }
+    },
+    "v02_labels_v2_metrics": {
+      "child": {
+        "recall": 0.84,
+        "precision": 0.20800000000000002,
+        "mrr": 0.6833333333333333,
+        "ndcg": 0.7011976903031928
+      },
+      "parent": {
+        "recall": 0.84,
+        "precision": 0.17600000000000002,
+        "mrr": 0.69,
+        "ndcg": 0.731150069181918
+      }
+    },
+    "interpretation": "Column 1->2 changes metric definitions only; 2->3 changes annotations only. Neither changes retrieval."
+  },
+  "hybrid": {
+    "fixed_queries_index_rankings_and_scores": true,
+    "v01_labels_v01_metrics": {
+      "child": {
+        "recall": 0.88,
+        "precision": 0.2,
+        "mrr": 0.8133333333333334,
+        "ndcg": 0.7391943125890995
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.86,
+        "ndcg": 0.7534832781531945
+      }
+    },
+    "v01_labels_v2_metrics": {
+      "child": {
+        "recall": 0.88,
+        "precision": 0.21600000000000003,
+        "mrr": 0.8133333333333334,
+        "ndcg": 0.8304743802857166
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.86,
+        "ndcg": 0.875711570428575
+      }
+    },
+    "v02_labels_v2_metrics": {
+      "child": {
+        "recall": 0.88,
+        "precision": 0.232,
+        "mrr": 0.8133333333333334,
+        "ndcg": 0.8304743802857166
+      },
+      "parent": {
+        "recall": 0.92,
+        "precision": 0.192,
+        "mrr": 0.86,
+        "ndcg": 0.875711570428575
+      }
+    },
+    "interpretation": "Column 1->2 changes metric definitions only; 2->3 changes annotations only. Neither changes retrieval."
+  }
+}

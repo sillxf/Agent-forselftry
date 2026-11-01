@@ -1,0 +1,36 @@
+{
+  "scope": "Independent same-machine rebuild; timing and local image path prefixes excluded",
+  "verified_queries": 90,
+  "strategies": {
+    "dense": {
+      "queries": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "e1b3a8a4dbee47beb3024afbdf2121d6",
+      "metric_contract": "result-qrels-v2",
+      "ranking_sha256": "1428db7aa6dd04ed2a1877b140befe67715bc726430b6d1343827d786019ee17",
+      "index_portable_content_vectors_and_model_identical": true,
+      "raw_image_storage_paths_differ": true,
+      "all_ranks_scores_fact_matches_qrels_and_metrics_identical": true
+    },
+    "bm25": {
+      "queries": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "e1b3a8a4dbee47beb3024afbdf2121d6",
+      "metric_contract": "result-qrels-v2",
+      "ranking_sha256": "1540948e39e28ba2a5b75b55209a535d78492d5355ca137aec7d0446a5c69e2e",
+      "index_portable_content_vectors_and_model_identical": true,
+      "raw_image_storage_paths_differ": true,
+      "all_ranks_scores_fact_matches_qrels_and_metrics_identical": true
+    },
+    "hybrid": {
+      "queries": 30,
+      "original_generation": "c7f1ca1d02924e0a93de2b06941e07d6",
+      "rebuilt_generation": "e1b3a8a4dbee47beb3024afbdf2121d6",
+      "metric_contract": "result-qrels-v2",
+      "ranking_sha256": "6e0872348ad80dd50c12fc6755eb377148f93894290b6a40a3ab051f91019822",
+      "index_portable_content_vectors_and_model_identical": true,
+      "raw_image_storage_paths_differ": true,
+      "all_ranks_scores_fact_matches_qrels_and_metrics_identical": true
+    }
+  }
+}

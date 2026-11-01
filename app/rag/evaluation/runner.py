@@ -15,9 +15,9 @@ def map_evidence(result, evidence):
     """
     ids = set(result["source_block_ids"])
     content = normalize(result["content"])
-    return [e.evidence_id for e in evidence
-            if e.document_id == result["document_id"] and ids & set(e.source_block_ids)
-            and normalize(e.text_quote) in content]
+    return [e.evidence_id for e in evidence if any(
+        a.document_id == result["document_id"] and ids & set(a.source_block_ids)
+        and normalize(a.text_quote) in content for a in e.anchors())]
 
 
 def annotate(results, question, retriever, *, parent=False):
@@ -34,13 +34,39 @@ def annotate(results, question, retriever, *, parent=False):
     return output
 
 
+def evaluation_units(retriever):
+    """The complete indexed universe, independent of query strategy and returned ranks."""
+    children = [dict(item, source_block_ids=item["block_ids"]) for item in retriever.store.records]
+    parents = [{"parent_id": p.parent_id, "document_id": p.document_id, "content": p.content,
+                "source_block_ids": list(dict.fromkeys(key for b in p.blocks
+                    for key in (b.source_block_ids or [b.block_id])))} for p in retriever.parents.values()]
+    return {"children": children, "parents": parents}
+
+
+def derive_qrels(question, units):
+    """Map source annotations to each indexed unit; these are derived, not human chunk labels."""
+    grades = {e.evidence_id: e.relevance_grade for e in question.relevant_evidence}
+    qrels = {}
+    for name, records in units.items():
+        id_field = "chunk_id" if name == "children" else "parent_id"
+        qrels[name] = {}
+        for record in records:
+            matches = map_evidence(record, question.relevant_evidence)
+            grade = max((grades[key] for key in matches), default=0)
+            if grade > 0:
+                qrels[name][record[id_field]] = grade
+    return qrels
+
+
 def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
     if top_k <= 0:
         raise ValueError("top_k must be positive")
     dataset.validate_corpus()
     dataset.validate_index(retriever)
     rows = []
+    units = evaluation_units(retriever)
     for question in dataset.questions:
+        qrels = derive_qrels(question, units)
         started = time.perf_counter()
         error, child, parent, candidate_count = None, [], [], 0
         try:
@@ -56,8 +82,10 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
             error = f"{type(exception).__name__}: {exception}"
             child, parent = [], []
         grades = {e.evidence_id: e.relevance_grade for e in question.relevant_evidence}
-        child_metrics = retrieval_metrics([r["matched_evidence"] for r in child], grades, top_k)
-        parent_metrics = retrieval_metrics([r["matched_evidence"] for r in parent], grades, top_k)
+        child_metrics = retrieval_metrics([r["matched_evidence"] for r in child], grades, top_k,
+                                          ideal_result_grades=list(qrels["children"].values()))
+        parent_metrics = retrieval_metrics([r["matched_evidence"] for r in parent], grades, top_k,
+                                           ideal_result_grades=list(qrels["parents"].values()))
         failures = []
         if error:
             failures.append("retrieval_error")
@@ -74,11 +102,11 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
             "question_id": question.id, "question": question.question, "category": question.category,
             "difficulty": question.difficulty, "answerable": question.answerable,
             "review_status": question.review_status,
-            "document_types": sorted({e.source.rsplit(".", 1)[-1] for e in question.relevant_evidence}),
+            "document_types": sorted({a.source.rsplit(".", 1)[-1] for e in question.relevant_evidence for a in e.anchors()}),
             "expected_evidence": [e.model_dump() for e in question.relevant_evidence],
             "latency_ms": latency_ms, "candidate_count": candidate_count,
             "children": child, "parents": parent,
-            "child_metrics": child_metrics, "parent_metrics": parent_metrics,
+            "child_metrics": child_metrics, "parent_metrics": parent_metrics, "derived_qrels": qrels,
             "parent_context_characters": sum(len(r["content"]) for r in parent),
             "error": error, "failure_types": failures,
         })
@@ -104,6 +132,6 @@ def ranking_fingerprint(rows):
                "children": [portable_record(r) for r in row["children"]],
                "parents": [portable_record(r) for r in row["parents"]],
                "child_metrics": row["child_metrics"], "parent_metrics": row["parent_metrics"],
-               "error": row["error"], "failure_types": row["failure_types"]} for row in rows]
+               "derived_qrels": row["derived_qrels"], "error": row["error"], "failure_types": row["failure_types"]} for row in rows]
     return hashlib.sha256(json.dumps(stable, sort_keys=True, ensure_ascii=False,
                                     separators=(",", ":"), allow_nan=False).encode()).hexdigest()

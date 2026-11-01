@@ -15,9 +15,8 @@ def normalize(text: str) -> str:
     return " ".join(text.casefold().split())
 
 
-class Evidence(BaseModel):
+class SourceAnchor(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
-    evidence_id: str = Field(min_length=1)
     document_id: str = Field(min_length=1)
     source: str
     source_block_ids: list[str] = Field(min_length=1)
@@ -25,7 +24,16 @@ class Evidence(BaseModel):
     page_number: int | None = Field(default=None, ge=1)
     page_end: int | None = Field(default=None, ge=1)
     text_quote: str = Field(min_length=1)
+
+
+class Evidence(SourceAnchor):
+    evidence_id: str = Field(min_length=1)
     relevance_grade: int = Field(ge=0, le=3)
+    alternatives: list[SourceAnchor] = Field(default_factory=list)
+
+    def anchors(self):
+        """Alternative locations support the same fact, not extra required facts."""
+        return [self, *self.alternatives]
 
 
 class Question(BaseModel):
@@ -62,7 +70,7 @@ class Dataset:
         self.path = Path(path).resolve()
         self.metadata_path = self.path.parent / "dataset.json"
         self.metadata = json.loads(self.metadata_path.read_text(encoding="utf-8"))
-        if self.metadata["schema_version"] != 1:
+        if self.metadata["schema_version"] not in {1, 2}:
             raise ValueError("Unsupported benchmark schema version")
         self.questions = [Question.model_validate_json(line) for line in
                           self.path.read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -92,17 +100,19 @@ class Dataset:
             raise ValueError("Indexed documents do not match the benchmark corpus")
         for question in self.questions:
             for evidence in question.relevant_evidence:
-                blocks = [b for p in retriever.parents.values() if p.document_id == evidence.document_id
-                          for b in p.blocks if set(b.source_block_ids or [b.block_id]) & set(evidence.source_block_ids)]
-                if not blocks or not any(normalize(evidence.text_quote) in normalize(b.text) for b in blocks):
-                    raise ValueError(f"Unresolved source evidence: {question.id}/{evidence.evidence_id}")
-                resolved_ids = {key for b in blocks for key in (b.source_block_ids or [b.block_id])}
-                if not set(evidence.source_block_ids) <= resolved_ids:
-                    raise ValueError(f"Unresolved source evidence IDs: {question.id}/{evidence.evidence_id}")
-                matching = [b for b in blocks if normalize(evidence.text_quote) in normalize(b.text)]
-                if not any(b.section_path == evidence.section_path and b.page_number == evidence.page_number
-                           and b.page_end == evidence.page_end for b in matching):
-                    raise ValueError(f"Stale evidence location: {question.id}/{evidence.evidence_id}")
-                source = next(d.filename for d in retriever.documents if d.document_id == evidence.document_id)
-                if evidence.source != source:
-                    raise ValueError(f"Stale evidence filename: {question.id}/{evidence.evidence_id}")
+                for number, anchor in enumerate(evidence.anchors()):
+                    label = f"{question.id}/{evidence.evidence_id}/anchor-{number}"
+                    blocks = [b for p in retriever.parents.values() if p.document_id == anchor.document_id
+                              for b in p.blocks if set(b.source_block_ids or [b.block_id]) & set(anchor.source_block_ids)]
+                    if not blocks or not any(normalize(anchor.text_quote) in normalize(b.text) for b in blocks):
+                        raise ValueError(f"Unresolved source evidence: {label}")
+                    resolved_ids = {key for b in blocks for key in (b.source_block_ids or [b.block_id])}
+                    if not set(anchor.source_block_ids) <= resolved_ids:
+                        raise ValueError(f"Unresolved source evidence IDs: {label}")
+                    matching = [b for b in blocks if normalize(anchor.text_quote) in normalize(b.text)]
+                    if not any(b.section_path == anchor.section_path and b.page_number == anchor.page_number
+                               and b.page_end == anchor.page_end for b in matching):
+                        raise ValueError(f"Stale evidence location: {label}")
+                    source = next(d.filename for d in retriever.documents if d.document_id == anchor.document_id)
+                    if anchor.source != source:
+                        raise ValueError(f"Stale evidence filename: {label}")

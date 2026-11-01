@@ -189,7 +189,7 @@ Block IP
 Enable MFA
 Investigate account
 
-## RAG retrieval benchmark (candidate v0.1)
+## RAG retrieval benchmark (source-audited candidate v0.2)
 
 A separate retrieval benchmark reuses the existing index and Dense/BM25/RRF scoring:
 
@@ -214,4 +214,18 @@ See [the benchmark guide](tests/rag_benchmark/README.md),
 
 Benchmark implementation validation: normal suite **69 passed, 8 skipped**; full
 PDF/OCR suite **77 passed**. The candidate baseline and independent rebuild check
-are saved under `evaluation_results/baselines/`. Remote CI remains unverified.
+are saved under `evaluation_results/baselines/`. The subsequent source audit confirmed
+Actions run `41267810301` succeeded for commit `1cd53a2` (default tests; full-model step
+skipped). That historical run does not certify uncommitted audit changes.
+
+The source audit keeps all 30 questions pending human relevance review, adds OR
+locations for equivalent facts, and corrects NDCG's result/evidence unit mismatch.
+New runs identify metric contract `result-qrels-v2`; their Precision/NDCG values are
+not directly comparable to the archived v0.1 novelty metrics. See the updated
+annotation worksheet and the source-audit report before approving a formal baseline.
+
+Source-audit validation: **70 passed, 8 model skips** by default; **78 passed** with
+real PDF/OCR models. The current review packet is
+[evaluation_results/baselines/2026-11-01_source_audit_v2/source_audit.md](evaluation_results/baselines/2026-11-01_source_audit_v2/source_audit.md).
+It preserves pending human review and documents metric corrections separately from
+retrieval changes; a formal baseline has not yet been approved.

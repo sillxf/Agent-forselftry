@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from app.rag.evaluation.dataset import Dataset, checksum
 from app.rag.evaluation.report import build_report
+from app.rag.evaluation.retrieval_metrics import METRIC_CONTRACT
 from app.rag.evaluation.runner import portable_record, ranking_fingerprint, run_benchmark, write_json
 
 
@@ -108,7 +109,7 @@ def main():
     pointer = json.loads(index_pointer.read_text(encoding="utf-8"))
     index_dir = index_pointer.parent / pointer["generation"]
     base = dict(
-        schema_version=1, started_at=now.isoformat(), code=code_state(output),
+        schema_version=2, metric_contract=METRIC_CONTRACT, started_at=now.isoformat(), code=code_state(output),
         annotation_status="provisional" if dataset.pending_count else "human-reviewed",
         dataset=dict(version=dataset.metadata["version"], sha256=dataset.sha256,
                      metadata_sha256=checksum(dataset.metadata_path), path=str(dataset.path)),
@@ -160,7 +161,8 @@ def main():
             values = [child[key] for key in ("recall", "precision", "mrr", "ndcg")] + [summary["parent"]["recall"]]
             lines.append(f"| {strategy} | " + " | ".join(f"{value:.4f}" if value is not None else "N/A" for value in values) + " |")
         lines += ["", f"K={args.top_k}. Recall is unique evidence coverage within K child or K unique-parent ranks.",
-                  "Novelty-aware precision/NDCG conventions are documented in each report. Unanswerable cases are excluded.",
+                  "Metric definitions changed from candidate v0.1. Do not interpret score differences as retrieval improvements.",
+                  "Precision/NDCG use derived result-level qrels (contract result-qrels-v2); Recall covers unique facts. Unknown cases are excluded.",
                   "Only rank/metric comparisons are meaningful here; sequential strategy order affects cache/latency measurements.",
                   "The exact implementation is archived in source_snapshot.zip; config files record its hash."]
         (output / "comparison.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

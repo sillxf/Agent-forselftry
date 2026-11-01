@@ -6,35 +6,40 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.rag.evaluation.dataset import Dataset, Evidence
+from app.rag.evaluation.dataset import Dataset, Evidence, SourceAnchor
 from app.rag.evaluation.report import build_report
 from app.rag.evaluation.retrieval_metrics import retrieval_metrics
 from app.rag.evaluation.runner import map_evidence, portable_record, ranking_fingerprint, run_benchmark
 
 
-@pytest.mark.parametrize("ranks,grades,k,recall,precision,mrr", [
-    ([["a"], ["b"]], {"a": 3, "b": 2}, 2, 1, 1, 1),
-    ([[], ["a"], ["a"], ["b"]], {"a": 3, "b": 2}, 3, .5, 1/3, .5),
-    ([], {"a": 3}, 5, 0, 0, 0),
-    ([["a"]], {"a": 3}, 5, 1, .2, 1),
-    ([["a", "b"]], {"a": 3, "b": 2}, 2, 1, .5, 1),
-    ([["not_relevant"]], {"not_relevant": 0, "a": 1}, 1, 0, 0, 0),
+@pytest.mark.parametrize("ranks,grades,ideal,k,recall,precision,mrr", [
+    ([["a"], ["b"]], {"a": 3, "b": 2}, [3, 2], 2, 1, 1, 1),
+    ([[], ["a"], ["a"], ["b"]], {"a": 3, "b": 2}, [3, 3, 2], 3, .5, 2/3, .5),
+    ([], {"a": 3}, [3], 5, 0, 0, 0),
+    ([["a"]], {"a": 3}, [3], 5, 1, .2, 1),
+    ([["a", "b"]], {"a": 3, "b": 2}, [3], 2, 1, .5, 1),
+    ([["not_relevant"]], {"not_relevant": 0, "a": 1}, [1], 1, 0, 0, 0),
 ])
-def test_metrics_preserve_empty_duplicate_and_short_result_slots(ranks, grades, k, recall, precision, mrr):
-    metrics = retrieval_metrics(ranks, grades, k)
+def test_metrics_preserve_result_slots_and_distinguish_facts_from_results(ranks, grades, ideal, k, recall, precision, mrr):
+    metrics = retrieval_metrics(ranks, grades, k, ideal_result_grades=ideal)
     assert metrics["recall"] == recall
     assert metrics["precision"] == precision
     assert metrics["mrr"] == mrr
     assert 0 <= metrics["ndcg"] <= 1
 
 
-def test_ndcg_uses_graded_gain_and_does_not_reward_duplicate_evidence():
+def test_ndcg_uses_the_same_result_unit_in_dcg_and_idcg():
     grades = {"a": 3, "b": 1}
-    expected = (1 + 7 / log2(4)) / (7 + 1 / log2(3))
-    assert retrieval_metrics([["b"], ["b"], ["a"]], grades, 3)["ndcg"] == pytest.approx(expected)
-    assert retrieval_metrics([], {}, 5) == dict(recall=None, precision=None, mrr=None, ndcg=None)
+    expected = (1 + 1 / log2(3) + 7 / log2(4)) / (7 + 1 / log2(3) + 1 / log2(4))
+    assert retrieval_metrics([["b"], ["b"], ["a"]], grades, 3,
+                             ideal_result_grades=[3, 1, 1])["ndcg"] == pytest.approx(expected)
+    # A single perfectly ranked result can contain several complete evidence facts.
+    assert retrieval_metrics([["a", "b"]], grades, 5, ideal_result_grades=[3])["ndcg"] == 1
+    # The high-grade result outside Top K must still contribute to the ideal ranking.
+    assert retrieval_metrics([["b"]], grades, 1, ideal_result_grades=[3, 1])["ndcg"] == pytest.approx(1/7)
+    assert retrieval_metrics([], {}, 5, ideal_result_grades=[]) == dict(recall=None, precision=None, mrr=None, ndcg=None)
     with pytest.raises(ValueError):
-        retrieval_metrics([], {}, 0)
+        retrieval_metrics([], {}, 0, ideal_result_grades=[])
 
 
 def test_mapping_requires_document_identity_block_and_actual_text():
@@ -46,6 +51,18 @@ def test_mapping_requires_document_identity_block_and_actual_text():
     assert map_evidence(result, [evidence]) == ["rule-r004"]
     assert map_evidence(dict(result, document_id="other"), [evidence]) == []
     assert map_evidence(dict(result, source_block_ids=["other"]), [evidence]) == []
+
+
+def test_alternative_anchors_credit_one_fact_not_two_requirements():
+    evidence = Evidence(evidence_id="collect-logs", document_id="document", source="steps.docx",
+                        source_block_ids=["english"], section_path=[], text_quote="Collect logs", relevance_grade=3,
+                        alternatives=[SourceAnchor(document_id="document", source="steps.docx",
+                            source_block_ids=["chinese"], section_path=[], text_quote="收集日志")])
+    result = dict(document_id="document", source_block_ids=["chinese"], content="收集日志")
+    assert map_evidence(result, [evidence]) == ["collect-logs"]
+    metrics = retrieval_metrics([map_evidence(result, [evidence])], {"collect-logs": 3}, 1,
+                                ideal_result_grades=[3, 3])
+    assert metrics == dict(recall=1, precision=1, mrr=1, ndcg=1)
 
 
 def test_checked_in_dataset_and_corpus_are_consistent_and_review_status_is_enforced():
@@ -90,6 +107,8 @@ def test_runner_reuses_actual_retriever_separates_parent_and_keeps_unknown_resul
     retriever.search_rankings = Mock(wraps=original)
     rows = run_benchmark(dataset, retriever, top_k=5)
     assert rows[0]["child_metrics"]["recall"] == rows[0]["parent_metrics"]["recall"] == 1
+    assert rows[0]["derived_qrels"]["children"] and rows[0]["derived_qrels"]["parents"]
+    assert rows[0]["child_metrics"]["ndcg"] == 1
     assert rows[1]["children"] and rows[1]["child_metrics"]["recall"] is None
     assert [call.args[0] for call in retriever.search_rankings.call_args_list] == [q.question for q in dataset.questions]
     assert original("failed login", 2)["parents"] == retriever.search("failed login", 2)
@@ -120,6 +139,12 @@ def test_runner_reuses_actual_retriever_separates_parent_and_keeps_unknown_resul
     assert failed[0]["child_metrics"]["recall"] == 0
     assert failed[0]["failure_types"] == ["retrieval_error"]
 
+    evidence = dataset.questions[0].relevant_evidence[0]
+    evidence.alternatives = [SourceAnchor(**evidence.model_dump(exclude={"evidence_id", "relevance_grade", "alternatives"}))]
+    evidence.alternatives[0].source_block_ids = ["stale-alternative"]
+    with pytest.raises(ValueError, match="Unresolved"):
+        dataset.validate_index(retriever)
+    evidence.alternatives = []
     dataset.questions[0].relevant_evidence[0].source_block_ids = ["stale-block"]
     with pytest.raises(ValueError, match="Unresolved"):
         dataset.validate_index(retriever)

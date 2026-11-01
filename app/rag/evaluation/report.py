@@ -5,6 +5,7 @@ from statistics import mean
 import numpy as np
 
 from app.rag.evaluation.runner import write_json
+from app.rag.evaluation.retrieval_metrics import METRIC_CONTRACT
 
 
 def summarize(rows):
@@ -43,7 +44,7 @@ def build_report(output, config, rows):
             for key in values:
                 buckets[key].append(row)
         groups[field] = {key: summarize(items) for key, items in sorted(buckets.items())}
-    metrics = {"overall": summarize(rows), "groups": groups}
+    metrics = {"metric_contract": METRIC_CONTRACT, "overall": summarize(rows), "groups": groups}
     failures = [row for row in rows if row["failure_types"]]
     write_json(output / "metrics.json", metrics)
     write_json(output / "failures.json", failures)
@@ -54,17 +55,21 @@ def build_report(output, config, rows):
              f"Dataset: `{config['dataset']['version']}` / `{config['dataset']['sha256']}`.",
              f"Code: `{config['code']['commit']}`; dirty={config['code']['dirty']}; source SHA-256 `{config['code']['source_sha256']}`.",
              "", f"Questions: {overall['questions']}; answerable: {overall['answerable']}; unanswerable: {overall['unanswerable']}.",
-             "", f"| Ranking unit (K={k}) | Evidence Recall | Novel-hit Precision | MRR | Evidence NDCG |",
+             "", f"| Ranking unit (K={k}) | Evidence Recall | Result Precision | MRR | Result NDCG |",
              "| --- | ---: | ---: | ---: | ---: |"]
     for unit in ("child", "parent"):
         m = overall[unit]
         formatted = [f"{m[key]:.4f}" if m[key] is not None else "N/A" for key in ("recall", "precision", "mrr", "ndcg")]
         lines.append(f"| {unit} | " + " | ".join(formatted) + " |")
     lines += ["", "Child K and unique-parent K are different ranking units; do not combine them.",
-              "Unmatched and duplicate slots keep their original ranks. Recall counts unique positive evidence;",
-              "Precision counts ranks introducing new positive evidence / fixed K. NDCG uses maximum new grade",
-              "per rank, gain 2^grade-1 and evidence-level IDCG. A result may cover several evidence labels.",
-              "Grades 1–3 count as positive. These novelty-aware conventions must remain fixed across experiments.",
+              f"Metric contract: `{METRIC_CONTRACT}`. Recall covers unique required facts; alternatives are OR locations.",
+              "Precision is relevant result slots / fixed K. Multiple distinct results supporting one fact remain relevant.",
+              "DCG uses max fact grade per result, gain 2^grade-1 and log2(rank+1) discount.",
+              "IDCG uses the sorted grades of ALL indexed units of the same type, not the number of facts.",
+              "Qrels are deterministically derived from body quotes and source IDs, not independently human-judged chunks.",
+              "Misses keep their rank. Metadata-only answers are not credited as body evidence.",
+              "Old v0.1 novelty/evidence metrics used a different definition and are not directly comparable.",
+              "No search, embedding, chunking or RRF change is implied by an evaluation score change.",
               "", "## Categories", "", "| Category | Questions | Child Recall | Child MRR | Parent Recall |",
               "| --- | ---: | ---: | ---: | ---: |"]
     for key, value in groups["category"].items():
