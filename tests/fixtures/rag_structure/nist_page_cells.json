@@ -1,0 +1,3510 @@
+{
+  "1": [
+    {
+      "index": 0,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 47.514183859649165,
+        "r_x1": 141.60446400000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 141.60446400000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 72.0,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "NIST SP 800-61r3",
+      "orig": "NIST SP 800-61r3",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 1,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 369.60480000000007,
+        "r_y0": 47.514183859649165,
+        "r_x1": 540.0682080000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 540.0682080000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 369.60480000000007,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Incident Response Recommendations and",
+      "orig": "Incident Response Recommendations and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 2,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000011,
+        "r_y0": 59.635503859649134,
+        "r_x1": 113.5272240000001,
+        "r_y1": 59.635503859649134,
+        "r_x2": 113.5272240000001,
+        "r_y2": 51.42660000000001,
+        "r_x3": 72.00000000000011,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "April 2025",
+      "orig": "April 2025",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 3,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 364.0770000000001,
+        "r_y0": 59.635503859649134,
+        "r_x1": 539.9765760000004,
+        "r_y1": 59.635503859649134,
+        "r_x2": 539.9765760000004,
+        "r_y2": 51.42660000000001,
+        "r_x3": 364.0770000000001,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Considerations for Cyber Risk Management",
+      "orig": "Considerations for Cyber Risk Management",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 4,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 303.48036000000013,
+        "r_y0": 755.2717838596493,
+        "r_x1": 308.5300800000001,
+        "r_y1": 755.2717838596493,
+        "r_x2": 308.5300800000001,
+        "r_y2": 747.0628800000002,
+        "r_x3": 303.48036000000013,
+        "r_y3": 747.0628800000002,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "2",
+      "orig": "2",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 5,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 86.66746487006742,
+        "r_x1": 147.0828,
+        "r_y1": 86.66746487006742,
+        "r_x2": 147.0828,
+        "r_y2": 76.53600000000006,
+        "r_x3": 72.0,
+        "r_y3": 76.53600000000006,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "1. Introduction",
+      "orig": "1. Introduction",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 6,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 109.94624561403509,
+        "r_x1": 525.2388,
+        "r_y1": 109.94624561403509,
+        "r_x2": 525.2388,
+        "r_y2": 100.04399999999998,
+        "r_x3": 72.0,
+        "r_y3": 100.04399999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Within this document, an event is any observable occurrence that involves computing assets,",
+      "orig": "Within this document, an event is any observable occurrence that involves computing assets,",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 7,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 124.58624561403508,
+        "r_x1": 534.8435999999997,
+        "r_y1": 124.58624561403508,
+        "r_x2": 534.8435999999997,
+        "r_y2": 114.69600000000003,
+        "r_x3": 72.0,
+        "r_y3": 114.69600000000003,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "including physical and virtual platforms, networks, services, and cloud environments. Examples",
+      "orig": "including physical and virtual platforms, networks, services, and cloud environments. Examples",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 8,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 139.22624561403507,
+        "r_x1": 508.37879999999996,
+        "r_y1": 139.22624561403507,
+        "r_x2": 508.37879999999996,
+        "r_y2": 129.336,
+        "r_x3": 72.0,
+        "r_y3": 129.336,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "of events are user login attempts, the installation of software updates, and an application",
+      "orig": "of events are user login attempts, the installation of software updates, and an application",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 9,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 153.86624561403505,
+        "r_x1": 480.8747999999999,
+        "r_y1": 153.86624561403505,
+        "r_x2": 480.8747999999999,
+        "r_y2": 143.976,
+        "r_x3": 72.0,
+        "r_y3": 143.976,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "responding to a transaction request. Many events focus on security or have security",
+      "orig": "responding to a transaction request. Many events focus on security or have security",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 10,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 168.62624561403504,
+        "r_x1": 535.2132000000001,
+        "r_y1": 168.62624561403504,
+        "r_x2": 535.2132000000001,
+        "r_y2": 158.72399999999993,
+        "r_x3": 71.99999999999994,
+        "r_y3": 158.72399999999993,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "implications. Adverse events are any events associated with a negative consequence regardless",
+      "orig": "implications. Adverse events are any events associated with a negative consequence regardless",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 11,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 183.26624561403503,
+        "r_x1": 498.6959999999999,
+        "r_y1": 183.26624561403503,
+        "r_x2": 498.6959999999999,
+        "r_y2": 173.37599999999998,
+        "r_x3": 71.99999999999994,
+        "r_y3": 173.37599999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "of cause, including natural disasters, power failures, or cybersecurity attacks. This guide",
+      "orig": "of cause, including natural disasters, power failures, or cybersecurity attacks. This guide",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 12,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 197.90624561403502,
+        "r_x1": 528.4559999999997,
+        "r_y1": 197.90624561403502,
+        "r_x2": 528.4559999999997,
+        "r_y2": 188.0039999999999,
+        "r_x3": 71.99999999999994,
+        "r_y3": 188.0039999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "addresses only adverse cybersecurity events. Additional analysis is often needed to determine",
+      "orig": "addresses only adverse cybersecurity events. Additional analysis is often needed to determine",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 13,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 212.546245614035,
+        "r_x1": 509.54159999999996,
+        "r_y1": 212.546245614035,
+        "r_x2": 509.54159999999996,
+        "r_y2": 202.65599999999995,
+        "r_x3": 71.99999999999994,
+        "r_y3": 202.65599999999995,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "whether adverse cybersecurity events indicate that a cybersecurity incident has occurred.",
+      "orig": "whether adverse cybersecurity events indicate that a cybersecurity incident has occurred.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 14,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 233.186245614035,
+        "r_x1": 293.77199999999993,
+        "r_y1": 233.186245614035,
+        "r_x2": 293.77199999999993,
+        "r_y2": 223.28399999999988,
+        "r_x3": 71.99999999999994,
+        "r_y3": 223.28399999999988,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "A cybersecurity incident (or simply incident) is",
+      "orig": "A cybersecurity incident (or simply incident) is",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 15,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 129.6,
+        "r_y0": 253.8262456140351,
+        "r_x1": 476.9843999999999,
+        "r_y1": 253.8262456140351,
+        "r_x2": 476.9843999999999,
+        "r_y2": 243.93600000000004,
+        "r_x3": 129.6,
+        "r_y3": 243.93600000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "…an occurrence that actually or imminently jeopardizes, without lawful",
+      "orig": "…an occurrence that actually or imminently jeopardizes, without lawful",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 16,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 129.6,
+        "r_y0": 268.4662456140351,
+        "r_x1": 474.3431999999999,
+        "r_y1": 268.4662456140351,
+        "r_x2": 474.3431999999999,
+        "r_y2": 258.576,
+        "r_x3": 129.6,
+        "r_y3": 258.576,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "authority, the integrity, confidentiality, or availability of information or",
+      "orig": "authority, the integrity, confidentiality, or availability of information or",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 17,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 129.6,
+        "r_y0": 283.1062456140351,
+        "r_x1": 475.37399999999997,
+        "r_y1": 283.1062456140351,
+        "r_x2": 475.37399999999997,
+        "r_y2": 273.216,
+        "r_x3": 129.6,
+        "r_y3": 273.216,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "an information system; or constitutes a violation or imminent threat of",
+      "orig": "an information system; or constitutes a violation or imminent threat of",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 18,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 129.6,
+        "r_y0": 297.7462456140351,
+        "r_x1": 481.8924,
+        "r_y1": 297.7462456140351,
+        "r_x2": 481.8924,
+        "r_y2": 287.856,
+        "r_x3": 129.6,
+        "r_y3": 287.856,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "violation of law, security policies, security procedures, or acceptable use",
+      "orig": "violation of law, security policies, security procedures, or acceptable use",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 19,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 129.6,
+        "r_y0": 312.3862456140351,
+        "r_x1": 235.044,
+        "r_y1": 312.3862456140351,
+        "r_x2": 235.044,
+        "r_y2": 302.496,
+        "r_x3": 129.6,
+        "r_y3": 302.496,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "policies. [FISMA2014]",
+      "orig": "policies. [FISMA2014]",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 20,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 333.0262456140351,
+        "r_x1": 276.8148,
+        "r_y1": 333.0262456140351,
+        "r_x2": 276.8148,
+        "r_y2": 323.13599999999997,
+        "r_x3": 72.0,
+        "r_y3": 323.13599999999997,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Examples of incidents include an attacker:",
+      "orig": "Examples of incidents include an attacker:",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 21,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.00000000000003,
+        "r_y0": 354.2662456140351,
+        "r_x1": 527.4119999999999,
+        "r_y1": 354.2662456140351,
+        "r_x2": 527.4119999999999,
+        "r_y2": 343.56,
+        "r_x3": 90.00000000000003,
+        "r_y3": 343.56,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Employing a botnet to send high volumes of connection requests to an internet-facing",
+      "orig": "• Employing a botnet to send high volumes of connection requests to an internet-facing",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 22,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.00000000000006,
+        "r_y0": 369.0262456140351,
+        "r_x1": 381.72839999999985,
+        "r_y1": 369.0262456140351,
+        "r_x2": 381.72839999999985,
+        "r_y2": 359.13599999999997,
+        "r_x3": 108.00000000000006,
+        "r_y3": 359.13599999999997,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "service, making it unavailable to legitimate service users",
+      "orig": "service, making it unavailable to legitimate service users",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 23,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.00000000000006,
+        "r_y0": 390.2662456140351,
+        "r_x1": 516.3720000000001,
+        "r_y1": 390.2662456140351,
+        "r_x2": 516.3720000000001,
+        "r_y2": 379.56,
+        "r_x3": 90.00000000000006,
+        "r_y3": 379.56,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Obtaining administrative credentials at a software-as-a-service provider, which puts",
+      "orig": "• Obtaining administrative credentials at a software-as-a-service provider, which puts",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 24,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.00000000000011,
+        "r_y0": 404.9062456140351,
+        "r_x1": 373.13759999999996,
+        "r_y1": 404.9062456140351,
+        "r_x2": 373.13759999999996,
+        "r_y2": 395.01599999999996,
+        "r_x3": 108.00000000000011,
+        "r_y3": 395.01599999999996,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "sensitive tenant data entrusted to that provider at risk",
+      "orig": "sensitive tenant data entrusted to that provider at risk",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 25,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.00000000000011,
+        "r_y0": 426.1462456140351,
+        "r_x1": 532.7579999999999,
+        "r_y1": 426.1462456140351,
+        "r_x2": 532.7579999999999,
+        "r_y2": 415.44,
+        "r_x3": 90.00000000000011,
+        "r_y3": 415.44,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Intruding upon an organization's business network to steal credentials and use them to",
+      "orig": "• Intruding upon an organization's business network to steal credentials and use them to",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 26,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.0000000000001,
+        "r_y0": 440.9062456140351,
+        "r_x1": 537.2387999999999,
+        "r_y1": 440.9062456140351,
+        "r_x2": 537.2387999999999,
+        "r_y2": 431.01599999999996,
+        "r_x3": 108.0000000000001,
+        "r_y3": 431.01599999999996,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "instruct industrial control systems to shut down or destroy critical physical components,",
+      "orig": "instruct industrial control systems to shut down or destroy critical physical components,",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 27,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.0000000000001,
+        "r_y0": 455.54624561403506,
+        "r_x1": 274.01640000000003,
+        "r_y1": 455.54624561403506,
+        "r_x2": 274.01640000000003,
+        "r_y2": 445.65599999999995,
+        "r_x3": 108.0000000000001,
+        "r_y3": 445.65599999999995,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "causing a major service disruption",
+      "orig": "causing a major service disruption",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 28,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.00000000000009,
+        "r_y0": 476.78624561403507,
+        "r_x1": 537.8267999999998,
+        "r_y1": 476.78624561403507,
+        "r_x2": 537.8267999999998,
+        "r_y2": 466.08,
+        "r_x3": 90.00000000000009,
+        "r_y3": 466.08,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Deploying ransomware to prevent the use of computer systems and cause multiple data",
+      "orig": "• Deploying ransomware to prevent the use of computer systems and cause multiple data",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 29,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.00000000000006,
+        "r_y0": 491.42624561403505,
+        "r_x1": 328.21200000000005,
+        "r_y1": 491.42624561403505,
+        "r_x2": 328.21200000000005,
+        "r_y2": 481.53599999999994,
+        "r_x3": 108.00000000000006,
+        "r_y3": 481.53599999999994,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "breaches by copying files from those systems",
+      "orig": "breaches by copying files from those systems",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 30,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.00000000000006,
+        "r_y0": 512.666245614035,
+        "r_x1": 538.8599999999997,
+        "r_y1": 512.666245614035,
+        "r_x2": 538.8599999999997,
+        "r_y2": 501.96,
+        "r_x3": 90.00000000000006,
+        "r_y3": 501.96,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Using phishing emails to compromise user accounts and using those accounts to commit",
+      "orig": "• Using phishing emails to compromise user accounts and using those accounts to commit",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 31,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.0,
+        "r_y0": 527.426245614035,
+        "r_x1": 178.13999999999996,
+        "r_y1": 527.426245614035,
+        "r_x2": 178.13999999999996,
+        "r_y2": 517.536,
+        "r_x3": 108.0,
+        "r_y3": 517.536,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "financial fraud",
+      "orig": "financial fraud",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 32,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 89.99999999999999,
+        "r_y0": 548.666245614035,
+        "r_x1": 523.8923999999998,
+        "r_y1": 548.666245614035,
+        "r_x2": 523.8923999999998,
+        "r_y2": 537.9599999999999,
+        "r_x3": 89.99999999999999,
+        "r_y3": 537.9599999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Identifying a new vulnerability in network management appliances and exploiting the",
+      "orig": "• Identifying a new vulnerability in network management appliances and exploiting the",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 33,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 107.99999999999997,
+        "r_y0": 563.306245614035,
+        "r_x1": 447.1296000000001,
+        "r_y1": 563.306245614035,
+        "r_x2": 447.1296000000001,
+        "r_y2": 553.4159999999999,
+        "r_x3": 107.99999999999997,
+        "r_y3": 553.4159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "vulnerability to gain unauthorized access to network communications",
+      "orig": "vulnerability to gain unauthorized access to network communications",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 34,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.0,
+        "r_y0": 584.546245614035,
+        "r_x1": 539.8895999999997,
+        "r_y1": 584.546245614035,
+        "r_x2": 539.8895999999997,
+        "r_y2": 573.8399999999999,
+        "r_x3": 90.0,
+        "r_y3": 573.8399999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Compromising a vendor's software, which is subsequently distributed to customers in its",
+      "orig": "• Compromising a vendor's software, which is subsequently distributed to customers in its",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 35,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.00000000000001,
+        "r_y0": 599.306245614035,
+        "r_x1": 202.41600000000003,
+        "r_y1": 599.306245614035,
+        "r_x2": 202.41600000000003,
+        "r_y2": 589.4159999999999,
+        "r_x3": 108.00000000000001,
+        "r_y3": 589.4159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "compromised state",
+      "orig": "compromised state",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 36,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000003,
+        "r_y0": 619.946245614035,
+        "r_x1": 504.2244,
+        "r_y1": 619.946245614035,
+        "r_x2": 504.2244,
+        "r_y2": 610.0559999999999,
+        "r_x3": 72.00000000000003,
+        "r_y3": 610.0559999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Because of the damage that cybersecurity incidents can inflict on organizations and their",
+      "orig": "Because of the damage that cybersecurity incidents can inflict on organizations and their",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 37,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000003,
+        "r_y0": 634.586245614035,
+        "r_x1": 530.4599999999997,
+        "r_y1": 634.586245614035,
+        "r_x2": 530.4599999999997,
+        "r_y2": 624.6959999999999,
+        "r_x3": 72.00000000000003,
+        "r_y3": 624.6959999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "customers, business partners, and others, it is vital to respond quickly and effectively when an",
+      "orig": "customers, business partners, and others, it is vital to respond quickly and effectively when an",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 38,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000003,
+        "r_y0": 649.226245614035,
+        "r_x1": 523.116,
+        "r_y1": 649.226245614035,
+        "r_x2": 523.116,
+        "r_y2": 639.3359999999999,
+        "r_x3": 72.00000000000003,
+        "r_y3": 639.3359999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "incident occurs. Effective implementation of incident response processes enables systematic",
+      "orig": "incident occurs. Effective implementation of incident response processes enables systematic",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 39,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 663.8662456140349,
+        "r_x1": 511.6547999999999,
+        "r_y1": 663.8662456140349,
+        "r_x2": 511.6547999999999,
+        "r_y2": 653.9759999999999,
+        "r_x3": 72.00000000000006,
+        "r_y3": 653.9759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "responses to and recovery from incidents by analyzing information and taking appropriate",
+      "orig": "responses to and recovery from incidents by analyzing information and taking appropriate",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 40,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 678.5062456140349,
+        "r_x1": 513.6948000000001,
+        "r_y1": 678.5062456140349,
+        "r_x2": 513.6948000000001,
+        "r_y2": 668.6159999999999,
+        "r_x3": 72.00000000000006,
+        "r_y3": 668.6159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "action. This reduces cybersecurity and enterprise risks by minimizing data loss or theft, the",
+      "orig": "action. This reduces cybersecurity and enterprise risks by minimizing data loss or theft, the",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 41,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000011,
+        "r_y0": 693.146245614035,
+        "r_x1": 503.21760000000023,
+        "r_y1": 693.146245614035,
+        "r_x2": 503.21760000000023,
+        "r_y2": 683.2559999999999,
+        "r_x3": 72.00000000000011,
+        "r_y3": 683.2559999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "disruption of services, and the overall impact of incidents. Lessons learned from incident",
+      "orig": "disruption of services, and the overall impact of incidents. Lessons learned from incident",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 42,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000011,
+        "r_y0": 707.786245614035,
+        "r_x1": 522.2963999999998,
+        "r_y1": 707.786245614035,
+        "r_x2": 522.2963999999998,
+        "r_y2": 697.8959999999998,
+        "r_x3": 72.00000000000011,
+        "r_y3": 697.8959999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "response activities and root cause analysis help improve cybersecurity risk management and",
+      "orig": "response activities and root cause analysis help improve cybersecurity risk management and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    }
+  ],
+  "2": [
+    {
+      "index": 0,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 47.514183859649165,
+        "r_x1": 141.60446400000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 141.60446400000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 72.0,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "NIST SP 800-61r3",
+      "orig": "NIST SP 800-61r3",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 1,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 369.60480000000007,
+        "r_y0": 47.514183859649165,
+        "r_x1": 540.0682080000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 540.0682080000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 369.60480000000007,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Incident Response Recommendations and",
+      "orig": "Incident Response Recommendations and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 2,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000011,
+        "r_y0": 59.635503859649134,
+        "r_x1": 113.5272240000001,
+        "r_y1": 59.635503859649134,
+        "r_x2": 113.5272240000001,
+        "r_y2": 51.42660000000001,
+        "r_x3": 72.00000000000011,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "April 2025",
+      "orig": "April 2025",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 3,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 364.0770000000001,
+        "r_y0": 59.635503859649134,
+        "r_x1": 539.9765760000004,
+        "r_y1": 59.635503859649134,
+        "r_x2": 539.9765760000004,
+        "r_y2": 51.42660000000001,
+        "r_x3": 364.0770000000001,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Considerations for Cyber Risk Management",
+      "orig": "Considerations for Cyber Risk Management",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 4,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 303.48036000000013,
+        "r_y0": 755.2717838596493,
+        "r_x1": 308.5300800000001,
+        "r_y1": 755.2717838596493,
+        "r_x2": 308.5300800000001,
+        "r_y2": 747.0628800000002,
+        "r_x3": 303.48036000000013,
+        "r_y3": 747.0628800000002,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "3",
+      "orig": "3",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 5,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 86.3062456140351,
+        "r_x1": 523.7351999999998,
+        "r_y1": 86.3062456140351,
+        "r_x2": 523.7351999999998,
+        "r_y2": 76.41600000000005,
+        "r_x3": 72.0,
+        "r_y3": 76.41600000000005,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "governance efforts and ensure that the organization is better prepared to identify its current",
+      "orig": "governance efforts and ensure that the organization is better prepared to identify its current",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 6,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 100.94624561403509,
+        "r_x1": 501.77639999999997,
+        "r_y1": 100.94624561403509,
+        "r_x2": 501.77639999999997,
+        "r_y2": 91.05600000000004,
+        "r_x3": 72.0,
+        "r_y3": 91.05600000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "technology assets and cybersecurity risks, protect its assets, and detect, respond to, and",
+      "orig": "technology assets and cybersecurity risks, protect its assets, and detect, respond to, and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 7,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 115.58624561403508,
+        "r_x1": 218.78280000000007,
+        "r_y1": 115.58624561403508,
+        "r_x2": 218.78280000000007,
+        "r_y2": 105.69600000000003,
+        "r_x3": 72.0,
+        "r_y3": 105.69600000000003,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "recover from future incidents.",
+      "orig": "recover from future incidents.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 8,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 150.50746487006734,
+        "r_x1": 188.79479999999995,
+        "r_y1": 150.50746487006734,
+        "r_x2": 188.79479999999995,
+        "r_y2": 140.37599999999998,
+        "r_x3": 72.0,
+        "r_y3": 140.37599999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "1.1. Purpose and Scope",
+      "orig": "1.1. Purpose and Scope",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 9,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999997,
+        "r_y0": 173.90624561403502,
+        "r_x1": 501.33599999999996,
+        "r_y1": 173.90624561403502,
+        "r_x2": 501.33599999999996,
+        "r_y2": 164.01599999999996,
+        "r_x3": 71.99999999999997,
+        "r_y3": 164.01599999999996,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "This publication seeks to help organizations incorporate cybersecurity incident response",
+      "orig": "This publication seeks to help organizations incorporate cybersecurity incident response",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 10,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 188.546245614035,
+        "r_x1": 496.4939999999999,
+        "r_y1": 188.546245614035,
+        "r_x2": 496.4939999999999,
+        "r_y2": 178.65599999999995,
+        "r_x3": 71.99999999999994,
+        "r_y3": 178.65599999999995,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "recommendations and considerations throughout their cybersecurity risk management",
+      "orig": "recommendations and considerations throughout their cybersecurity risk management",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 11,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 203.186245614035,
+        "r_x1": 523.2923999999998,
+        "r_y1": 203.186245614035,
+        "r_x2": 523.2923999999998,
+        "r_y2": 193.29599999999994,
+        "r_x3": 71.99999999999994,
+        "r_y3": 193.29599999999994,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "activities. It also provides a common language that all organizations can use to communicate",
+      "orig": "activities. It also provides a common language that all organizations can use to communicate",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 12,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 217.82624561403497,
+        "r_x1": 453.74039999999985,
+        "r_y1": 217.82624561403497,
+        "r_x2": 453.74039999999985,
+        "r_y2": 207.93599999999992,
+        "r_x3": 71.99999999999994,
+        "r_y3": 207.93599999999992,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "internally and externally regarding their incident response plans and activities.",
+      "orig": "internally and externally regarding their incident response plans and activities.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 13,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 238.46624561403496,
+        "r_x1": 533.3351999999998,
+        "r_y1": 238.46624561403496,
+        "r_x2": 533.3351999999998,
+        "r_y2": 228.5759999999999,
+        "r_x3": 71.99999999999994,
+        "r_y3": 228.5759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "The scope of this publication differs significantly from previous versions. Because the details of",
+      "orig": "The scope of this publication differs significantly from previous versions. Because the details of",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 14,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 253.10624561403495,
+        "r_x1": 486.84839999999997,
+        "r_y1": 253.10624561403495,
+        "r_x2": 486.84839999999997,
+        "r_y2": 243.2159999999999,
+        "r_x3": 71.99999999999994,
+        "r_y3": 243.2159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "how to perform incident response activities change so often and vary so much across",
+      "orig": "how to perform incident response activities change so often and vary so much across",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 15,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 267.86624561403494,
+        "r_x1": 532.9751999999997,
+        "r_y1": 267.86624561403494,
+        "r_x2": 532.9751999999997,
+        "r_y2": 257.9759999999999,
+        "r_x3": 71.99999999999994,
+        "r_y3": 257.9759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "technologies, environments, and organizations, it is no longer feasible to capture and maintain",
+      "orig": "technologies, environments, and organizations, it is no longer feasible to capture and maintain",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 16,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 282.5062456140349,
+        "r_x1": 500.7660000000001,
+        "r_y1": 282.5062456140349,
+        "r_x2": 500.7660000000001,
+        "r_y2": 272.6159999999999,
+        "r_x3": 71.99999999999994,
+        "r_y3": 272.6159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "that information in a single static publication. Instead, this version focuses on improving",
+      "orig": "that information in a single static publication. Instead, this version focuses on improving",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 17,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 297.1462456140349,
+        "r_x1": 535.4459999999996,
+        "r_y1": 297.1462456140349,
+        "r_x2": 535.4459999999996,
+        "r_y2": 287.2559999999998,
+        "r_x3": 71.99999999999994,
+        "r_y3": 287.2559999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions",
+      "orig": "cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 18,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 311.7862456140349,
+        "r_x1": 435.1392,
+        "r_y1": 311.7862456140349,
+        "r_x2": 435.1392,
+        "r_y2": 301.8959999999998,
+        "r_x3": 71.99999999999994,
+        "r_y3": 301.8959999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "[CSF2.0] to better support an organization's incident response capabilities.",
+      "orig": "[CSF2.0] to better support an organization's incident response capabilities.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 19,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 332.4262456140349,
+        "r_x1": 512.8776,
+        "r_y1": 332.4262456140349,
+        "r_x2": 512.8776,
+        "r_y2": 322.5359999999998,
+        "r_x3": 71.99999999999994,
+        "r_y3": 322.5359999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Readers are encouraged to utilize other NIST resources in conjunction with this document,",
+      "orig": "Readers are encouraged to utilize other NIST resources in conjunction with this document,",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 20,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 347.0662456140351,
+        "r_x1": 522.7800000000001,
+        "r_y1": 347.0662456140351,
+        "r_x2": 522.7800000000001,
+        "r_y2": 337.17599999999976,
+        "r_x3": 71.99999999999994,
+        "r_y3": 337.17599999999976,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "including the CSF 2.0 publication and supplemental resources, the Incident Response project",
+      "orig": "including the CSF 2.0 publication and supplemental resources, the Incident Response project",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 21,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 361.7062456140351,
+        "r_x1": 523.4088,
+        "r_y1": 361.7062456140351,
+        "r_x2": 523.4088,
+        "r_y2": 351.816,
+        "r_x3": 72.0,
+        "r_y3": 351.816,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "page, and mappings to additional sources of information on implementing incident response",
+      "orig": "page, and mappings to additional sources of information on implementing incident response",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 22,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 376.3462456140351,
+        "r_x1": 533.46,
+        "r_y1": 376.3462456140351,
+        "r_x2": 533.46,
+        "r_y2": 366.456,
+        "r_x3": 72.0,
+        "r_y3": 366.456,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "considerations available through the NIST Cybersecurity and Privacy Reference Tool (CPRT). An",
+      "orig": "considerations available through the NIST Cybersecurity and Privacy Reference Tool (CPRT). An",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 23,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 390.9862456140351,
+        "r_x1": 528.756,
+        "r_y1": 390.9862456140351,
+        "r_x2": 528.756,
+        "r_y2": 381.096,
+        "r_x3": 72.0,
+        "r_y3": 381.096,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "example of a CPRT mapping is associating CSF 2.0 outcomes with NIST Special Publication (SP)",
+      "orig": "example of a CPRT mapping is associating CSF 2.0 outcomes with NIST Special Publication (SP)",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 24,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 405.6262456140351,
+        "r_x1": 520.6415999999998,
+        "r_y1": 405.6262456140351,
+        "r_x2": 520.6415999999998,
+        "r_y2": 395.736,
+        "r_x3": 72.0,
+        "r_y3": 395.736,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "800-53 controls that can be implemented to help achieve the outcomes. In this way, CSF 2.0",
+      "orig": "800-53 controls that can be implemented to help achieve the outcomes. In this way, CSF 2.0",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 25,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 420.2662456140351,
+        "r_x1": 507.258,
+        "r_y1": 420.2662456140351,
+        "r_x2": 507.258,
+        "r_y2": 410.376,
+        "r_x3": 72.0,
+        "r_y3": 410.376,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "provides a common language that facilitates access to a large number of other resources.",
+      "orig": "provides a common language that facilitates access to a large number of other resources.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 26,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 440.90624561403513,
+        "r_x1": 511.2467999999999,
+        "r_y1": 440.90624561403513,
+        "r_x2": 511.2467999999999,
+        "r_y2": 431.004,
+        "r_x3": 72.0,
+        "r_y3": 431.004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "This publication supersedes SP 800-61r2 (Revision 2), Computer Security Incident Handling",
+      "orig": "This publication supersedes SP 800-61r2 (Revision 2), Computer Security Incident Handling",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 27,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 455.5462456140351,
+        "r_x1": 169.704,
+        "r_y1": 455.5462456140351,
+        "r_x2": 169.704,
+        "r_y2": 445.644,
+        "r_x3": 72.0,
+        "r_y3": 445.644,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Guide [SP800-61r2].",
+      "orig": "Guide [SP800-61r2].",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT3",
+      "font_name": "/USDUGF+Calibri-Italic"
+    },
+    {
+      "index": 28,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 490.4674648700674,
+        "r_x1": 195.1559999999999,
+        "r_y1": 490.4674648700674,
+        "r_x2": 195.1559999999999,
+        "r_y2": 480.336,
+        "r_x3": 72.0,
+        "r_y3": 480.336,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "1.2. Document Structure",
+      "orig": "1.2. Document Structure",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 29,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 513.866245614035,
+        "r_x1": 504.4524000000001,
+        "r_y1": 513.866245614035,
+        "r_x2": 504.4524000000001,
+        "r_y2": 503.976,
+        "r_x3": 72.0,
+        "r_y3": 503.976,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "The remainder of this document is organized into the following sections and appendices:",
+      "orig": "The remainder of this document is organized into the following sections and appendices:",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 30,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.0,
+        "r_y0": 535.1062456140351,
+        "r_x1": 508.49639999999994,
+        "r_y1": 535.1062456140351,
+        "r_x2": 508.49639999999994,
+        "r_y2": 524.4000000000001,
+        "r_x3": 90.0,
+        "r_y3": 524.4000000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Section 2 discusses how incident response has evolved to become a critical part of",
+      "orig": "• Section 2 discusses how incident response has evolved to become a critical part of",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 31,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 107.99999999999994,
+        "r_y0": 549.866245614035,
+        "r_x1": 536.6099999999996,
+        "r_y1": 549.866245614035,
+        "r_x2": 536.6099999999996,
+        "r_y2": 539.976,
+        "r_x3": 107.99999999999994,
+        "r_y3": 539.976,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "cybersecurity risk management, as well as how the concept of the incident response life",
+      "orig": "cybersecurity risk management, as well as how the concept of the incident response life",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 32,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.0,
+        "r_y0": 564.506245614035,
+        "r_x1": 269.30279999999993,
+        "r_y1": 564.506245614035,
+        "r_x2": 269.30279999999993,
+        "r_y2": 554.616,
+        "r_x3": 108.0,
+        "r_y3": 554.616,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "cycle has changed to reflect that.",
+      "orig": "cycle has changed to reflect that.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 33,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.0,
+        "r_y0": 585.746245614035,
+        "r_x1": 505.7364000000002,
+        "r_y1": 585.746245614035,
+        "r_x2": 505.7364000000002,
+        "r_y2": 575.04,
+        "r_x3": 90.0,
+        "r_y3": 575.04,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Section 3 presents incident response recommendations and considerations for an",
+      "orig": "• Section 3 presents incident response recommendations and considerations for an",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 34,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 107.99999999999997,
+        "r_y0": 600.386245614035,
+        "r_x1": 498.29879999999997,
+        "r_y1": 600.386245614035,
+        "r_x2": 498.29879999999997,
+        "r_y2": 590.496,
+        "r_x3": 107.99999999999997,
+        "r_y3": 590.496,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "organization's cybersecurity risk management practices. They are organized and",
+      "orig": "organization's cybersecurity risk management practices. They are organized and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 35,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 108.0,
+        "r_y0": 615.026245614035,
+        "r_x1": 326.9004,
+        "r_y1": 615.026245614035,
+        "r_x2": 326.9004,
+        "r_y2": 605.136,
+        "r_x3": 108.0,
+        "r_y3": 605.136,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "documented as a CSF 2.0 Community Profile.",
+      "orig": "documented as a CSF 2.0 Community Profile.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 36,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.0,
+        "r_y0": 636.386245614035,
+        "r_x1": 463.58160000000004,
+        "r_y1": 636.386245614035,
+        "r_x2": 463.58160000000004,
+        "r_y2": 625.68,
+        "r_x3": 90.0,
+        "r_y3": 625.68,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• The References section lists references cited throughout this publication.",
+      "orig": "• The References section lists references cited throughout this publication.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 37,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 90.0,
+        "r_y0": 657.746245614035,
+        "r_x1": 503.54279999999983,
+        "r_y1": 657.746245614035,
+        "r_x2": 503.54279999999983,
+        "r_y2": 647.04,
+        "r_x3": 90.0,
+        "r_y3": 647.04,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Appendix A and Appendix B provide an acronyms list and a glossary, respectively.",
+      "orig": "• Appendix A and Appendix B provide an acronyms list and a glossary, respectively.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 38,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 89.99999999999989,
+        "r_y0": 678.866245614035,
+        "r_x1": 498.00959999999986,
+        "r_y1": 678.866245614035,
+        "r_x2": 498.00959999999986,
+        "r_y2": 668.16,
+        "r_x3": 89.99999999999989,
+        "r_y3": 668.16,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "• Appendix C contains a change log of the major changes made since the previous",
+      "orig": "• Appendix C contains a change log of the major changes made since the previous",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/C2_0",
+      "font_name": "/HWPUGF+SymbolMT"
+    },
+    {
+      "index": 39,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 107.99999999999983,
+        "r_y0": 693.626245614035,
+        "r_x1": 149.54279999999986,
+        "r_y1": 693.626245614035,
+        "r_x2": 149.54279999999986,
+        "r_y2": 683.736,
+        "r_x3": 107.99999999999983,
+        "r_y3": 683.736,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "revision.",
+      "orig": "revision.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    }
+  ],
+  "3": [
+    {
+      "index": 0,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 47.514183859649165,
+        "r_x1": 141.60446400000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 141.60446400000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 72.0,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "NIST SP 800-61r3",
+      "orig": "NIST SP 800-61r3",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 1,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 369.60480000000007,
+        "r_y0": 47.514183859649165,
+        "r_x1": 540.0682080000004,
+        "r_y1": 47.514183859649165,
+        "r_x2": 540.0682080000004,
+        "r_y2": 39.30528000000004,
+        "r_x3": 369.60480000000007,
+        "r_y3": 39.30528000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Incident Response Recommendations and",
+      "orig": "Incident Response Recommendations and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 2,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000011,
+        "r_y0": 59.635503859649134,
+        "r_x1": 113.5272240000001,
+        "r_y1": 59.635503859649134,
+        "r_x2": 113.5272240000001,
+        "r_y2": 51.42660000000001,
+        "r_x3": 72.00000000000011,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "April 2025",
+      "orig": "April 2025",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 3,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 364.0770000000001,
+        "r_y0": 59.635503859649134,
+        "r_x1": 539.9765760000004,
+        "r_y1": 59.635503859649134,
+        "r_x2": 539.9765760000004,
+        "r_y2": 51.42660000000001,
+        "r_x3": 364.0770000000001,
+        "r_y3": 51.42660000000001,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Considerations for Cyber Risk Management",
+      "orig": "Considerations for Cyber Risk Management",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 4,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 303.48036000000013,
+        "r_y0": 755.2717838596493,
+        "r_x1": 308.5300800000001,
+        "r_y1": 755.2717838596493,
+        "r_x2": 308.5300800000001,
+        "r_y2": 747.0628800000002,
+        "r_x3": 303.48036000000013,
+        "r_y3": 747.0628800000002,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "4",
+      "orig": "4",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 5,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 86.66746487006742,
+        "r_x1": 389.0063999999999,
+        "r_y1": 86.66746487006742,
+        "r_x2": 389.0063999999999,
+        "r_y2": 76.53600000000006,
+        "r_x3": 72.0,
+        "r_y3": 76.53600000000006,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "2. Incident Response as Part of Cybersecurity Risk Management",
+      "orig": "2. Incident Response as Part of Cybersecurity Risk Management",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 6,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 109.94624561403509,
+        "r_x1": 508.73760000000004,
+        "r_y1": 109.94624561403509,
+        "r_x2": 508.73760000000004,
+        "r_y2": 100.05600000000004,
+        "r_x3": 72.0,
+        "r_y3": 100.05600000000004,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "This section explains the fundamental concepts of incident response as an integral part of",
+      "orig": "This section explains the fundamental concepts of incident response as an integral part of",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 7,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 124.58624561403508,
+        "r_x1": 502.86000000000007,
+        "r_y1": 124.58624561403508,
+        "r_x2": 502.86000000000007,
+        "r_y2": 114.69600000000003,
+        "r_x3": 72.0,
+        "r_y3": 114.69600000000003,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "cybersecurity risk management. Section 2.1 explores the incident response life cycle and",
+      "orig": "cybersecurity risk management. Section 2.1 explores the incident response life cycle and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 8,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 139.22624561403507,
+        "r_x1": 512.3388000000001,
+        "r_y1": 139.22624561403507,
+        "r_x2": 512.3388000000001,
+        "r_y2": 129.336,
+        "r_x3": 72.0,
+        "r_y3": 129.336,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "proposes a new life cycle model based on CSF 2.0 Functions. Section 2.2 discusses incident",
+      "orig": "proposes a new life cycle model based on CSF 2.0 Functions. Section 2.2 discusses incident",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 9,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999994,
+        "r_y0": 153.86624561403505,
+        "r_x1": 532.5179999999996,
+        "r_y1": 153.86624561403505,
+        "r_x2": 532.5179999999996,
+        "r_y2": 143.976,
+        "r_x3": 71.99999999999994,
+        "r_y3": 143.976,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "response roles and responsibilities both inside and outside an organization. Finally, Section 2.3",
+      "orig": "response roles and responsibilities both inside and outside an organization. Finally, Section 2.3",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 10,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999989,
+        "r_y0": 168.62624561403504,
+        "r_x1": 419.54040000000003,
+        "r_y1": 168.62624561403504,
+        "r_x2": 419.54040000000003,
+        "r_y2": 158.736,
+        "r_x3": 71.99999999999989,
+        "r_y3": 158.736,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "briefly examines incident response policies, processes, and procedures.",
+      "orig": "briefly examines incident response policies, processes, and procedures.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 11,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999989,
+        "r_y0": 203.5474648700673,
+        "r_x1": 269.59199999999987,
+        "r_y1": 203.5474648700673,
+        "r_x2": 269.59199999999987,
+        "r_y2": 193.41599999999994,
+        "r_x3": 71.99999999999989,
+        "r_y3": 193.41599999999994,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "2.1. Incident Response Life Cycle Model",
+      "orig": "2.1. Incident Response Life Cycle Model",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 12,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999986,
+        "r_y0": 226.82624561403497,
+        "r_x1": 521.7695999999996,
+        "r_y1": 226.82624561403497,
+        "r_x2": 521.7695999999996,
+        "r_y2": 216.93599999999992,
+        "r_x3": 71.99999999999986,
+        "r_y3": 216.93599999999992,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Fig. 1 depicts the incident response life cycle model illustrated in the previous version of this",
+      "orig": "Fig. 1 depicts the incident response life cycle model illustrated in the previous version of this",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 13,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.9999999999998,
+        "r_y0": 241.46624561403496,
+        "r_x1": 195.86399999999978,
+        "r_y1": 241.46624561403496,
+        "r_x2": 195.86399999999978,
+        "r_y2": 231.5759999999999,
+        "r_x3": 71.9999999999998,
+        "r_y3": 231.5759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "publication [SP800-61r2].",
+      "orig": "publication [SP800-61r2].",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 14,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 203.28,
+        "r_y0": 454.03439584215596,
+        "r_x1": 408.51874799999996,
+        "r_y1": 454.03439584215596,
+        "r_x2": 408.51874799999996,
+        "r_y2": 445.62528000000003,
+        "r_x3": 203.28,
+        "r_y3": 445.62528000000003,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Fig. 1. Previous incident response life cycle model",
+      "orig": "Fig. 1. Previous incident response life cycle model",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT1",
+      "font_name": "/WNELIB+Calibri-Bold"
+    },
+    {
+      "index": 15,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 477.2662456140351,
+        "r_x1": 526.0247999999999,
+        "r_y1": 477.2662456140351,
+        "r_x2": 526.0247999999999,
+        "r_y2": 467.376,
+        "r_x3": 72.0,
+        "r_y3": 467.376,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "At that time, incidents were relatively rare, the scope of most incidents was narrow and well-",
+      "orig": "At that time, incidents were relatively rare, the scope of most incidents was narrow and well-",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 16,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 491.9062456140351,
+        "r_x1": 535.6643999999997,
+        "r_y1": 491.9062456140351,
+        "r_x2": 535.6643999999997,
+        "r_y2": 482.01599999999996,
+        "r_x3": 72.0,
+        "r_y3": 482.01599999999996,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "defined, and incident response and recovery was usually completed within a day or two. Under",
+      "orig": "defined, and incident response and recovery was usually completed within a day or two. Under",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 17,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 506.54624561403506,
+        "r_x1": 500.04839999999984,
+        "r_y1": 506.54624561403506,
+        "r_x2": 500.04839999999984,
+        "r_y2": 496.65599999999995,
+        "r_x3": 72.0,
+        "r_y3": 496.65599999999995,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "those conditions, it was realistic to treat incident response as a separate set of activities",
+      "orig": "those conditions, it was realistic to treat incident response as a separate set of activities",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 18,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 521.186245614035,
+        "r_x1": 537.7727999999996,
+        "r_y1": 521.186245614035,
+        "r_x2": 537.7727999999996,
+        "r_y2": 511.29599999999994,
+        "r_x3": 72.0,
+        "r_y3": 511.29599999999994,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "performed by a separate team of personnel and to depict all incident response activities as part",
+      "orig": "performed by a separate team of personnel and to depict all incident response activities as part",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 19,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 535.8262456140351,
+        "r_x1": 534.5375999999997,
+        "r_y1": 535.8262456140351,
+        "r_x2": 534.5375999999997,
+        "r_y2": 525.9359999999999,
+        "r_x3": 72.0,
+        "r_y3": 525.9359999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "of a circular life cycle. Formal post-incident activities would identify needed improvements and",
+      "orig": "of a circular life cycle. Formal post-incident activities would identify needed improvements and",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 20,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999997,
+        "r_y0": 550.466245614035,
+        "r_x1": 533.7707999999998,
+        "r_y1": 550.466245614035,
+        "r_x2": 533.7707999999998,
+        "r_y2": 540.5759999999999,
+        "r_x3": 71.99999999999997,
+        "r_y3": 540.5759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "feed them into the preparation stage, thus starting the cycle again. Incident response activities",
+      "orig": "feed them into the preparation stage, thus starting the cycle again. Incident response activities",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 21,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 71.99999999999997,
+        "r_y0": 565.106245614035,
+        "r_x1": 320.6616,
+        "r_y1": 565.106245614035,
+        "r_x2": 320.6616,
+        "r_y2": 555.2159999999999,
+        "r_x3": 71.99999999999997,
+        "r_y3": 555.2159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "were typically intermittent rather than continuous.",
+      "orig": "were typically intermittent rather than continuous.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 22,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 585.8662456140349,
+        "r_x1": 497.28,
+        "r_y1": 585.8662456140349,
+        "r_x2": 497.28,
+        "r_y2": 575.9759999999999,
+        "r_x3": 72.0,
+        "r_y3": 575.9759999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "However, the current state of incident response has greatly changed since then. Today,",
+      "orig": "However, the current state of incident response has greatly changed since then. Today,",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 23,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 600.5062456140349,
+        "r_x1": 510.612,
+        "r_y1": 600.5062456140349,
+        "r_x2": 510.612,
+        "r_y2": 590.6159999999999,
+        "r_x3": 72.0,
+        "r_y3": 590.6159999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "incidents occur frequently and cause far more damage. Recovering from them often takes",
+      "orig": "incidents occur frequently and cause far more damage. Recovering from them often takes",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 24,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 615.1462456140349,
+        "r_x1": 523.0908000000002,
+        "r_y1": 615.1462456140349,
+        "r_x2": 523.0908000000002,
+        "r_y2": 605.2559999999999,
+        "r_x3": 72.00000000000006,
+        "r_y3": 605.2559999999999,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "weeks or months due to their breadth, complexity, and dynamic nature. Incident response is",
+      "orig": "weeks or months due to their breadth, complexity, and dynamic nature. Incident response is",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 25,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 629.7862456140349,
+        "r_x1": 511.26,
+        "r_y1": 629.7862456140349,
+        "r_x2": 511.26,
+        "r_y2": 619.8959999999998,
+        "r_x3": 72.00000000000006,
+        "r_y3": 619.8959999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "now considered a critical part of cybersecurity risk management that should be integrated",
+      "orig": "now considered a critical part of cybersecurity risk management that should be integrated",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 26,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 644.4262456140349,
+        "r_x1": 535.176,
+        "r_y1": 644.4262456140349,
+        "r_x2": 535.176,
+        "r_y2": 634.5359999999998,
+        "r_x3": 72.00000000000006,
+        "r_y3": 634.5359999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "across organizational operations. The lessons learned during incident response should often be",
+      "orig": "across organizational operations. The lessons learned during incident response should often be",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 27,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.00000000000006,
+        "r_y0": 659.0662456140349,
+        "r_x1": 523.5708,
+        "r_y1": 659.0662456140349,
+        "r_x2": 523.5708,
+        "r_y2": 649.1759999999998,
+        "r_x3": 72.00000000000006,
+        "r_y3": 649.1759999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "shared as soon as they are identified, not delayed until after recovery concludes. Continuous",
+      "orig": "shared as soon as they are identified, not delayed until after recovery concludes. Continuous",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 28,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 673.706245614035,
+        "r_x1": 532.1843999999998,
+        "r_y1": 673.706245614035,
+        "r_x2": 532.1843999999998,
+        "r_y2": 663.8159999999998,
+        "r_x3": 72.0,
+        "r_y3": 663.8159999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "improvement is increasingly necessary for all facets of cybersecurity risk management in order",
+      "orig": "improvement is increasingly necessary for all facets of cybersecurity risk management in order",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 29,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 72.0,
+        "r_y0": 688.346245614035,
+        "r_x1": 230.66400000000004,
+        "r_y1": 688.346245614035,
+        "r_x2": 230.66400000000004,
+        "r_y2": 678.4559999999998,
+        "r_x3": 72.0,
+        "r_y3": 678.4559999999998,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "to keep up with modern threats.",
+      "orig": "to keep up with modern threats.",
+      "text_direction": "left_to_right",
+      "confidence": 1.0,
+      "from_ocr": false,
+      "rendering_mode": -1,
+      "widget": false,
+      "font_key": "/TT0",
+      "font_name": "/OTFPAR+Calibri"
+    },
+    {
+      "index": 30,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 425.3333333333333,
+        "r_y0": 324.0,
+        "r_x1": 454.6666666666667,
+        "r_y1": 324.0,
+        "r_x2": 454.6666666666667,
+        "r_y2": 296.0,
+        "r_x3": 425.3333333333333,
+        "r_y3": 296.0,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "今",
+      "orig": "今",
+      "text_direction": "left_to_right",
+      "confidence": 0.73427,
+      "from_ocr": true
+    },
+    {
+      "index": 31,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 326.33333333333337,
+        "r_y0": 332.3333333333333,
+        "r_x1": 376.0,
+        "r_y1": 332.3333333333333,
+        "r_x2": 376.0,
+        "r_y2": 324.0,
+        "r_x3": 326.33333333333337,
+        "r_y3": 324.0,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Containment",
+      "orig": "Containment",
+      "text_direction": "left_to_right",
+      "confidence": 0.99999,
+      "from_ocr": true
+    },
+    {
+      "index": 32,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 239.0,
+        "r_y0": 341.3333333333333,
+        "r_x1": 285.0,
+        "r_y1": 341.3333333333333,
+        "r_x2": 285.0,
+        "r_y2": 333.0,
+        "r_x3": 239.0,
+        "r_y3": 333.0,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Detection &",
+      "orig": "Detection &",
+      "text_direction": "left_to_right",
+      "confidence": 0.99941,
+      "from_ocr": true
+    },
+    {
+      "index": 33,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 328.66666666666663,
+        "r_y0": 341.6666666666667,
+        "r_x1": 372.33333333333337,
+        "r_y1": 341.6666666666667,
+        "r_x2": 372.33333333333337,
+        "r_y2": 332.3333333333333,
+        "r_x3": 328.66666666666663,
+        "r_y3": 332.3333333333333,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Eradication",
+      "orig": "Eradication",
+      "text_direction": "left_to_right",
+      "confidence": 0.99994,
+      "from_ocr": true
+    },
+    {
+      "index": 34,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 414.6666666666667,
+        "r_y0": 341.3333333333333,
+        "r_x1": 464.6666666666667,
+        "r_y1": 341.3333333333333,
+        "r_x2": 464.6666666666667,
+        "r_y2": 332.6666666666667,
+        "r_x3": 414.6666666666667,
+        "r_y3": 332.6666666666667,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Post-Incident",
+      "orig": "Post-Incident",
+      "text_direction": "left_to_right",
+      "confidence": 0.99938,
+      "from_ocr": true
+    },
+    {
+      "index": 35,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 150.33333333333334,
+        "r_y0": 351.0,
+        "r_x1": 196.0,
+        "r_y1": 351.0,
+        "r_x2": 196.0,
+        "r_y2": 341.3333333333333,
+        "r_x3": 150.33333333333334,
+        "r_y3": 341.3333333333333,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Preparation",
+      "orig": "Preparation",
+      "text_direction": "left_to_right",
+      "confidence": 0.99998,
+      "from_ocr": true
+    },
+    {
+      "index": 36,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 245.66666666666669,
+        "r_y0": 351.3333333333333,
+        "r_x1": 278.33333333333337,
+        "r_y1": 351.3333333333333,
+        "r_x2": 278.33333333333337,
+        "r_y2": 341.0,
+        "r_x3": 245.66666666666669,
+        "r_y3": 341.0,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Analysis",
+      "orig": "Analysis",
+      "text_direction": "left_to_right",
+      "confidence": 0.99998,
+      "from_ocr": true
+    },
+    {
+      "index": 37,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 328.33333333333337,
+        "r_y0": 351.0,
+        "r_x1": 372.66666666666663,
+        "r_y1": 351.0,
+        "r_x2": 372.66666666666663,
+        "r_y2": 341.0,
+        "r_x3": 328.33333333333337,
+        "r_y3": 341.0,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "& Recovery",
+      "orig": "& Recovery",
+      "text_direction": "left_to_right",
+      "confidence": 0.99928,
+      "from_ocr": true
+    },
+    {
+      "index": 38,
+      "rgba": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 255
+      },
+      "rect": {
+        "r_x0": 424.0,
+        "r_y0": 351.3333333333333,
+        "r_x1": 454.0,
+        "r_y1": 351.3333333333333,
+        "r_x2": 454.0,
+        "r_y2": 340.6666666666667,
+        "r_x3": 424.0,
+        "r_y3": 340.6666666666667,
+        "coord_origin": "TOPLEFT"
+      },
+      "text": "Activity",
+      "orig": "Activity",
+      "text_direction": "left_to_right",
+      "confidence": 0.99999,
+      "from_ocr": true
+    }
+  ]
+}

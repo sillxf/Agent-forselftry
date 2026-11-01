@@ -1,6 +1,6 @@
 {
   "audit_type": "AI-assisted source and annotation audit; not human approval",
-  "dataset_version": "rag-benchmark-v0.3-fact-audited-candidate",
+  "dataset_version": "rag-benchmark-v0.3.1-structure-corrected-candidate",
   "human_review_granted": false,
   "questions": {
     "rag_001": {
@@ -68,9 +68,7 @@
         "核对原始标题 1. Introduction；解析得到的 section_path 不等于可靠的原始层级。"
       ],
       "human_review_required": true,
-      "visible_source_section": [
-        "1. Introduction"
-      ]
+      "phase2_structure_fix": "已按图表容器/原始字体/编号恢复章节，更新 source section_path；证据语义、页范围、原问答不变。历史解析错误保留在旧实验快照。"
     },
     "rag_011": {
       "source_audit_note": "本地 brute_force.md Response 的三个动作均已标注；保留中文问题与英文语料，不改写为更容易检索的问法。",
@@ -111,13 +109,10 @@
         "确认 why 问题的三个事实是否均为必要答案内容；此次未删除任何事实。"
       ],
       "human_review_required": true,
-      "visible_source_section": [
-        "2. Incident Response as Part of Cybersecurity Risk Management",
-        "2.1. Incident Response Life Cycle Model"
-      ],
       "metadata_issue": "Diagram label Containment was treated as a native section heading and contaminates the later section path.",
       "phase2_fact_review": "保留三个事实：及时共享的建议、现代事件恢复的复杂性和时长、持续改进的必要性。后两项是 why 的理由，第一项是被解释的建议；请人工确认三者是否均应计入召回分母，未为提高 Recall 删除。",
-      "requested_evidence_scope": "reference_knowledge"
+      "requested_evidence_scope": "reference_knowledge",
+      "phase2_structure_fix": "已按图表容器/原始字体/编号恢复章节，更新 source section_path；证据语义、页范围、原问答不变。历史解析错误保留在旧实验快照。"
     },
     "rag_016": {
       "source_audit_note": "R004 / High / Block 是独立表格规则，事实 ID 改为 continued_rules-r004；共同表格来源不能共用事实 ID。",
@@ -169,11 +164,8 @@
         "实际标题应为 1.1 Purpose and Scope；当前解析路径受前一处非章节标题影响，需单列 Metadata 缺陷。"
       ],
       "human_review_required": true,
-      "visible_source_section": [
-        "1. Introduction",
-        "1.1. Purpose and Scope"
-      ],
-      "metadata_issue": "Parser carries the incident-definition line as a heading into Purpose and Scope; source heading is different."
+      "metadata_issue": "Parser carries the incident-definition line as a heading into Purpose and Scope; source heading is different.",
+      "phase2_structure_fix": "已按图表容器/原始字体/编号恢复章节，更新 source section_path；证据语义、页范围、原问答不变。历史解析错误保留在旧实验快照。"
     },
     "rag_023": {
       "source_audit_note": "Invoke-Command 与远程管理员权限分别被解析成两个相邻片段；两个事实都已标注。",

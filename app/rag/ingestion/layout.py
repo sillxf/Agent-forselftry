@@ -43,7 +43,14 @@ def docx_layouts(path: Path, items) -> dict[str, BlockLayout]:
 
 def item_layout(item, document, pages) -> BlockLayout:
     formatting = getattr(item, "formatting", None)
-    layout = BlockLayout(bold=bool(formatting and formatting.bold))
+    label = getattr(item.label, "value", item.label)
+    layout = BlockLayout(bold=bool(formatting and formatting.bold), source_label=label)
+    parent = getattr(item, "parent", None)
+    while parent is not None and parent.cref not in {"#/body", "#/furniture"}:
+        if parent.cref.startswith(("#/pictures/", "#/tables/")):
+            layout.container_type = "picture" if parent.cref.startswith("#/pictures/") else "table"
+            break
+        parent = parent.resolve(document).parent
     provenance = getattr(item, "prov", [])
     if not provenance:
         return layout

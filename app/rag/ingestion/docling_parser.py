@@ -1,12 +1,14 @@
 """Local mixed-format ingestion via Docling, preserving reading order and provenance."""
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from app.rag.models import ContentBlock, DocumentRecord, ParsedDocument
 from app.rag.ingestion.layout import docx_layouts, item_layout
+from app.rag.processing.structure_recovery import sentence_like_heading
 
 SUPPORTED_EXTENSIONS = frozenset({
     ".md", ".markdown", ".pdf", ".docx", ".xlsx", ".pptx", ".html", ".htm",
@@ -56,6 +58,7 @@ class DoclingParser:
             if full_page_ocr:
                 options.ocr_options.mode = OcrMode.FULL_PAGE
             options.do_table_structure = True
+            options.generate_parsed_pages = True  # Retain font/cell signals until blocks are built.
             options.generate_picture_images = True
             # Image inputs have no text layer; OCR the whole source.
             image_options = options.model_copy(deep=True)
@@ -90,13 +93,23 @@ class DoclingParser:
         for item, _ in items:
             label = getattr(item.label, "value", item.label)
             text = getattr(item, "text", "") or ""
+            layout = item_layout(item, doc, page_cells)
+            if item.self_ref in source_layouts:
+                layout = layout.model_copy(update=source_layouts[item.self_ref].model_dump(exclude_unset=True))
+            rejected_heading = (label in {"title", "section_header"}
+                                and (layout.container_type or layout.source_label == "caption"
+                                     or (path.suffix.lower() == ".pdf" and sentence_like_heading(text))))
             kind = label if label in {"page_header", "page_footer"} else "paragraph"
             heading_level = None
             columns, rows, image_path = [], None, None
             caption = None
-            if label in {"title", "section_header"}:
+            if label in {"title", "section_header"} and not rejected_heading:
                 kind = "heading"
                 level = 0 if label == "title" else getattr(item, "level", 1)
+                if path.suffix.lower() == ".pdf":
+                    numbering = re.match(r"^(\d{1,2}(?:\.\d{1,2})*)[.)]?\s+\S", text)
+                    if numbering:
+                        level = numbering[1].count(".") + 1
                 heading_level = level
                 while headings and headings[-1][0] >= level:
                     headings.pop()
@@ -151,7 +164,8 @@ class DoclingParser:
                 section_path=[text for _, text in headings], table_data=rows, table_columns=columns,
                 image_path=image_path, caption=caption, heading_level=heading_level,
                 list_marker=getattr(item, "marker", None) if kind == "list" else None,
-                layout=source_layouts.get(item.self_ref) or item_layout(item, doc, page_cells),
+                layout=layout,
+                structure_reason="docling_heading_rejected" if rejected_heading else None,
             ))
         if path.suffix.lower() in IMAGE_EXTENSIONS:
             # Preserve the input even when the OCR backend emits no PictureItem.

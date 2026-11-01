@@ -40,3 +40,11 @@
 - rag_026–030：缺少指定对象/事件资料，而非“检索出来的邻近参考知识等于事件答案”。
 - 题单、审核理由和勾选项见 review.md；人工批准前不能生成正式验收基线。
 - 后续 PDF 结构修复若改变解析路径，只更新来源定位并单列变更，不能修改证据语义或文档内容。
+
+## PDF 结构修复后的定位更新
+
+最终数据版本：`rag-benchmark-v0.3.1-structure-corrected-candidate`。最终 Dataset SHA-256：`04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7`。
+
+rag_010、rag_015（3 个事实）、rag_022（2 个事实）共 6 个来源位置更新。
+只修改 section_path；原始页范围、Block ID、引用、事实数量、相关等级及问答完全不变。
+详情见 phase2_structure_location_changes.json。历史错误路径仍在旧快照中保留，未覆盖。

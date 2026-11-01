@@ -26,10 +26,24 @@ def body_size(blocks: list[ContentBlock]) -> float | None:
     return median(sizes) if sizes else None
 
 
+def sentence_like_heading(text):
+    # A definition lead-in is body text even if the layout model labels it a header.
+    return bool(re.search(r"^(?:a|an|the)\b.+\b(?:is|are|means|defined as|consists of)\s*:?$", text.strip(), re.I))
+
+
+def heading_text(block):
+    if block.block_type == "list" and block.list_marker and not block.text.startswith(block.list_marker):
+        return f"{block.list_marker} {block.text}"
+    return block.text
+
+
 def heading_hint(block: ContentBlock, typical_size=None, following=None):
     """Return (level, confidence, reason), or leave an ambiguous paragraph alone."""
-    text = block.text.strip()
-    if block.block_type != "paragraph" or len(text) > 90 or not text:
+    text = heading_text(block).strip()
+    if (block.layout.container_type or block.layout.source_label == "caption"
+            or sentence_like_heading(text)):
+        return None
+    if block.block_type not in {"paragraph", "list"} or len(text) > 90 or not text:
         return None
     if text.endswith(("。", "！", "？", ".", "!", "?", ";", "；")):
         return None
@@ -111,7 +125,7 @@ class StructureRecovery:
                     continue
                 level, confidence, reason = hint
                 native = [heading for heading in stack if heading.structure_source == "original"]
-                if native:
+                if native and not (reason == "numbering" and NUMBERED.match(native[-1].text.strip())):
                     level += native[-1].heading_level
                 if reason == "bold" and block.layout.indent is not None and stack:
                     indented = [h for h in stack if h.layout.indent is not None]
@@ -121,6 +135,7 @@ class StructureRecovery:
                         peers = [h for h in indented if abs(h.layout.indent - block.layout.indent) <= 8]
                         if peers:
                             level = peers[-1].heading_level
+                block.text = heading_text(block)
                 block.block_type = "heading"
                 block.structure_source = "inferred"
                 block.structure_reason, block.structure_confidence = reason, confidence

@@ -19,6 +19,8 @@ class DocumentRecord(BaseModel):
 
 
 class BlockLayout(BaseModel):
+    source_label: str | None = None
+    container_type: Literal["picture", "table"] | None = None
     font_size: float | None = None
     line_height: float | None = None
     bold: bool = False

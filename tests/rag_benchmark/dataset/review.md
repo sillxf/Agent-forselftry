@@ -2,7 +2,7 @@
 
 **来源核对由 AI 完成，不等于人工相关性批准。所有待审核状态保持不变。**
 
-数据集：`rag-benchmark-v0.3-fact-audited-candidate`。JSONL 是标签的唯一事实来源。
+数据集：`rag-benchmark-v0.3.1-structure-corrected-candidate`。JSONL 是标签的唯一事实来源。
 一个 evidence_id 表示一项事实；alternatives 是相同事实的 OR 位置，不增加 Recall 分母。
 确认问题、答案、所有有效来源、分级、实际页码/章节后，由真实审核人填写 reviewer 并批准。
 
@@ -200,11 +200,8 @@ What kinds of observable occurrences are considered events in the NIST incident-
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：1–1
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`ff45e0e6-d8a0-516a-9adf-527fecaebd31`
-  - 解析章节：(none)
+  - 解析章节：1. Introduction
   - 原文：Within this document, an event is any observable occurrence that involves computing assets, including physical and virtual platforms, networks, services, and cloud environments.
-
-源文档可见章节：1. Introduction
-注意：解析章节可能错误；此字段是来源核对，不冒充当前索引已修复。
 
 - [ ] 人工确认：核对原始标题 1. Introduction；解析得到的 section_path 不等于可靠的原始层级。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
@@ -354,7 +351,7 @@ Why should lessons learned during incident response be shared before recovery ha
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：3–3
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`f6162960-05d9-52ae-9d47-a71be9bf79ae`
-  - 解析章节：2.1. Incident Response Life Cycle Model > Containment
+  - 解析章节：2. Incident Response as Part of Cybersecurity Risk Management > 2.1. Incident Response Life Cycle Model
   - 原文：The lessons learned during incident response should often be shared as soon as they are identified, not delayed until after recovery concludes.
 
 ### 事实 `nist-modern-incident-complexity`（grade=3）
@@ -362,7 +359,7 @@ Why should lessons learned during incident response be shared before recovery ha
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：3–3
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`f6162960-05d9-52ae-9d47-a71be9bf79ae`
-  - 解析章节：2.1. Incident Response Life Cycle Model > Containment
+  - 解析章节：2. Incident Response as Part of Cybersecurity Risk Management > 2.1. Incident Response Life Cycle Model
   - 原文：Today, incidents occur frequently and cause far more damage. Recovering from them often takes weeks or months due to their breadth, complexity, and dynamic nature.
 
 ### 事实 `nist-continuous-improvement`（grade=3）
@@ -370,11 +367,8 @@ Why should lessons learned during incident response be shared before recovery ha
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：3–3
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`f6162960-05d9-52ae-9d47-a71be9bf79ae`
-  - 解析章节：2.1. Incident Response Life Cycle Model > Containment
+  - 解析章节：2. Incident Response as Part of Cybersecurity Risk Management > 2.1. Incident Response Life Cycle Model
   - 原文：Continuous improvement is increasingly necessary for all facets of cybersecurity risk management in order to keep up with modern threats.
-
-源文档可见章节：2. Incident Response as Part of Cybersecurity Risk Management > 2.1. Incident Response Life Cycle Model
-注意：解析章节可能错误；此字段是来源核对，不冒充当前索引已修复。
 
 - [ ] 人工确认：确认时机主张及两项原因是否均为本题必要事实，并核准分级相关性；不能把图中的旧版生命周期结论当作现代建议。
 - [ ] 人工确认：确认 why 问题的三个事实是否均为必要答案内容；此次未删除任何事实。
@@ -579,7 +573,7 @@ Why does NIST Rev. 3 emphasize cybersecurity risk management instead of maintain
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：2–2
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`4a0e88f0-2723-5bcc-83f6-e62e853990cc`
-  - 解析章节：A cybersecurity incident (or simply incident) is
+  - 解析章节：1. Introduction > 1.1. Purpose and Scope
   - 原文：Because the details of how to perform incident response activities change so often and vary so much across technologies, environments, and organizations, it is no longer feasible to capture and maintain that information in a single static publication.
 
 ### 事实 `nist_sp80061r3_pp10-12-b14-2`（grade=3）
@@ -587,11 +581,8 @@ Why does NIST Rev. 3 emphasize cybersecurity risk management instead of maintain
 - 主位置：`nist_sp80061r3_pp10-12.pdf`；索引页范围：2–2
   - Document ID：`dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830`
   - 原始 Block：`4a0e88f0-2723-5bcc-83f6-e62e853990cc`
-  - 解析章节：A cybersecurity incident (or simply incident) is
+  - 解析章节：1. Introduction > 1.1. Purpose and Scope
   - 原文：this version focuses on improving cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions
-
-源文档可见章节：1. Introduction > 1.1. Purpose and Scope
-注意：解析章节可能错误；此字段是来源核对，不冒充当前索引已修复。
 
 - [ ] 人工确认：实际标题应为 1.1 Purpose and Scope；当前解析路径受前一处非章节标题影响，需单列 Metadata 缺陷。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
