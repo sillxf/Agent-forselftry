@@ -94,3 +94,11 @@ index. Candidate-question generation is not run as part of evaluation.
 - Archived schema versions can be parsed, but invalid shared fact IDs are rejected.
   Replaying a flawed historical experiment requires its own frozen implementation,
   not silently applying current validation/scoring rules to an old result.
+
+## 独立的 100 题扩展候选集
+
+本目录继续保留原 30 题，不用新题覆盖历史。扩展版见
+[`../v1/dataset/questions.jsonl`](../v1/dataset/questions.jsonl)。
+来源与覆盖审查见 [benchmark_expansion_report.md](benchmark_expansion_report.md)，
+逐题复核入口见 [benchmark_review_checklist.md](benchmark_review_checklist.md)。
+没有把 AI 自动审查改成人工审核通过。

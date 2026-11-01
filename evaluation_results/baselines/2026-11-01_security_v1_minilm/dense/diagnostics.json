@@ -1,0 +1,2843 @@
+[
+  {
+    "question_id": "rag_001",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "mitre_attack_v17_1-b1-1"
+    ],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b1-1"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "540ea747-41da-59ee-8cfc-15ec29520986"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_002",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b20-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b20-1"
+    ],
+    "positive_children_outside_top_k": [
+      "1ba1ee21-8635-5711-915e-773ef0e6ad7c"
+    ],
+    "positive_parents_outside_top_k": [
+      "8d2245ff-cf7d-5822-8ae2-e4c407bd1b66"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_003",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b33-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b33-1"
+    ],
+    "positive_children_outside_top_k": [
+      "e016b4d5-29d9-5a36-be29-4f56084c78a0"
+    ],
+    "positive_parents_outside_top_k": [
+      "8b837f1c-14d7-5dcd-9edf-d3abf30be71e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_004",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "owasp_wstg_v4_2_sql_injection-b1-1"
+    ],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b1-1"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "61bc522d-f34a-5400-b47a-c5aeaacfe63c"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_005",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_006",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_007",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_008",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_009",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_010",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_011",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "brute_force-b10-1",
+      "brute_force-b11-2",
+      "brute_force-b12-3"
+    ],
+    "missing_parent_facts": [
+      "brute_force-b10-1",
+      "brute_force-b11-2",
+      "brute_force-b12-3"
+    ],
+    "positive_children_outside_top_k": [
+      "248d9fc6-316f-5292-a86c-63d04e9b9451"
+    ],
+    "positive_parents_outside_top_k": [
+      "7ebc4ee3-1714-5c74-9e35-f5d19230bf88"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_012",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_013",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_014",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "sql_injection-b10-2",
+      "sql_injection-b11-3",
+      "sql_injection-b9-1"
+    ],
+    "missing_parent_facts": [
+      "sql_injection-b10-2",
+      "sql_injection-b11-3",
+      "sql_injection-b9-1"
+    ],
+    "positive_children_outside_top_k": [
+      "733dd27d-f7b2-5223-a487-c6d64e95c953"
+    ],
+    "positive_parents_outside_top_k": [
+      "1747a098-7f98-52a7-bd3b-c2c5669649f7"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_015",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_016",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_017",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_018",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_019",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_020",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "owasp_wstg_v4_2_sql_injection-b34-1"
+    ],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b34-1"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "169a848c-8109-55ab-9ffb-e2b303a46899"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_021",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      3,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_022",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_023",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_024",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_025",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_026",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_027",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_028",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_029",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_030",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_031",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b7-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b7-1"
+    ],
+    "positive_children_outside_top_k": [
+      "540ea747-41da-59ee-8cfc-15ec29520986"
+    ],
+    "positive_parents_outside_top_k": [
+      "f70e6204-af37-518f-be29-0cbd58e13320"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_032",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b6-2"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b6-2"
+    ],
+    "positive_children_outside_top_k": [
+      "540ea747-41da-59ee-8cfc-15ec29520986"
+    ],
+    "positive_parents_outside_top_k": [
+      "f70e6204-af37-518f-be29-0cbd58e13320"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_033",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b35-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b35-1"
+    ],
+    "positive_children_outside_top_k": [
+      "e016b4d5-29d9-5a36-be29-4f56084c78a0",
+      "f0f5770b-8bea-5b73-bb4b-ad730c26d616"
+    ],
+    "positive_parents_outside_top_k": [
+      "8b837f1c-14d7-5dcd-9edf-d3abf30be71e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_034",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b34-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b34-1"
+    ],
+    "positive_children_outside_top_k": [
+      "e016b4d5-29d9-5a36-be29-4f56084c78a0"
+    ],
+    "positive_parents_outside_top_k": [
+      "8b837f1c-14d7-5dcd-9edf-d3abf30be71e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_035",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-spray-pattern"
+    ],
+    "missing_parent_facts": [
+      "security-v1-spray-pattern"
+    ],
+    "positive_children_outside_top_k": [
+      "a86ab3a8-f027-57a3-bc09-c937479def13"
+    ],
+    "positive_parents_outside_top_k": [
+      "07675d5f-341f-5969-b7f3-e3a64e13fe53"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_036",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-spray-lockout"
+    ],
+    "missing_parent_facts": [
+      "security-v1-spray-lockout"
+    ],
+    "positive_children_outside_top_k": [
+      "a86ab3a8-f027-57a3-bc09-c937479def13"
+    ],
+    "positive_parents_outside_top_k": [
+      "07675d5f-341f-5969-b7f3-e3a64e13fe53"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_037",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-stuffing-cause",
+      "security-v1-stuffing-reuse"
+    ],
+    "missing_parent_facts": [
+      "security-v1-stuffing-cause",
+      "security-v1-stuffing-reuse"
+    ],
+    "positive_children_outside_top_k": [
+      "36853e34-7332-5f56-8ea0-e332da85f44d"
+    ],
+    "positive_parents_outside_top_k": [
+      "45577f31-35ac-500f-9a8b-264d449c4e74"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_038",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-pth-auth"
+    ],
+    "missing_parent_facts": [
+      "security-v1-pth-auth"
+    ],
+    "positive_children_outside_top_k": [
+      "8e4f8476-2f4d-54a6-a935-1cddda286fe2"
+    ],
+    "positive_parents_outside_top_k": [
+      "3913ce83-0ca1-5e65-a251-6f343a80272c"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_039",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-lsass-memory"
+    ],
+    "missing_parent_facts": [
+      "security-v1-lsass-memory"
+    ],
+    "positive_children_outside_top_k": [
+      "1b52342b-7799-5baa-a127-ea516d9ab74c"
+    ],
+    "positive_parents_outside_top_k": [
+      "0e5580ba-f3a3-5a3c-9306-e7d2bde9adf4"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_040",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-run-logon"
+    ],
+    "missing_parent_facts": [
+      "security-v1-run-logon"
+    ],
+    "positive_children_outside_top_k": [
+      "ba588ae9-482e-51dd-8605-e6b75b1337dc"
+    ],
+    "positive_parents_outside_top_k": [
+      "f14b8453-0013-5cbd-9ded-aff710992602"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_041",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-run-context"
+    ],
+    "missing_parent_facts": [
+      "security-v1-run-context"
+    ],
+    "positive_children_outside_top_k": [
+      "ba588ae9-482e-51dd-8605-e6b75b1337dc"
+    ],
+    "positive_parents_outside_top_k": [
+      "f14b8453-0013-5cbd-9ded-aff710992602"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_042",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-batch"
+    ],
+    "missing_parent_facts": [
+      "security-v1-batch"
+    ],
+    "positive_children_outside_top_k": [
+      "6a29f214-e18d-5ae4-bf72-ecd05eb83a58"
+    ],
+    "positive_parents_outside_top_k": [
+      "f0dbe279-2b81-52fa-90c0-c84611c53b5d"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_043",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "missing_parent_facts": [
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "positive_children_outside_top_k": [
+      "39d7bf82-4c36-5ba7-82d2-cbb8e32e257b"
+    ],
+    "positive_parents_outside_top_k": [
+      "95883c1e-59f8-531d-aa8e-ac8e9d7808f7"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_044",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-js-runtime"
+    ],
+    "missing_parent_facts": [
+      "security-v1-js-runtime"
+    ],
+    "positive_children_outside_top_k": [
+      "8081b163-afaf-5190-8226-c16ddc053d81"
+    ],
+    "positive_parents_outside_top_k": [
+      "9d47d608-d805-5891-ad50-ad0f34344a0a"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_045",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-mshta-files",
+      "security-v1-mshta-outside"
+    ],
+    "missing_parent_facts": [
+      "security-v1-mshta-files",
+      "security-v1-mshta-outside"
+    ],
+    "positive_children_outside_top_k": [
+      "fa6c2f5e-6148-5af7-b0d2-ea447803511f"
+    ],
+    "positive_parents_outside_top_k": [
+      "2864d8d1-f727-578b-88f9-87d841924062"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_046",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-winrm-user"
+    ],
+    "missing_parent_facts": [
+      "security-v1-winrm-user"
+    ],
+    "positive_children_outside_top_k": [
+      "47b8c8c2-0e92-5b69-9a3a-3d0a425725ae"
+    ],
+    "positive_parents_outside_top_k": [
+      "b0bf46a1-c169-5a30-b7d1-a6ece3e0dc1e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_047",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-winrm-service"
+    ],
+    "missing_parent_facts": [
+      "security-v1-winrm-service"
+    ],
+    "positive_children_outside_top_k": [
+      "47b8c8c2-0e92-5b69-9a3a-3d0a425725ae"
+    ],
+    "positive_parents_outside_top_k": [
+      "b0bf46a1-c169-5a30-b7d1-a6ece3e0dc1e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_048",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-service-manager"
+    ],
+    "missing_parent_facts": [
+      "security-v1-service-manager"
+    ],
+    "positive_children_outside_top_k": [
+      "6aa74254-fee3-5268-86fa-ee5667f9071b"
+    ],
+    "positive_parents_outside_top_k": [
+      "bf338212-9279-51d0-9db3-05b4f175f706"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_049",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b17-1"
+    ],
+    "missing_parent_facts": [
+      "owasp_wstg_v4_2_sql_injection-b17-1"
+    ],
+    "positive_children_outside_top_k": [
+      "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+    ],
+    "positive_parents_outside_top_k": [
+      "45d84c94-be45-5847-b9d0-29499a927de4"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_050",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "owasp_wstg_v4_2_sql_injection-b16-2"
+    ],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b16-2"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "0c4540cf-878d-5a57-a41a-a0fc9a97b554",
+      "4a868b13-59ee-51d9-8ec2-8f9151d99c8c",
+      "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_051",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b34-1"
+    ],
+    "missing_parent_facts": [
+      "owasp_wstg_v4_2_sql_injection-b34-1"
+    ],
+    "positive_children_outside_top_k": [
+      "169a848c-8109-55ab-9ffb-e2b303a46899"
+    ],
+    "positive_parents_outside_top_k": [
+      "524cbd2f-44a7-5b8d-84c3-4f42fbe6e727"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_052",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "nist_sp80061r3_pp10-12-b38-1"
+    ],
+    "missing_parent_facts": [
+      "nist_sp80061r3_pp10-12-b38-1"
+    ],
+    "positive_children_outside_top_k": [
+      "51188538-dd65-5146-bbd3-16f43a125923"
+    ],
+    "positive_parents_outside_top_k": [
+      "fdc3f284-d67e-56da-8d91-55a30dca7346"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_053",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "nist_sp80061r3_pp10-12-b14-1"
+    ],
+    "missing_parent_facts": [
+      "nist_sp80061r3_pp10-12-b14-1"
+    ],
+    "positive_children_outside_top_k": [
+      "5346b998-ec8f-5fc3-a273-44d80e07adbb"
+    ],
+    "positive_parents_outside_top_k": [
+      "51488a7b-8c0e-5155-8a98-ed8ea166729c"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_054",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "malware-b17-1",
+      "malware-b18-2"
+    ],
+    "missing_parent_facts": [
+      "malware-b17-1",
+      "malware-b18-2"
+    ],
+    "positive_children_outside_top_k": [
+      "e09b2a00-f3d5-5eb6-bc06-82b042f21798"
+    ],
+    "positive_parents_outside_top_k": [
+      "dba1b75f-5cf7-51a7-9393-5daee9064a55"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_055",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_056",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_057",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_058",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_059",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "security-v1-winrm-service"
+    ],
+    "missing_child_facts": [
+      "security-v1-winrm-service"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "47b8c8c2-0e92-5b69-9a3a-3d0a425725ae"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_060",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_061",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_062",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_063",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_064",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_065",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_066",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "security-v1-obfuscation-purpose"
+    ],
+    "missing_child_facts": [
+      "security-v1-obfuscation-purpose"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "8b443a9a-15ef-5c89-9cd1-ad155513876c"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_067",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_068",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_069",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_070",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_071",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_072",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_073",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_074",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_075",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_076",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-spray-lockout",
+      "security-v1-spray-pattern"
+    ],
+    "missing_parent_facts": [
+      "security-v1-spray-lockout",
+      "security-v1-spray-pattern"
+    ],
+    "positive_children_outside_top_k": [
+      "a86ab3a8-f027-57a3-bc09-c937479def13"
+    ],
+    "positive_parents_outside_top_k": [
+      "07675d5f-341f-5969-b7f3-e3a64e13fe53"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_077",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-stuffing-cause",
+      "security-v1-stuffing-reuse"
+    ],
+    "missing_parent_facts": [
+      "security-v1-stuffing-cause",
+      "security-v1-stuffing-reuse"
+    ],
+    "positive_children_outside_top_k": [
+      "36853e34-7332-5f56-8ea0-e332da85f44d"
+    ],
+    "positive_parents_outside_top_k": [
+      "45577f31-35ac-500f-9a8b-264d449c4e74"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_078",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-pth-auth"
+    ],
+    "missing_parent_facts": [
+      "security-v1-pth-auth"
+    ],
+    "positive_children_outside_top_k": [
+      "8e4f8476-2f4d-54a6-a935-1cddda286fe2"
+    ],
+    "positive_parents_outside_top_k": [
+      "3913ce83-0ca1-5e65-a251-6f343a80272c"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_079",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-lsass-memory"
+    ],
+    "missing_parent_facts": [
+      "security-v1-lsass-memory"
+    ],
+    "positive_children_outside_top_k": [
+      "1b52342b-7799-5baa-a127-ea516d9ab74c"
+    ],
+    "positive_parents_outside_top_k": [
+      "0e5580ba-f3a3-5a3c-9306-e7d2bde9adf4"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_080",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "missing_parent_facts": [
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "positive_children_outside_top_k": [
+      "39d7bf82-4c36-5ba7-82d2-cbb8e32e257b"
+    ],
+    "positive_parents_outside_top_k": [
+      "95883c1e-59f8-531d-aa8e-ac8e9d7808f7"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_081",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-js-engine"
+    ],
+    "missing_parent_facts": [
+      "security-v1-js-engine"
+    ],
+    "positive_children_outside_top_k": [
+      "8081b163-afaf-5190-8226-c16ddc053d81"
+    ],
+    "positive_parents_outside_top_k": [
+      "9d47d608-d805-5891-ad50-ad0f34344a0a"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_082",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-batch"
+    ],
+    "missing_parent_facts": [
+      "security-v1-batch"
+    ],
+    "positive_children_outside_top_k": [
+      "6a29f214-e18d-5ae4-bf72-ecd05eb83a58"
+    ],
+    "positive_parents_outside_top_k": [
+      "f0dbe279-2b81-52fa-90c0-c84611c53b5d"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_083",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-winrm-service"
+    ],
+    "missing_parent_facts": [
+      "security-v1-winrm-service"
+    ],
+    "positive_children_outside_top_k": [
+      "47b8c8c2-0e92-5b69-9a3a-3d0a425725ae"
+    ],
+    "positive_parents_outside_top_k": [
+      "b0bf46a1-c169-5a30-b7d1-a6ece3e0dc1e"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_084",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-run-context",
+      "security-v1-run-logon"
+    ],
+    "missing_parent_facts": [
+      "security-v1-run-context",
+      "security-v1-run-logon"
+    ],
+    "positive_children_outside_top_k": [
+      "ba588ae9-482e-51dd-8605-e6b75b1337dc"
+    ],
+    "positive_parents_outside_top_k": [
+      "f14b8453-0013-5cbd-9ded-aff710992602"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_085",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-service-psexec"
+    ],
+    "missing_parent_facts": [
+      "security-v1-service-psexec"
+    ],
+    "positive_children_outside_top_k": [
+      "6aa74254-fee3-5268-86fa-ee5667f9071b"
+    ],
+    "positive_parents_outside_top_k": [
+      "bf338212-9279-51d0-9db3-05b4f175f706"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_086",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "mitre_attack_v17_1-b7-1"
+    ],
+    "missing_parent_facts": [
+      "mitre_attack_v17_1-b7-1"
+    ],
+    "positive_children_outside_top_k": [
+      "540ea747-41da-59ee-8cfc-15ec29520986"
+    ],
+    "positive_parents_outside_top_k": [
+      "f70e6204-af37-518f-be29-0cbd58e13320"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_087",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-obfuscation-purpose"
+    ],
+    "missing_parent_facts": [
+      "security-v1-obfuscation-purpose"
+    ],
+    "positive_children_outside_top_k": [
+      "8b443a9a-15ef-5c89-9cd1-ad155513876c"
+    ],
+    "positive_parents_outside_top_k": [
+      "31b05eda-ff77-5d2e-be4d-7e02398ce997"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_088",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b17-1"
+    ],
+    "missing_parent_facts": [
+      "owasp_wstg_v4_2_sql_injection-b17-1"
+    ],
+    "positive_children_outside_top_k": [
+      "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+    ],
+    "positive_parents_outside_top_k": [
+      "45d84c94-be45-5847-b9d0-29499a927de4"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_089",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "owasp_wstg_v4_2_sql_injection-b16-2"
+    ],
+    "missing_child_facts": [
+      "owasp_wstg_v4_2_sql_injection-b16-2"
+    ],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [
+      "0c4540cf-878d-5a57-a41a-a0fc9a97b554",
+      "4a868b13-59ee-51d9-8ec2-8f9151d99c8c",
+      "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+    ],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_090",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-mshta-files",
+      "security-v1-mshta-outside"
+    ],
+    "missing_parent_facts": [
+      "security-v1-mshta-files",
+      "security-v1-mshta-outside"
+    ],
+    "positive_children_outside_top_k": [
+      "fa6c2f5e-6148-5af7-b0d2-ea447803511f"
+    ],
+    "positive_parents_outside_top_k": [
+      "2864d8d1-f727-578b-88f9-87d841924062"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_091",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_092",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_093",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_094",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_095",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [],
+    "missing_parent_facts": [],
+    "positive_children_outside_top_k": [],
+    "positive_parents_outside_top_k": [],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": {
+      "returned_neighbour_context": true,
+      "answer_support_in_frozen_corpus": false,
+      "false_analogy_risk": "requires_case_review",
+      "knowledge_gap_detection": "not_evaluated",
+      "incorrect_answer_or_refusal": "not_evaluated_retrieval_only"
+    }
+  },
+  {
+    "question_id": "rag_096",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-lsass-memory",
+      "security-v1-pth-auth"
+    ],
+    "missing_parent_facts": [
+      "security-v1-lsass-memory",
+      "security-v1-pth-auth"
+    ],
+    "positive_children_outside_top_k": [
+      "1b52342b-7799-5baa-a127-ea516d9ab74c",
+      "8e4f8476-2f4d-54a6-a935-1cddda286fe2"
+    ],
+    "positive_parents_outside_top_k": [
+      "0e5580ba-f3a3-5a3c-9306-e7d2bde9adf4",
+      "3913ce83-0ca1-5e65-a251-6f343a80272c"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_097",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-run-logon",
+      "security-v1-winrm-service"
+    ],
+    "missing_parent_facts": [
+      "security-v1-run-logon",
+      "security-v1-winrm-service"
+    ],
+    "positive_children_outside_top_k": [
+      "47b8c8c2-0e92-5b69-9a3a-3d0a425725ae",
+      "ba588ae9-482e-51dd-8605-e6b75b1337dc"
+    ],
+    "positive_parents_outside_top_k": [
+      "b0bf46a1-c169-5a30-b7d1-a6ece3e0dc1e",
+      "f14b8453-0013-5cbd-9ded-aff710992602"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_098",
+    "child_only_facts": [],
+    "parent_only_facts": [
+      "nist_sp80061r3_pp10-12-b38-1"
+    ],
+    "missing_child_facts": [
+      "malware-b14-1",
+      "malware-b17-1",
+      "malware-b18-2",
+      "nist_sp80061r3_pp10-12-b38-1"
+    ],
+    "missing_parent_facts": [
+      "malware-b14-1",
+      "malware-b17-1",
+      "malware-b18-2"
+    ],
+    "positive_children_outside_top_k": [
+      "51188538-dd65-5146-bbd3-16f43a125923",
+      "e09b2a00-f3d5-5eb6-bc06-82b042f21798"
+    ],
+    "positive_parents_outside_top_k": [
+      "dba1b75f-5cf7-51a7-9393-5daee9064a55"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_099",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "security-v1-js-engine",
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "missing_parent_facts": [
+      "security-v1-js-engine",
+      "security-v1-vba-event",
+      "security-v1-vba-macros"
+    ],
+    "positive_children_outside_top_k": [
+      "39d7bf82-4c36-5ba7-82d2-cbb8e32e257b",
+      "8081b163-afaf-5190-8226-c16ddc053d81"
+    ],
+    "positive_parents_outside_top_k": [
+      "95883c1e-59f8-531d-aa8e-ac8e9d7808f7",
+      "9d47d608-d805-5891-ad50-ad0f34344a0a"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  },
+  {
+    "question_id": "rag_100",
+    "child_only_facts": [],
+    "parent_only_facts": [],
+    "missing_child_facts": [
+      "brute_force-b10-1",
+      "brute_force-b11-2",
+      "brute_force-b12-3",
+      "security-v1-spray-pattern"
+    ],
+    "missing_parent_facts": [
+      "brute_force-b10-1",
+      "brute_force-b11-2",
+      "brute_force-b12-3",
+      "security-v1-spray-pattern"
+    ],
+    "positive_children_outside_top_k": [
+      "248d9fc6-316f-5292-a86c-63d04e9b9451",
+      "a86ab3a8-f027-57a3-bc09-c937479def13"
+    ],
+    "positive_parents_outside_top_k": [
+      "07675d5f-341f-5969-b7f3-e3a64e13fe53",
+      "7ebc4ee3-1714-5c74-9e35-f5d19230bf88"
+    ],
+    "nonrelevant_child_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "nonrelevant_parent_ranks": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unanswerable_assessment": null
+  }
+]

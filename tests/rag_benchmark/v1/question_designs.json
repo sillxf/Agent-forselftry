@@ -1,0 +1,1496 @@
+{
+  "authoring": "AI-authored candidate questions; no human approvals",
+  "legacy_metadata": {
+    "rag_001": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_001"
+    },
+    "rag_002": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_002"
+    },
+    "rag_003": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_003"
+    },
+    "rag_004": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_004"
+    },
+    "rag_005": {
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "detection_rules",
+      "question_type": "mixed_terms",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_005"
+    },
+    "rag_006": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_006"
+    },
+    "rag_007": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_007"
+    },
+    "rag_008": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_008"
+    },
+    "rag_009": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_009"
+    },
+    "rag_010": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_010"
+    },
+    "rag_011": {
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "zh_to_en",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_011"
+    },
+    "rag_012": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_012"
+    },
+    "rag_013": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_013"
+    },
+    "rag_014": {
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "mixed_terms",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_014"
+    },
+    "rag_015": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_015"
+    },
+    "rag_016": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "detection_rules",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_016"
+    },
+    "rag_017": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "detection_rules",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_017"
+    },
+    "rag_018": {
+      "language": "en",
+      "document_language": "mixed",
+      "topic": "incident_response",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_018"
+    },
+    "rag_019": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_019"
+    },
+    "rag_020": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_020"
+    },
+    "rag_021": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_021"
+    },
+    "rag_022": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_022"
+    },
+    "rag_023": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "english",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_023"
+    },
+    "rag_024": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_024"
+    },
+    "rag_025": {
+      "language": "en",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "paraphrase",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_025"
+    },
+    "rag_026": {
+      "language": "en",
+      "document_language": "none",
+      "topic": "knowledge_gap",
+      "question_type": "unanswerable",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_026"
+    },
+    "rag_027": {
+      "language": "en",
+      "document_language": "none",
+      "topic": "knowledge_gap",
+      "question_type": "unanswerable",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_027"
+    },
+    "rag_028": {
+      "language": "zh",
+      "document_language": "none",
+      "topic": "knowledge_gap",
+      "question_type": "unanswerable",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_028"
+    },
+    "rag_029": {
+      "language": "en",
+      "document_language": "none",
+      "topic": "knowledge_gap",
+      "question_type": "unanswerable",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_029"
+    },
+    "rag_030": {
+      "language": "en",
+      "document_language": "none",
+      "topic": "knowledge_gap",
+      "question_type": "unanswerable",
+      "design_note": "Inherited verbatim from the legacy 30-question candidate; this categorization is AI metadata, not human approval.",
+      "query_family": "legacy-rag_030"
+    }
+  },
+  "legacy_translations": {
+    "rag_005": "What severity and response are specified for detection rule R002?",
+    "rag_011": "Which actions are recommended by the local response checklist for brute-force alerts?",
+    "rag_014": "Which prevention measures are listed in the local SQL injection knowledge document?",
+    "rag_028": "Which production accounts did the attacker actually log into in the alert on 2026-10-31?"
+  },
+  "new_questions": [
+    {
+      "id": "rag_031",
+      "question": "为什么取证时没有发现新落地的程序文件，也不能排除系统自带脚本环境曾下载并运行过程序？",
+      "english_query": "Why does the absence of a newly written executable not rule out the built-in scripting environment downloading and running one?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "PowerShell can download executables and run them in memory without touching disk.",
+      "evidence_keys": [
+        "ps-memory"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "ps-memory",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_032",
+      "question": "用系统自带脚本环境连接另一台机器执行任务时，资料要求连接方具备什么权限？",
+      "english_query": "What permission does the guidance require when using the built-in scripting environment to connect to another machine?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Administrator permissions are required for PowerShell connections to remote systems.",
+      "evidence_keys": [
+        "ps-admin"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "ps-admin",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_033",
+      "question": "离职人员的身份被重新使用时，为什么这种活动可能更不容易被本人察觉？",
+      "english_query": "Why can reuse of a departed employee account be less likely to be noticed by its original owner?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "The original account user is absent and cannot notice anomalous activity.",
+      "evidence_keys": [
+        "dormant"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "dormant",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_034",
+      "question": "攻击者已经拿到合法登录凭据时，还可能绕过资源上的哪类限制？",
+      "english_query": "What resource restrictions can an attacker bypass after acquiring legitimate credentials?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Compromised credentials may bypass access controls.",
+      "evidence_keys": [
+        "controls"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "controls",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_035",
+      "question": "大量身份各只收到少数几个常见口令的尝试，这种横着铺开的登录行为属于什么模式？",
+      "english_query": "What pattern tries one or a few common passwords across many identities instead of concentrating on one?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Password spraying uses one or a small list of common passwords against many accounts.",
+      "evidence_keys": [
+        "spray-pattern"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "spray-pattern",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_036",
+      "question": "把同一个候选口令轮流用于许多身份，而不是对单个身份反复更换口令，这样做是在规避什么？",
+      "english_query": "What does spreading a password across many accounts seek to avoid compared with many passwords against one account?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Account lockouts caused by many guesses against one account.",
+      "evidence_keys": [
+        "spray-lockout"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "spray-lockout",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_037",
+      "question": "某个站点泄露的成对用户名和口令，为什么会被攻击者带到另一个站点再试一次？",
+      "english_query": "Why can username/password pairs leaked by one site be useful against a different site?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "zh_to_en",
+      "difficulty": "hard",
+      "expected_answer": "Credential stuffing exploits overlap and users reusing passwords across personal and business accounts.",
+      "evidence_keys": [
+        "stuffing-reuse",
+        "stuffing-cause"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "stuffing-cause|stuffing-reuse",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_038",
+      "question": "攻击者不认识用户实际输入的密码字符，却拿着窃取的摘要完成认证，这属于哪种做法？",
+      "english_query": "What technique authenticates with a stolen hash without knowing the cleartext characters?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Pass the Hash authenticates as a user without the cleartext password.",
+      "evidence_keys": [
+        "pth-auth"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "pth-auth",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_039",
+      "question": "用户已经在主机上登录后，系统哪个安全进程的内存会保存可被窃取的凭据材料？",
+      "english_query": "Which security process stores credential material in memory after a user logs on?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "LSASS process memory stores credential materials after logon.",
+      "evidence_keys": [
+        "lsass-memory"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lsass-memory",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_040",
+      "question": "攻击者把程序挂到用户登录时自动执行的位置，这个触发时机是什么？",
+      "english_query": "When does a program referenced by Registry run keys or a startup folder execute?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "persistence",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "It executes when a user logs in.",
+      "evidence_keys": [
+        "run-logon"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "run-logon",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_041",
+      "question": "借助用户登录自启动位置运行的程序，通常继承谁的身份上下文和权限？",
+      "english_query": "Whose execution context and permissions are used by programs launched through logon startup entries?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "persistence",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "The user context and associated account permissions.",
+      "evidence_keys": [
+        "run-context"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "run-context",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_042",
+      "question": "管理员希望把重复工作保存为可按顺序运行、还能写条件和循环的命令清单，哪种文件机制能做到？",
+      "english_query": "What file mechanism stores sequential commands with conditions and loops for repetitive administration?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Windows command-shell batch files such as .bat or .cmd.",
+      "evidence_keys": [
+        "batch"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "batch",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_043",
+      "question": "办公文档为什么能像小程序一样，在事件触发时自动执行主机任务？",
+      "english_query": "What built-in document mechanism allows event-driven automation of host tasks?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "hard",
+      "expected_answer": "VBA is event-driven and lets Office documents contain task-automation macros.",
+      "evidence_keys": [
+        "vba-event",
+        "vba-macros"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "vba-event|vba-macros",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_044",
+      "question": "一种常被当成网页专用的脚本语言，能否在没有浏览器页面的运行环境里执行？",
+      "english_query": "Can the scripting language usually associated with webpages execute outside a browser?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Yes; JavaScript can execute in runtime environments outside the browser.",
+      "evidence_keys": [
+        "js-runtime"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "js-runtime",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_045",
+      "question": "不打开浏览器窗口也能运行网页应用格式的独立程序，资料指的是哪个系统工具？",
+      "english_query": "Which utility executes standalone HTML applications outside the browser?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "hard",
+      "expected_answer": "Mshta.exe executes HTA files; HTAs run outside the browser.",
+      "evidence_keys": [
+        "mshta-files",
+        "mshta-outside"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "mshta-files|mshta-outside",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_046",
+      "question": "攻击者借用合法账号连接远程管理机制后，会以哪个登录身份执行后续操作？",
+      "english_query": "In the remote-management description, whose identity is used after connecting through valid accounts?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "WinRM interactions can perform actions as the logged-on user.",
+      "evidence_keys": [
+        "winrm-user"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "winrm-user",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_047",
+      "question": "远程管理机制除了启动程序，还允许对目标系统的哪两类配置进行修改？",
+      "english_query": "Besides running executables, what two kinds of target configuration can the remote-management service modify?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "WinRM can modify the Registry and services.",
+      "evidence_keys": [
+        "winrm-service"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "winrm-service",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_048",
+      "question": "不是向用户登录目录放文件，而是借助系统服务管理接口来启动载荷，这对应什么执行机制？",
+      "english_query": "What execution mechanism abuses service management instead of placing files in a logon startup folder?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Service Execution abuses the Windows service control manager.",
+      "evidence_keys": [
+        "service-manager"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "service-manager",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_049",
+      "question": "数据库结果不直接出现在页面中时，测试者可以通过什么观察方式重建信息？",
+      "english_query": "How can information be reconstructed when the database does not directly return query data?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Inferential/blind injection sends requests and observes database behaviour.",
+      "evidence_keys": [
+        "blind"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "blind",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_050",
+      "question": "查询结果不沿着提交输入的页面返回，而是另走一条通信通道，这属于哪种取数方式？",
+      "english_query": "Which information-retrieval approach returns query data through a channel different from the injection channel?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Out-of-band SQL injection retrieves data through a different channel.",
+      "evidence_keys": [
+        "oob"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "oob",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_051",
+      "question": "梳理可能进入数据库查询的入口时，只查看可见输入框够不够，还应考虑哪些隐藏或附带的请求内容？",
+      "english_query": "When identifying query inputs, are visible form controls sufficient, or should hidden fields and request metadata also be considered?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Include hidden POST fields, HTTP headers and cookies, and test input fields separately.",
+      "evidence_keys": [
+        "input-surface"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "input-surface",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_052",
+      "question": "恢复工作尚未结束时，已经发现的改进经验应当什么时候分享，而不是等待什么节点？",
+      "english_query": "When should already identified response lessons be shared, and which milestone should not delay them?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Share lessons as soon as identified; do not delay until recovery concludes.",
+      "evidence_keys": [
+        "lessons"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lessons",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_053",
+      "question": "为什么一本固定出版物不再适合维护所有事件处置的操作细节？",
+      "english_query": "Why is a single static publication unsuitable for maintaining all detailed response procedures?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "zh_to_en",
+      "difficulty": "medium",
+      "expected_answer": "Response details change often and vary across technologies, environments and organizations.",
+      "evidence_keys": [
+        "static-publication"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "static-publication",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_054",
+      "question": "恶意软件事件处理完后，已受影响的认证材料和用于恢复的数据副本分别该如何处理？",
+      "english_query": "How should compromised credentials and restoration copies be handled in malware response?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "zh_to_en",
+      "difficulty": "hard",
+      "expected_answer": "Reset compromised credentials and restore from clean backups.",
+      "evidence_keys": [
+        "reset",
+        "backup"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "backup|reset",
+      "design_note": "Natural Chinese security-analysis query over English evidence; no technique ID in query."
+    },
+    {
+      "id": "rag_055",
+      "question": "cmd.exe 的 .bat/.cmd 文件能否承载顺序任务、条件分支和循环？",
+      "english_query": "Can cmd.exe batch files contain sequential tasks, conditions and loops?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "Yes; batch files support sequential commands, conditionals and loops.",
+      "evidence_keys": [
+        "batch"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "batch",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_056",
+      "question": "VBA macro 为什么能让 Office 文档自动执行宿主机上的任务？",
+      "english_query": "How do VBA macros let Office documents automate host tasks?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "hard",
+      "expected_answer": "VBA is event-driven and enables task-automation macros in documents.",
+      "evidence_keys": [
+        "vba-event",
+        "vba-macros"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "vba-event|vba-macros",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_057",
+      "question": "JScript 在 Windows 里由哪个脚本引擎解释，而不只是被当成网页代码？",
+      "english_query": "Which engine interprets JScript in Windows?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "The Windows Script engine.",
+      "evidence_keys": [
+        "js-engine"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "js-engine",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_058",
+      "question": "mshta.exe 对 .hta 文件的作用是什么？这些应用一定要在浏览器内部执行吗？",
+      "english_query": "What does mshta.exe do with .hta files, and must they execute inside a browser?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "hard",
+      "expected_answer": "It executes HTA files, which run outside the browser.",
+      "evidence_keys": [
+        "mshta-files",
+        "mshta-outside"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "mshta-files|mshta-outside",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_059",
+      "question": "WinRM 不只是 PowerShell 命令名，它在系统里同时代表哪两种东西？",
+      "english_query": "What two things does WinRM name in Windows, beyond a PowerShell invocation?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "Both a Windows service and a remote interaction protocol.",
+      "evidence_keys": [
+        "winrm-service"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "winrm-service",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_060",
+      "question": "PsExec 借助 SCM 创建临时 Windows service 后，利用什么机制运行命令或载荷？",
+      "english_query": "How can PsExec run commands or payloads using the SCM?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "By creating a temporary Windows service through the service control manager API.",
+      "evidence_keys": [
+        "service-psexec"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "service-psexec",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_061",
+      "question": "Password Spraying 中为什么每个 account 的尝试次数会刻意压低？",
+      "english_query": "Why does password spraying avoid many guesses on a single account?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "To avoid account lockouts from many passwords against one account.",
+      "evidence_keys": [
+        "spray-lockout"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "spray-lockout",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_062",
+      "question": "Credential Stuffing 使用 breach dump 后，认证失败和账号锁定方面有什么风险？",
+      "english_query": "What login-policy risk does credential stuffing introduce?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "It can cause numerous authentication failures and account lockouts depending on login failure policies.",
+      "evidence_keys": [
+        "stuffing-lockout"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "stuffing-lockout",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_063",
+      "question": "Pass-the-Hash 能否在不知道 cleartext password 的情况下冒用身份认证？",
+      "english_query": "Can Pass the Hash authenticate without knowing the cleartext password?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "Yes; it authenticates using a password hash without access to the cleartext password.",
+      "evidence_keys": [
+        "pth-auth"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "pth-auth",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_064",
+      "question": "LSASS 的 credential material 在什么事件后生成并保留在进程内存？",
+      "english_query": "After what event does the system generate and store credential material in LSASS memory?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "After a user logs on.",
+      "evidence_keys": [
+        "lsass-memory"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lsass-memory",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_065",
+      "question": "Registry Run key 引用的程序在 logon 时运行，继承的是哪个 account context？",
+      "english_query": "Which account context is used by a program launched by a Registry Run key at logon?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "persistence",
+      "question_type": "mixed_terms",
+      "difficulty": "hard",
+      "expected_answer": "The user context and its associated permissions.",
+      "evidence_keys": [
+        "run-logon",
+        "run-context"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "run-context|run-logon",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_066",
+      "question": "Base64 或 URL encoding 在 Command Obfuscation 中起什么作用？",
+      "english_query": "What role can Base64 or URL encoding play in command obfuscation?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "mixed_terms",
+      "difficulty": "hard",
+      "expected_answer": "They are built-in forms of obfuscation that make command strings and patterns harder to signature and analyze.",
+      "evidence_keys": [
+        "obfuscation-purpose",
+        "obfuscation-encoding"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "obfuscation-encoding|obfuscation-purpose",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_067",
+      "question": "LSASS memory dump 可以只在目标主机当场分析吗，还是能够离线转移分析？",
+      "english_query": "Can an LSASS process-memory dump be analyzed on another local system?",
+      "language": "mixed",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "mixed_terms",
+      "difficulty": "medium",
+      "expected_answer": "LSASS memory can be dumped from the target and analyzed on a local system.",
+      "evidence_keys": [
+        "lsass-dump"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lsass-dump",
+      "design_note": "Chinese analysis wording with retained operational English terms; require the cited fact, not keyword neighbours."
+    },
+    {
+      "id": "rag_068",
+      "question": "有没有办法让一个程序在用户开始新的桌面会话时自己再次运行，而不需要用户亲手启动它？",
+      "english_query": "How can a program return automatically when a person starts a new desktop session, without that person launching it?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "persistence",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "A Registry run key or startup-folder entry launches the referenced program when the user logs in.",
+      "evidence_keys": [
+        "run-logon"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "run-logon",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_069",
+      "question": "How can a stolen secret stand in for the characters its owner originally typed when a service authenticates that owner?",
+      "english_query": "How can a stolen secret stand in for the characters its owner originally typed when a service authenticates that owner?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "Pass the Hash authenticates with a stolen password hash without the cleartext password.",
+      "evidence_keys": [
+        "pth-auth"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "pth-auth",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support."
+    },
+    {
+      "id": "rag_070",
+      "question": "为什么攻击者会把一份很短的猜测清单分散用于许多身份，而不把所有尝试押在同一个身份上？",
+      "english_query": "Why might an intruder spread the same short guess list over many identities rather than spend all attempts on one?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "To avoid account lockouts associated with many password guesses against a single account.",
+      "evidence_keys": [
+        "spray-lockout"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "spray-lockout",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_071",
+      "question": "Why can an unrelated website leak create a second opportunity to enter an organization through employee logins?",
+      "english_query": "Why can an unrelated website leak create a second opportunity to enter an organization through employee logins?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "Users may reuse passwords across personal and business accounts; credential stuffing exploits this overlap.",
+      "evidence_keys": [
+        "stuffing-reuse",
+        "stuffing-cause"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "stuffing-cause|stuffing-reuse",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support."
+    },
+    {
+      "id": "rag_072",
+      "question": "办公文件原本只是内容载体，哪种内置能力能让它在特定事件发生时自动执行主机任务？",
+      "english_query": "Which document feature can turn an otherwise passive office file into an event-driven task automator?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "VBA macros in Office documents can automate host tasks.",
+      "evidence_keys": [
+        "vba-event",
+        "vba-macros"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "vba-event|vba-macros",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_073",
+      "question": "Why is a login using an existing identity not enough to conclude that access controls kept an intruder out?",
+      "english_query": "Why is a login using an existing identity not enough to conclude that access controls kept an intruder out?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "account_abuse",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "Compromised credentials may be used to bypass access controls.",
+      "evidence_keys": [
+        "controls"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "controls",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support."
+    },
+    {
+      "id": "rag_074",
+      "question": "不去猜用户的口令，而是寻找已经登录的会话留下的秘密，应查看哪里，又需要哪类身份才能提取？",
+      "english_query": "Where are secrets left by an already signed-in session kept, and which privileged identities can harvest them?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "Credential materials are stored in LSASS process memory and can be harvested by an administrative user or SYSTEM.",
+      "evidence_keys": [
+        "lsass-memory",
+        "lsass-rights"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lsass-memory|lsass-rights",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_075",
+      "question": "How can a saved command list repeat desktop tasks and make choices without an operator typing every instruction again?",
+      "english_query": "How can a saved command list repeat desktop tasks and make choices without an operator typing every instruction again?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "paraphrase",
+      "difficulty": "hard",
+      "expected_answer": "Windows command-shell batch files provide sequential commands, conditionals and loops.",
+      "evidence_keys": [
+        "batch"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "batch",
+      "design_note": "Indirect description omits the source heading; preserve exact fact support."
+    },
+    {
+      "id": "rag_076",
+      "question": "What account attack tries the same few common passwords across identities to avoid per-account lockout?",
+      "english_query": "What account attack tries the same few common passwords across identities to avoid per-account lockout?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Password spraying.",
+      "evidence_keys": [
+        "spray-pattern",
+        "spray-lockout"
+      ],
+      "hard_negative_sources": [
+        "attack_t1110_004.md"
+      ],
+      "query_family": "spray-lockout|spray-pattern",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_077",
+      "question": "攻击者已经拿到外站泄露的成对账号密码，再利用用户复用习惯登录目标；这与轮试常见口令的模式如何区分？",
+      "english_query": "Which technique reuses breached username/password pairs rather than guessing common passwords?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Credential stuffing uses breach-dump credentials and password overlap.",
+      "evidence_keys": [
+        "stuffing-reuse",
+        "stuffing-cause"
+      ],
+      "hard_negative_sources": [
+        "attack_t1110_003.md"
+      ],
+      "query_family": "stuffing-cause|stuffing-reuse",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_078",
+      "question": "Which technique uses a stolen hash to authenticate directly rather than cracking it back into a password?",
+      "english_query": "Which technique uses a stolen hash to authenticate directly rather than cracking it back into a password?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Pass the Hash authenticates without the cleartext password.",
+      "evidence_keys": [
+        "pth-auth"
+      ],
+      "hard_negative_sources": [
+        "mitre_attack_v17_1.md",
+        "attack_t1003_001.md"
+      ],
+      "query_family": "pth-auth",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_079",
+      "question": "分析目标是获取已登录会话留下的内存凭据，而不是使用现成摘要去认证；应该聚焦哪个安全进程？",
+      "english_query": "Which security process should be examined to collect credential materials after logon, rather than use hashes for authentication?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "LSASS process memory.",
+      "evidence_keys": [
+        "lsass-memory"
+      ],
+      "hard_negative_sources": [
+        "attack_t1550_002.md"
+      ],
+      "query_family": "lsass-memory",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_080",
+      "question": "Which language mechanism best fits event-driven macros embedded in Office documents rather than webpage scripts?",
+      "english_query": "Which language mechanism best fits event-driven macros embedded in Office documents rather than webpage scripts?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Visual Basic for Applications (VBA) macros.",
+      "evidence_keys": [
+        "vba-event",
+        "vba-macros"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_007.md",
+        "attack_t1218_005.md"
+      ],
+      "query_family": "vba-event|vba-macros",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_081",
+      "question": "线索明确是由系统脚本引擎解释的微软脚本实现，而非办公文档宏；应找哪个实现？",
+      "english_query": "Which Microsoft scripting implementation is interpreted by the Windows Script engine rather than Office macros?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "JScript.",
+      "evidence_keys": [
+        "js-engine"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_005.md"
+      ],
+      "query_family": "js-engine",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_082",
+      "question": "Which mechanism uses batch files with sequential commands and loops rather than PowerShell cmdlets?",
+      "english_query": "Which mechanism uses batch files with sequential commands and loops rather than PowerShell cmdlets?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Windows command-shell batch files (.bat or .cmd).",
+      "evidence_keys": [
+        "batch"
+      ],
+      "hard_negative_sources": [
+        "mitre_attack_v17_1.md"
+      ],
+      "query_family": "batch",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_083",
+      "question": "需要远程修改注册表和服务，线索指向一种同名的系统服务与协议，而非仅仅本地命令解释器；它是什么？",
+      "english_query": "Which service and protocol allows remote Registry and service modification, rather than just local shell execution?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Windows Remote Management (WinRM).",
+      "evidence_keys": [
+        "winrm-service"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_003.md",
+        "attack_t1569_002.md"
+      ],
+      "query_family": "winrm-service",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_084",
+      "question": "What persistence location executes a referenced program at user logon with that user permissions rather than via a temporary remote service?",
+      "english_query": "What persistence location executes a referenced program at user logon with that user permissions rather than via a temporary remote service?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "persistence",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Registry run keys or startup folders.",
+      "evidence_keys": [
+        "run-logon",
+        "run-context"
+      ],
+      "hard_negative_sources": [
+        "attack_t1569_002.md"
+      ],
+      "query_family": "run-context|run-logon",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_085",
+      "question": "载荷通过服务管理器的临时服务运行，不是等用户下次登录；资料中对应什么执行方式？",
+      "english_query": "What execution method runs payloads through a temporary managed Windows service instead of waiting for user logon?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Service Execution; PsExec can create a temporary service through the SCM API.",
+      "evidence_keys": [
+        "service-psexec"
+      ],
+      "hard_negative_sources": [
+        "attack_t1547_001.md"
+      ],
+      "query_family": "service-psexec",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_086",
+      "question": "Which system scripting environment can download and execute programs in memory without touching disk, unlike batch-file or logon-entry mechanisms?",
+      "english_query": "Which system scripting environment can download and execute programs in memory without touching disk, unlike batch-file or logon-entry mechanisms?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "PowerShell.",
+      "evidence_keys": [
+        "ps-memory"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_003.md",
+        "attack_t1547_001.md"
+      ],
+      "query_family": "ps-memory",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_087",
+      "question": "现象是把原来可识别的命令改写成难以签名的编码或字符串形式，而不是换一个脚本宿主；这描述哪种目的？",
+      "english_query": "What purpose is served by encoding or rewriting a command so its strings are harder to signature, rather than selecting another script host?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Command obfuscation impedes signature matching and analysis.",
+      "evidence_keys": [
+        "obfuscation-purpose"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_003.md",
+        "mitre_attack_v17_1.md"
+      ],
+      "query_family": "obfuscation-purpose",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_088",
+      "question": "Which retrieval method reconstructs information from database behaviour without receiving it through another channel?",
+      "english_query": "Which retrieval method reconstructs information from database behaviour without receiving it through another channel?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Inferential/blind SQL injection.",
+      "evidence_keys": [
+        "blind"
+      ],
+      "hard_negative_sources": [
+        "sql_injection.md"
+      ],
+      "query_family": "blind",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_089",
+      "question": "目标将查询结果交给另一条通信链路，而不是直接显示在提交输入的原页面；应归为哪一类？",
+      "english_query": "Which SQL injection category retrieves results over another channel rather than the original injection page?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "sql_injection",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Out-of-band.",
+      "evidence_keys": [
+        "oob"
+      ],
+      "hard_negative_sources": [
+        "sql_injection.md"
+      ],
+      "query_family": "oob",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword."
+    },
+    {
+      "id": "rag_090",
+      "question": "Which trusted Windows utility executes standalone HTA files rather than Office document macros?",
+      "english_query": "Which trusted Windows utility executes standalone HTA files rather than Office document macros?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "technique_confusion",
+      "difficulty": "hard",
+      "expected_answer": "Mshta.exe.",
+      "evidence_keys": [
+        "mshta-files",
+        "mshta-outside"
+      ],
+      "hard_negative_sources": [
+        "attack_t1059_005.md",
+        "attack_t1059_007.md"
+      ],
+      "query_family": "mshta-files|mshta-outside",
+      "design_note": "Discriminate the described behaviour from a declared similar but wrong source; do not credit a shared keyword. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_091",
+      "question": "我们租户当前到底连续失败几次才会锁定账号，锁定持续多少分钟？",
+      "english_query": "What exact failed-login threshold and lockout duration are currently configured in our tenant?",
+      "language": "zh",
+      "document_language": "none",
+      "topic": "authentication",
+      "question_type": "unanswerable",
+      "difficulty": "hard",
+      "expected_answer": "Insufficient evidence: the corpus contains guidance, not the required tenant configuration, acquisition output, host audit log, alert record or action-execution result.",
+      "evidence_keys": [],
+      "hard_negative_sources": [],
+      "query_family": "gap-rag_091",
+      "design_note": "Corpus contains related guidance but no tenant/host-specific observations; empty positive evidence is intentional."
+    },
+    {
+      "id": "rag_092",
+      "question": "这次内存采集实际提取到了哪些域用户的密码摘要？",
+      "english_query": "Which domain-user password hashes were actually extracted in this memory acquisition?",
+      "language": "zh",
+      "document_language": "none",
+      "topic": "credential_access",
+      "question_type": "unanswerable",
+      "difficulty": "hard",
+      "expected_answer": "Insufficient evidence: the corpus contains guidance, not the required tenant configuration, acquisition output, host audit log, alert record or action-execution result.",
+      "evidence_keys": [],
+      "hard_negative_sources": [],
+      "query_family": "gap-rag_092",
+      "design_note": "Corpus contains related guidance but no tenant/host-specific observations; empty positive evidence is intentional."
+    },
+    {
+      "id": "rag_093",
+      "question": "终端 SEC-WS-17 上的登录自启动条目是谁在什么时间写入的？",
+      "english_query": "Who wrote the logon startup entry on SEC-WS-17, and at what exact time?",
+      "language": "zh",
+      "document_language": "none",
+      "topic": "persistence",
+      "question_type": "unanswerable",
+      "difficulty": "hard",
+      "expected_answer": "Insufficient evidence: the corpus contains guidance, not the required tenant configuration, acquisition output, host audit log, alert record or action-execution result.",
+      "evidence_keys": [],
+      "hard_negative_sources": [],
+      "query_family": "gap-rag_093",
+      "design_note": "Corpus contains related guidance but no tenant/host-specific observations; empty positive evidence is intentional."
+    },
+    {
+      "id": "rag_094",
+      "question": "昨晚触发编码脚本告警的外部来源地址具体是多少？",
+      "english_query": "What exact external source address triggered last night encoded-script alert?",
+      "language": "zh",
+      "document_language": "none",
+      "topic": "execution",
+      "question_type": "unanswerable",
+      "difficulty": "hard",
+      "expected_answer": "Insufficient evidence: the corpus contains guidance, not the required tenant configuration, acquisition output, host audit log, alert record or action-execution result.",
+      "evidence_keys": [],
+      "hard_negative_sources": [],
+      "query_family": "gap-rag_094",
+      "design_note": "Corpus contains related guidance but no tenant/host-specific observations; empty positive evidence is intentional."
+    },
+    {
+      "id": "rag_095",
+      "question": "本次主机隔离是否已经由值班人员实际执行成功？",
+      "english_query": "Did the on-call analyst actually complete host isolation successfully in this incident?",
+      "language": "zh",
+      "document_language": "none",
+      "topic": "incident_response",
+      "question_type": "unanswerable",
+      "difficulty": "hard",
+      "expected_answer": "Insufficient evidence: the corpus contains guidance, not the required tenant configuration, acquisition output, host audit log, alert record or action-execution result.",
+      "evidence_keys": [],
+      "hard_negative_sources": [],
+      "query_family": "gap-rag_095",
+      "design_note": "Corpus contains related guidance but no tenant/host-specific observations; empty positive evidence is intentional."
+    },
+    {
+      "id": "rag_096",
+      "question": "Separate two stages: which process stores credential materials after logon, and how can captured hashes then authenticate without the cleartext password?",
+      "english_query": "Separate two stages: which process stores credential materials after logon, and how can captured hashes then authenticate without the cleartext password?",
+      "language": "en",
+      "document_language": "en",
+      "topic": "credential_access",
+      "question_type": "multi_document",
+      "difficulty": "hard",
+      "expected_answer": "LSASS process memory stores credential materials after logon; Pass the Hash authenticates as a user without the cleartext password.",
+      "evidence_keys": [
+        "lsass-memory",
+        "pth-auth"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "lsass-memory|pth-auth",
+      "design_note": "Every listed fact is necessary; no single source can fully answer both parts. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_097",
+      "question": "请分别说明用户登录自启动程序的触发时机，以及远程管理机制可修改的两类系统配置，不要把两种机制混为一谈。",
+      "english_query": "State the trigger for logon startup programs and the two configuration types modifiable through remote management; distinguish the mechanisms.",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "remote_execution",
+      "question_type": "multi_document",
+      "difficulty": "hard",
+      "expected_answer": "Run-key/startup programs execute at user logon; WinRM can modify the Registry and services.",
+      "evidence_keys": [
+        "run-logon",
+        "winrm-service"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "run-logon|winrm-service",
+      "design_note": "Every listed fact is necessary; no single source can fully answer both parts."
+    },
+    {
+      "id": "rag_098",
+      "question": "针对恶意软件事件，网络、认证材料和恢复副本应分别如何处理；已经发现的经验教训是否要等恢复结束才分享？",
+      "english_query": "For malware response, how should networking, credentials and restoration copies be handled, and should identified lessons wait until recovery ends?",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "incident_response",
+      "question_type": "multi_document",
+      "difficulty": "hard",
+      "expected_answer": "Isolate affected systems from the network, reset compromised credentials and restore clean backups; share identified lessons promptly rather than wait for recovery completion.",
+      "evidence_keys": [
+        "isolate",
+        "reset",
+        "backup",
+        "lessons"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "backup|isolate|lessons|reset",
+      "design_note": "Every listed fact is necessary; no single source can fully answer both parts."
+    },
+    {
+      "id": "rag_099",
+      "question": "Distinguish event-driven Office document macros from the Microsoft scripting implementation interpreted by the Windows Script engine.",
+      "english_query": "Distinguish event-driven Office document macros from the Microsoft scripting implementation interpreted by the Windows Script engine.",
+      "language": "en",
+      "document_language": "en",
+      "topic": "execution",
+      "question_type": "multi_document",
+      "difficulty": "hard",
+      "expected_answer": "VBA is event-driven and provides Office macros; JScript is interpreted by the Windows Script engine.",
+      "evidence_keys": [
+        "vba-event",
+        "vba-macros",
+        "js-engine"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "js-engine|vba-event|vba-macros",
+      "design_note": "Every listed fact is necessary; no single source can fully answer both parts. Balanced-language design revision: fixed ID rotation, not selected by retrieval success; answer/evidence unchanged."
+    },
+    {
+      "id": "rag_100",
+      "question": "先说明少量常见口令遍历许多身份的行为模式，再列出本地暴力破解清单的三项建议；不要声称每项措施与某个指标一一对应。",
+      "english_query": "Explain the pattern of a few common passwords across many identities, then list all three local brute-force response actions without inventing one-to-one indicator mappings.",
+      "language": "zh",
+      "document_language": "en",
+      "topic": "authentication",
+      "question_type": "multi_document",
+      "difficulty": "hard",
+      "expected_answer": "Password spraying uses a small password set against many accounts; the local guide recommends blocking suspicious IPs, enabling MFA and investigating affected accounts.",
+      "evidence_keys": [
+        "spray-pattern",
+        "block-ip",
+        "mfa",
+        "investigate"
+      ],
+      "hard_negative_sources": [],
+      "query_family": "block-ip|investigate|mfa|spray-pattern",
+      "design_note": "Every listed fact is necessary; no single source can fully answer both parts."
+    }
+  ],
+  "dataset_version": "security-rag-benchmark-v1-100-candidate-r2"
+}

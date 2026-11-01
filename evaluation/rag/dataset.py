@@ -48,6 +48,21 @@ class Question(BaseModel):
     rationale: str = Field(min_length=1)
     review_status: Literal["pending", "approved"] = "pending"
     reviewer: str | None = None
+    language: Literal["en", "zh", "mixed"] | None = None
+    document_language: Literal["en", "zh", "mixed", "none"] | None = None
+    topic: str | None = None
+    question_type: Literal["english", "zh_to_en", "mixed_terms", "paraphrase", "technique_confusion", "unanswerable", "multi_document"] | None = None
+    design_note: str | None = None
+    query_family: str | None = None
+    hard_negative_sources: list[str] = Field(default_factory=list)
+
+    @property
+    def question_id(self):
+        return self.id
+
+    @property
+    def evidence_ids(self):
+        return [e.evidence_id for e in self.relevant_evidence if e.relevance_grade > 0]
 
     @model_validator(mode="after")
     def check_labels(self):
@@ -77,6 +92,12 @@ class Dataset:
         ids = [q.id for q in self.questions]
         if not ids or len(ids) != len(set(ids)):
             raise ValueError("Dataset must be nonempty with unique question IDs")
+        if self.metadata.get("profile") == "security-v1":
+            for question in self.questions:
+                if any(getattr(question, name) is None for name in ("language", "document_language", "topic", "question_type", "design_note", "query_family")):
+                    raise ValueError(f"Missing Security V1 metadata: {question.id}")
+                if question.question_type == "multi_document" and len({e.document_id for e in question.relevant_evidence if e.relevance_grade > 0}) < 2:
+                    raise ValueError(f"Multi-document question needs at least two documents: {question.id}")
         fact_locations = {}
         for question in self.questions:
             for evidence in question.relevant_evidence:

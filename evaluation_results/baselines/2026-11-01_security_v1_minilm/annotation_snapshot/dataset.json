@@ -1,0 +1,9 @@
+{
+  "schema_version": 2,
+  "profile": "security-v1",
+  "version": "security-rag-benchmark-v1-100-candidate",
+  "documents_dir": "../documents",
+  "corpus_version": "security-corpus-v1-21",
+  "annotation_status": "AI-authored additions pending human review; inherited review states unchanged",
+  "legacy_dataset_sha256": "04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7"
+}

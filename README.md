@@ -240,3 +240,19 @@ metrics, experiments and evaluation-only answer generation live in
 [`evaluation/`](evaluation/README.md). The application never imports that package.
 Existing scripts remain CLI entry points. Agent evaluation has its own reserved
 `evaluation/agent/` package; its runner/judges/metrics are not implemented yet.
+
+## Security Benchmark V1 — 100 candidate questions
+
+The extended dataset is isolated in `tests/rag_benchmark/v1/`; the original
+30 questions and historical results remain unchanged. It contains 21 frozen
+sources, cross-language/indirect/confusable-technique cases and 10 unanswerable
+questions. Every label and experimental translation remains pending review.
+
+- [Usage, measured MiniLM results and A/B/C commands](docs/rag_benchmark_expansion.md)
+- [Coverage audit](tests/rag_benchmark/dataset/benchmark_expansion_report.md)
+- [100-question source review sheet](tests/rag_benchmark/v1/dataset/review.md)
+- [Actual grouped multi-K results](evaluation_results/baselines/2026-11-01_security_v1_balanced_minilm/hybrid/multik_report.md)
+
+BGE-M3 and dual-query comparison code is prepared, but no B/C scores are claimed:
+the model is not cached locally for this offline run. No production embedding or
+retrieval algorithm, Cross-Encoder or Agent refusal judge was introduced.

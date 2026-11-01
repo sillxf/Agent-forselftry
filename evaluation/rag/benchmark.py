@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--dataset", type=Path, default=ROOT / "tests/rag_benchmark/dataset/questions.jsonl")
     parser.add_argument("--retriever", choices=["dense", "bm25", "hybrid", "all"], default="hybrid")
     parser.add_argument("--top-k", type=int, default=5)
+    parser.add_argument("--ks", type=lambda value: [int(k) for k in value.split(",")], help="Score prefixes of one shared ranking, e.g. 1,3,5,10")
     parser.add_argument("--model", default="all-MiniLM-L6-v2")
     parser.add_argument("--parent-tokens", type=int, default=1600)
     parser.add_argument("--child-tokens", type=int, default=400)
@@ -36,7 +37,7 @@ def main():
     parser.add_argument("--offline", action="store_true", help="Require previously cached model artifacts")
     parser.add_argument("--require-reviewed", action="store_true", help="Refuse provisional human-unreviewed labels")
     args = parser.parse_args()
-    if args.top_k <= 0:
+    if args.top_k <= 0 or any(k <= 0 for k in (args.ks or [])):
         parser.error("--top-k must be positive")
     if args.offline:
         os.environ["HF_HUB_OFFLINE"] = "1"
@@ -69,6 +70,7 @@ def main():
     index_pointer = args.storage_dir / "indexes/current.json"
     pointer = json.loads(index_pointer.read_text(encoding="utf-8"))
     index_dir = index_pointer.parent / pointer["generation"]
+    shutil.copytree(index_dir, output / "index_snapshot")
     base = dict(
         schema_version=2, metric_contract=METRIC_CONTRACT, started_at=now.isoformat(), code=code_state(output),
         annotation_status="provisional" if dataset.pending_count else "human-reviewed",
@@ -98,11 +100,11 @@ def main():
         target = output / strategy if args.retriever == "all" else output
         if target != output:
             target.mkdir()
-        config = dict(base, retrieval=dict(strategy=strategy, top_k=args.top_k, dense_top_k=args.dense_top_k,
+        config = dict(base, retrieval=dict(strategy=strategy, top_k=args.top_k, evaluation_ks=args.ks or [args.top_k], ranking_depth=max([args.top_k, *(args.ks or [])]), dense_top_k=args.dense_top_k,
                 bm25_top_k=args.bm25_top_k, candidate_limit_rule="max(configured_top_k, K*4)",
                 rrf_rank_constant=60, bm25=dict(type="BM25Plus", k1=retriever._bm25.k1, b=retriever._bm25.b,
                                              delta=retriever._bm25.delta), reranker=False))
-        rows = run_benchmark(dataset, retriever, top_k=args.top_k, strategy=strategy)
+        rows = run_benchmark(dataset, retriever, top_k=args.top_k, strategy=strategy, evaluation_ks=args.ks)
         config["ranking_sha256"] = ranking_fingerprint(rows)
         write_json(target / "config.json", config)
         (target / "retrieval_results.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False, allow_nan=False) + "\n" for r in rows), encoding="utf-8")

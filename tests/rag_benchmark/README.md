@@ -278,3 +278,16 @@ is not claimed fixed. All logs and the still-open human acceptance gate are save
 `run_rag_benchmark.py`、`run_rag_answer_review.py` 等原命令保留为薄入口。
 源码归档包含新 `evaluation/` 包，旧封存结果与输入数据没有改写。
 完整分工见 [评测目录说明](../../evaluation/README.md)。
+
+## 100 题扩展版（独立输入，不覆盖原 30 题）
+
+新数据在 `v1/dataset/questions.jsonl`，主候选版本为 r2；分布、来源、逐题 Ground Truth 和状态均可审查。
+新的多 K 评测使用同一个深度 10 排名，输出 Recall@1/3/5/10、Precision/MRR/NDCG@5 和题型/语言分组。
+不可答题不进入普通 Recall/MRR，邻近上下文返回单列，不能冒充 Agent 拒答测试。
+
+[完整指南与实际 A 结果](../../docs/rag_benchmark_expansion.md) ·
+[覆盖报告](dataset/benchmark_expansion_report.md) ·
+[新题逐题审核](v1/dataset/review.md)。
+
+BGE-M3 / 双路 Query + 英文 BM25 + RRF 的代码与命令已准备；本地无 BGE 缓存，尚无 B/C 实测分数。
+生产 RAG 和原来 30 题的开发参考保持不变。

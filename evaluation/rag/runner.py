@@ -5,6 +5,7 @@ import time
 
 from evaluation.rag.dataset import normalize
 from evaluation.rag.metrics import retrieval_metrics
+from evaluation.rag.multik import failure_analysis
 
 
 def map_evidence(result, evidence):
@@ -82,20 +83,26 @@ def ranking_diagnostics(question, children, parents, qrels):
     }
 
 
-def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
+def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid", evaluation_ks=None, ranker=None):
     if top_k <= 0:
         raise ValueError("top_k must be positive")
     dataset.validate_corpus()
     dataset.validate_index(retriever)
+    ks = sorted(set(evaluation_ks or [top_k]))
+    if any(k <= 0 for k in ks):
+        raise ValueError("Evaluation K values must be positive")
+    depth = max(top_k, *ks)
+    retrieve = ranker or retriever.search_rankings
     rows = []
     units = evaluation_units(retriever)
     for question in dataset.questions:
         qrels = derive_qrels(question, units)
         started = time.perf_counter()
         error, child, parent, candidate_count = None, [], [], 0
+        ranks = {}
         try:
             # Only the question is queried. Never concatenate answers or evidence labels.
-            ranks = retriever.search_rankings(question.question, top_k, strategy)
+            ranks = retrieve(question.question, depth, strategy)
             latency_ms = (time.perf_counter() - started) * 1000
             candidate_count = ranks["candidate_count"]
             child = annotate(ranks["children"], question, retriever)
@@ -110,6 +117,11 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
                                           ideal_result_grades=list(qrels["children"].values()))
         parent_metrics = retrieval_metrics([r["matched_evidence"] for r in parent], grades, top_k,
                                            ideal_result_grades=list(qrels["parents"].values()))
+        by_k = {str(k): {name: retrieval_metrics([r["matched_evidence"] for r in ranked], grades, k,
+                    ideal_result_grades=list(qrels[universe].values()))
+                    for name, universe, ranked in (("child", "children", child), ("parent", "parents", parent))}
+                for k in ks}
+        analysis = failure_analysis(question, child, parent, top_k, depth, error)
         failures = []
         if error:
             failures.append("retrieval_error")
@@ -125,7 +137,11 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
         rows.append({
             "question_id": question.id, "question": question.question, "category": question.category,
             "difficulty": question.difficulty, "answerable": question.answerable,
-            "review_status": question.review_status,
+            "review_status": question.review_status, "expected_answer": question.expected_answer,
+            "language": question.language or "unspecified", "document_language": question.document_language or "unspecified",
+            "topic": question.topic or question.category, "question_type": question.question_type or question.category,
+            "language_pair": f"{question.language or 'unspecified'}->{question.document_language or 'unspecified'}",
+            "strategy": strategy, "query_routes": ranks.get("query_routes", []), "ranking_depth": depth, "metrics_by_k": by_k, "failure_analysis": analysis,
             "document_types": sorted({a.source.rsplit(".", 1)[-1] for e in question.relevant_evidence for a in e.anchors()}),
             "expected_evidence": [e.model_dump() for e in question.relevant_evidence],
             "latency_ms": latency_ms, "candidate_count": candidate_count,
@@ -133,7 +149,7 @@ def run_benchmark(dataset, retriever, *, top_k=5, strategy="hybrid"):
             "child_metrics": child_metrics, "parent_metrics": parent_metrics, "derived_qrels": qrels,
             "parent_context_characters": sum(len(r["content"]) for r in parent),
             "error": error, "failure_types": failures,
-            "diagnostics": ranking_diagnostics(question, child, parent, qrels),
+            "diagnostics": ranking_diagnostics(question, child[:top_k], parent[:top_k], qrels),
         })
     return rows
 

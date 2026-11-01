@@ -220,3 +220,29 @@ def test_dataset_rejects_shared_id_for_different_table_rules(tmp_path):
     (tmp_path / "questions.jsonl").write_text("\n".join(json.dumps(q) for q in records), encoding="utf8")
     with pytest.raises(ValueError, match="different facts"):
         Dataset(tmp_path / "questions.jsonl")
+
+
+def test_multik_uses_one_shared_ranking_and_excludes_unknowns(rag_factory, tmp_path):
+    from evaluation.rag.multik import aggregate
+    (rag_factory.knowledge/'manual.md').write_text('# Detection\n\nRepeated failed login attempts require investigation.',encoding='utf-8')
+    retriever=rag_factory()
+    dataset=make_dataset(tmp_path,retriever)
+    positive=dataset.questions[0]
+    correct=retriever.search_rankings(positive.question,1)['children'][0]
+    bad=dict(correct,chunk_id='wrong',parent_id='wrong-parent',content='An unrelated neighbour')
+    parent_correct=retriever.search_rankings(positive.question,1)['parents'][0]
+    # Real source mapping is used; wrong text must never earn a fact despite shared block IDs.
+    calls=[]
+    def rank(query,k,strategy):
+        calls.append((query,k,strategy))
+        return dict(children=[bad,bad,correct],parents=[dict(parent_correct,content='wrong'),dict(parent_correct,content='wrong'),parent_correct],candidate_count=3)
+    rows=run_benchmark(dataset,retriever,top_k=1,evaluation_ks=[1,3,5,10],ranker=rank)
+    assert len(calls)==2 and all(c[1]==10 for c in calls)
+    assert rows[0]['metrics_by_k']['1']['child']['recall']==0
+    assert rows[0]['metrics_by_k']['3']['child']['recall']==1
+    assert rows[0]['metrics_by_k']['5']['child']['mrr']==pytest.approx(1/3)
+    assert rows[0]['failure_analysis']['child']['recovered_below_cutoff']
+    assert all(rows[1]['metrics_by_k'][str(k)]['parent']['recall'] is None for k in [1,3,5,10])
+    summary=aggregate(rows,[1,3,5,10])
+    assert summary['by_k']['3']['parent']['recall']==1
+    assert summary['unanswerable_stats']['correct_refusal_rate'] is None

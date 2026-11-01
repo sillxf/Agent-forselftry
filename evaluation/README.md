@@ -54,3 +54,12 @@ evaluation/
 
 规划见 [`agent/README.md`](agent/README.md)。未来的 `runner.py`、`judges.py`、`metrics.py`
 应在 `evaluation/agent/` 实现，不能放进生产 Agent 或 RAG 包。目前不添加空实现来冒充完成。
+
+## Security V1 扩展工具
+
+- `rag/expansion.py`：固定来源节选、设计输入到标签的显式生成，拒绝覆盖已有 labels。
+- `rag/coverage_audit.py`：旧集与新集覆盖审查、真实证据校验和未签字复核单。
+- `rag/multik.py`：共享排名前缀的多 K/分组指标与失败、噪声诊断。
+- `rag/model_comparison.py`：冻结 Chunk 的 A/B/C 实验；缺权重时明确记未运行。
+
+这些模块不被 `app/` 导入；没有引入生产模型切换或 Cross-Encoder。
