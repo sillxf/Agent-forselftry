@@ -584,7 +584,7 @@ Why does NIST Rev. 3 emphasize cybersecurity risk management instead of maintain
   - 解析章节：1. Introduction > 1.1. Purpose and Scope
   - 原文：this version focuses on improving cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions
 
-- [ ] 人工确认：实际标题应为 1.1 Purpose and Scope；当前解析路径受前一处非章节标题影响，需单列 Metadata 缺陷。
+- [ ] 人工确认：确认恢复后的 1. Introduction > 1.1. Purpose and Scope 与源 PDF 相符；旧误判路径已留在历史快照。
 - [ ] 确认其他同义证据没有漏标，参考答案完整且没有混用当前事件事实。
 
 ## rag_023 — context

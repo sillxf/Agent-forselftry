@@ -189,43 +189,34 @@ Block IP
 Enable MFA
 Investigate account
 
-## RAG retrieval benchmark (source-audited candidate v0.2)
+## RAG retrieval benchmark (candidate v0.3.1)
 
-A separate retrieval benchmark reuses the existing index and Dense/BM25/RRF scoring:
+Nine frozen documents and 30 English/Chinese questions are evaluated with Dense,
+BM25Plus and Hybrid RRF. Child retrieval and Parent context have separate metrics.
 
 ```powershell
-python scripts/run_rag_benchmark.py --retriever all --top-k 5
-# When Sentence Transformers and Docling models are already cached:
 python scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline
+# Only after real human review:
+python scripts/run_rag_benchmark.py --retriever all --offline --require-reviewed
 ```
 
-It indexes nine frozen documents and evaluates 30 candidate queries, separately
-reporting Child evidence retrieval and Parent context coverage. Each run saves code,
-dataset/corpus/model/configuration fingerprints, raw ranks and provenance, category
-metrics and failures. Existing knowledge-search API behaviour is unchanged.
+**All 30 labels still need human review.** AI source checks are not approval.
+`--require-reviewed` rejects pending labels. These are development results, not a
+certified acceptance benchmark or an Agent accuracy/refusal evaluation.
 
-**The candidate labels still require human review.** They are not a certified
-benchmark; `--require-reviewed` enforces that acceptance boundary. Generation quality
-and refusal correctness are not evaluated by this retrieval-only run.
+Phase 2 separates table-rule fact IDs, preserves equivalent evidence as OR
+alternatives, tests the existing `result-qrels-v2` metric contract and repairs PDF
+figure-label/heading/column mistakes using source layout. It does not change the
+production embedding model, RRF, Top-K or add a reranker. A separate four-group
+Chinese/English/multilingual/dual-query experiment keeps original queries frozen.
 
-See [the benchmark guide](tests/rag_benchmark/README.md),
-[annotation checklist](tests/rag_benchmark/dataset/README.md) and
-[source attribution](tests/rag_benchmark/SOURCES.md).
+See [the Phase 2 report](docs/rag_benchmark_phase2_report.md),
+[benchmark commands](tests/rag_benchmark/README.md),
+[dataset audit](tests/rag_benchmark/dataset/phase2_audit.md),
+[human worksheet](tests/rag_benchmark/dataset/review.md), and
+[Agent evaluation design — not implemented](docs/agent_evaluation_design.md).
 
-Benchmark implementation validation: normal suite **69 passed, 8 skipped**; full
-PDF/OCR suite **77 passed**. The candidate baseline and independent rebuild check
-are saved under `evaluation_results/baselines/`. The subsequent source audit confirmed
-Actions run `41267810301` succeeded for commit `1cd53a2` (default tests; full-model step
-skipped). That historical run does not certify uncommitted audit changes.
-
-The source audit keeps all 30 questions pending human relevance review, adds OR
-locations for equivalent facts, and corrects NDCG's result/evidence unit mismatch.
-New runs identify metric contract `result-qrels-v2`; their Precision/NDCG values are
-not directly comparable to the archived v0.1 novelty metrics. See the updated
-annotation worksheet and the source-audit report before approving a formal baseline.
-
-Source-audit validation: **70 passed, 8 model skips** by default; **78 passed** with
-real PDF/OCR models. The current review packet is
-[evaluation_results/baselines/2026-11-01_source_audit_v2/source_audit.md](evaluation_results/baselines/2026-11-01_source_audit_v2/source_audit.md).
-It preserves pending human review and documents metric corrections separately from
-retrieval changes; a formal baseline has not yet been approved.
+Historical v0.1/v0.2 experiment directories remain unchanged. Their differing
+annotation/metric conventions are recorded in their own reports; do not interpret
+old score-definition changes as retrieval improvements. The latest report records
+actual test/CI results and explicitly distinguishes skipped PDF/OCR tests.

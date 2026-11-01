@@ -1,0 +1,28 @@
+Windows fatal exception: access violation
+
+Thread 0x00004c40 (most recent call first):
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\main.py", line 270 in __init__
+  File Windows fatal exception: access violation
+
+........................................................................ [ 79%]
+...................                                                      [100%]
+============================== warnings summary ===============================
+tests/test_pdf_structure.py: 2 warnings
+tests/test_rag_corpus.py: 8 warnings
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\main.py:587: DeprecationWarning: `force_full_page_ocr` is deprecated; set `mode=OcrMode.FULL_PAGE` instead.
+    return self.__pydantic_serializer__.to_json(
+
+tests/test_pdf_structure.py::test_nist_structure_from_live_pdf_conversion
+tests/test_pdf_structure.py::test_live_two_column_pdf_keeps_section_bodies_with_their_own_headers
+tests/test_rag_corpus.py::test_document_corpus[pdf/text_based/nist_sp80061r3_pp10-12.pdf]
+tests/test_rag_corpus.py::test_document_corpus[images/no_ocr.png]
+tests/test_rag_corpus.py::test_document_corpus[pdf/scanned/incident_note.pdf]
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\models\stages\ocr\rapid_ocr_model.py:686: DeprecationWarning: deprecated
+    if self.options.rec_font_path is not None:
+
+tests/test_pdf_structure.py::test_nist_structure_from_live_pdf_conversion
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\torch\nn\modules\conv.py:560: UserWarning: Using padding='same' with even kernel lengths and odd dilation may require a zero-padded copy of the input be created (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\aten\src\ATen\native\Convolution.cpp:1105.)
+    return F.conv2d(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+91 passed, 16 warnings in 89.81s (0:01:29)

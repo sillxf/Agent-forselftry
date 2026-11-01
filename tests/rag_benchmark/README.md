@@ -186,7 +186,7 @@ must approve labels, grades, alternative sources and metric/body-evidence scope 
 calling a subsequent frozen run an acceptance baseline. Source metadata discrepancies
 are recorded rather than blessed because the parser and labels agree with each other.
 
-Current source-audit validation: normal suite **70 passed, 8 skipped**, full model
+Historical v0.2 source-audit validation: normal suite **70 passed, 8 skipped**, full model
 suite **78 passed**. Latest logs have no native access-violation diagnostic; earlier
 intermittent dependency behaviour remains a recorded risk, not a proven fix.
 The saved `2026-11-01_source_audit_v2/` report includes `source_audit.md`,
@@ -232,3 +232,10 @@ or refusal. Agent evaluation remains a separate design task.
 The earlier `audit_rag_benchmark.py` is a **historical v0.1/v0.2 reconciliation**;
 it asserts unchanged rankings, so do not use it to compare the new parser run.
 Use `analyze_rag_benchmark.py` for Phase 2. Never overwrite historical baselines.
+
+
+Phase 2 delivery report: `docs/rag_benchmark_phase2_report.md` (repository root).
+Current regular validation is 81 passed / 10 intentional model skips. The full
+model run has 91 passed assertions and exit 0 **but printed a Windows native
+access-violation diagnostic**; an isolated nine-test PDF rerun is clean. The issue
+is not claimed fixed. All logs and the still-open human acceptance gate are saved.

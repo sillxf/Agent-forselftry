@@ -1,4 +1,4 @@
-# Dataset v0.2 — source-audited candidates, still awaiting human review
+# Dataset v0.3.1 — structure-corrected candidates, still awaiting human review
 
 `questions.jsonl` contains 30 **AI-prepared candidate** questions: five each for
 `exact_identifier`, `semantic`, `response`, `tables_steps`, `context` and
@@ -61,7 +61,7 @@ The default runner sends **only `question`** into retrieval. Neither the referen
 answer nor evidence text/IDs is embedded into the query or added to the knowledge
 index. Candidate-question generation is not run as part of evaluation.
 
-## Source-audit change log
+## Historical v0.2 source-audit change log
 
 - All 30 queries and reference answers are unchanged; corpus bytes are unchanged.
 - Eight annotations have reviewed-by-AI corrections: tighter sufficient quotes,
@@ -76,3 +76,21 @@ index. Candidate-question generation is not run as part of evaluation.
   source audit, not approval. All `review_status`/`reviewer` values remain pending/null.
 - The metric contract changed to result-level qrels independently of annotation
   fixes. Never interpret the Precision/NDCG change from v0.1 as a retrieval gain.
+
+
+## Phase 2 changes
+
+- `rag_005`, `rag_016`, `rag_017` use distinct stable rule fact IDs. A shared ID
+  across different source facts now fails validation; a table is not a fact ID.
+- The questions, answers, grades and fact granularity remain unchanged. Six NIST
+  source section paths were updated after generic parser repair, not edited to
+  match a ranking result. All document bytes and source quotes remain frozen.
+- `phase2_annotation_changes.json` records ID changes; `phase2_structure_location_changes.json`
+  records the six location changes and dataset hashes. `phase2_audit.md` explains
+  necessary fact granularity, equivalent anchors and unavailable event/private data.
+- `phase2_review_notes_changes.json` distinguishes corrected historical metadata
+  defects from still-pending human approval. It changes review prose, not labels
+  or metrics; the as-run snapshot remains unchanged, with a separate updated packet.
+- Archived schema versions can be parsed, but invalid shared fact IDs are rejected.
+  Replaying a flawed historical experiment requires its own frozen implementation,
+  not silently applying current validation/scoring rules to an old result.

@@ -1,0 +1,53 @@
+{
+  "method": "AI closed-corpus source inspection plus exact entity/date probes. Term absence alone is NOT human semantic approval.",
+  "corpus_manifest_sha256": "e5ed786f01adaf8544c70402773741991b4a31d71e5edabadd9c1d2ceab5e375",
+  "source_documents": 9,
+  "questions": [
+    {
+      "question_id": "rag_026",
+      "term_hits": {
+        "Acme": []
+      },
+      "evidence_scope": "missing_private_or_named_reference_information",
+      "human_review_status": "pending",
+      "similar_reference_examples_are_event_facts": false
+    },
+    {
+      "question_id": "rag_027",
+      "term_hits": {
+        "CVE-2099-99999": []
+      },
+      "evidence_scope": "missing_private_or_named_reference_information",
+      "human_review_status": "pending",
+      "similar_reference_examples_are_event_facts": false
+    },
+    {
+      "question_id": "rag_028",
+      "term_hits": {
+        "2026-10-31": []
+      },
+      "evidence_scope": "observed_event",
+      "human_review_status": "pending",
+      "similar_reference_examples_are_event_facts": false
+    },
+    {
+      "question_id": "rag_029",
+      "term_hits": {
+        "QuantumShield X900": []
+      },
+      "evidence_scope": "missing_private_or_named_reference_information",
+      "human_review_status": "pending",
+      "similar_reference_examples_are_event_facts": false
+    },
+    {
+      "question_id": "rag_030",
+      "term_hits": {
+        "ACME": [],
+        "2026-10-31": []
+      },
+      "evidence_scope": "observed_event",
+      "human_review_status": "pending",
+      "similar_reference_examples_are_event_facts": false
+    }
+  ]
+}

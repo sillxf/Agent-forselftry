@@ -48,3 +48,5 @@
 rag_010、rag_015（3 个事实）、rag_022（2 个事实）共 6 个来源位置更新。
 只修改 section_path；原始页范围、Block ID、引用、事实数量、相关等级及问答完全不变。
 详情见 phase2_structure_location_changes.json。历史错误路径仍在旧快照中保留，未覆盖。
+
+审核说明的历史/当前缺陷区分另有 phase2_review_notes_changes.json；只更新审核文字，不重评指标、不授予人工批准。
