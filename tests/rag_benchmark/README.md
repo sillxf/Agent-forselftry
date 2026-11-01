@@ -192,3 +192,43 @@ intermittent dependency behaviour remains a recorded risk, not a proven fix.
 The saved `2026-11-01_source_audit_v2/` report includes `source_audit.md`,
 `score_reconciliation.json`, `ci_status.json`, frozen annotations, independent
 rebuild records, test logs and a formal-acceptance checklist with human gates open.
+
+
+## Phase 2: fact identity, PDF structure and cross-language experiments
+
+Current annotations: **v0.3.1-structure-corrected-candidate**, still 30 human reviews
+pending. Rule rows R002/R003/R004 have distinct IDs; NIST source paths were refreshed
+after generic layout/container fixes. Queries, answers, evidence semantics, grades,
+corpus bytes and the `result-qrels-v2` metric contract are unchanged.
+Changes are recorded in `dataset/phase2_annotation_changes.json` and
+`dataset/phase2_structure_location_changes.json`; see `dataset/phase2_audit.md`.
+
+```powershell
+python scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline `
+  --storage-dir app/storage/benchmark-phase2 `
+  --output-dir evaluation_results/phase2-candidate
+python scripts/analyze_rag_benchmark.py --baseline evaluation_results/phase2-candidate `
+  --storage-dir app/storage/benchmark-phase2
+python scripts/run_crosslingual_experiment.py --baseline evaluation_results/phase2-candidate `
+  --storage-dir app/storage/benchmark-phase2 `
+  --output-dir evaluation_results/phase2-crosslingual --offline
+```
+
+Cross-language groups A/B/C/D retain the original Chinese dataset queries. Fixed
+literal translations live in `experiments/crosslingual_queries.json`, not the
+main dataset. Group C uses an isolated multilingual FAISS index with **identical
+frozen chunk texts/IDs**, not multilingual-tokenizer re-chunking; model-specific
+truncation counts and build cost are recorded. Group D uses two query routes,
+so its extra compute/candidates are explicit. Default models/query policies do
+not change. The multilingual model must be downloaded once before offline runs.
+
+New runs archive replayable dataset/corpus snapshots alongside source code,
+metrics, Child/Parent diagnostics and raw ranks. Failure analysis traces correct
+facts to indexed IDs and the original candidate pool, with cause hypotheses
+explicitly separated from evidence. Unknown cases retain misleading-neighbour
+risks but do not pretend to measure Agent hallucination, knowledge-gap detection
+or refusal. Agent evaluation remains a separate design task.
+
+The earlier `audit_rag_benchmark.py` is a **historical v0.1/v0.2 reconciliation**;
+it asserts unchanged rankings, so do not use it to compare the new parser run.
+Use `analyze_rag_benchmark.py` for Phase 2. Never overwrite historical baselines.

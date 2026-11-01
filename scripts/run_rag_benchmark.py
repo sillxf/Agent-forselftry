@@ -5,6 +5,7 @@ import importlib.metadata
 import json
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import time
@@ -105,6 +106,10 @@ def main():
     now = datetime.now(timezone(timedelta(hours=8)))
     output = args.output_dir or ROOT / "evaluation_results" / now.strftime("%Y-%m-%d_%H%M%S_%f")
     output.mkdir(parents=True, exist_ok=False)
+    # Keep the original relative dataset layout replayable without editing frozen metadata.
+    shutil.copytree(dataset.path.parent, output / "annotation_snapshot")
+    shutil.copytree(dataset.documents_dir, output / "documents")
+    shutil.copyfile(dataset.manifest_path, output / "manifest.json")
     index_pointer = args.storage_dir / "indexes/current.json"
     pointer = json.loads(index_pointer.read_text(encoding="utf-8"))
     index_dir = index_pointer.parent / pointer["generation"]
