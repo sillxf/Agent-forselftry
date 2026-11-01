@@ -18,3 +18,15 @@ printed pages 2–4, US government publication. Source provenance is retained in
 benchmark corpus manifest. No source PDF text or diagram was edited.
 
 Captured with docling 2.145.0 / docling-core 2.105.0.
+
+## Two-column regression
+
+`two_column.pdf` is a synthetic, deterministic one-page PDF authored for this test.
+Run `build_two_column.py` with reportlab to regenerate it; reportlab is not a test
+runtime dependency. Its rendered layout was visually inspected. The adjacent raw
+Docling document and page cells preserve the actual erroneous order: both column
+headers precede the left-column body. No raw output ordering was manually fixed.
+Both an offline replay and opt-in live parse check that Detection/Response bodies
+stay under their own headings and numbered operational steps remain list items.
+The generic repair only applies to two aligned, disjoint text columns with a gutter;
+complex mixed figure/table layouts deliberately remain in upstream reading order.

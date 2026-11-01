@@ -49,7 +49,7 @@ def reciprocal_rank_fusion(dense_results, sparse_results, rank_constant=60):
 
 
 class KnowledgeRetriever:
-    INDEX_VERSION = 4
+    INDEX_VERSION = 5
 
     def __init__(
         self, build=True, *, knowledge_dir=None, storage_dir=None, parser=None,

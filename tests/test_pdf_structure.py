@@ -99,3 +99,36 @@ def test_native_pdf_figure_headers_are_rejected_before_updating_paths():
     blocks = StructureRecovery().recover(parser.parse(PDF).blocks)
     assert blocks[-1].section_path == ["What security is"]
     assert next(b for b in blocks if b.text=="Containment" and b.block_type!="image").block_type == "paragraph"
+
+
+def check_two_columns(parser):
+    parsed = parser.parse(FIXTURE / "two_column.pdf")
+    blocks = StructureRecovery().recover(CrossPageMerger().merge(parsed.blocks))
+    left = next(b for b in blocks if b.text.startswith("Repeated authentication"))
+    right = next(b for b in blocks if b.text.startswith("Containment requires"))
+    assert left.section_path == ["1. Detection"]
+    assert right.section_path == ["2. Response"]
+    assert left.layout.indent < right.layout.indent
+    step = next(b for b in blocks if "Check firewall configuration" in b.text)
+    assert step.block_type == "list"
+    assert step.section_path == ["1. Detection"]
+
+
+def test_actual_two_column_docling_order_is_repaired_without_models():
+    from docling_core.types.doc import DoclingDocument
+    from docling_core.types.doc.page import PdfTextCell, TextCell
+    doc = DoclingDocument.model_validate_json((FIXTURE / "two_column_docling.json").read_text(encoding="utf8"))
+    cells = json.loads((FIXTURE / "two_column_page_cells.json").read_text(encoding="utf8"))
+    result = SimpleNamespace(status="success",document=doc,
+        pages=[SimpleNamespace(page_no=int(n),cells=[(TextCell if c["from_ocr"] else PdfTextCell).model_validate(c) for c in entries]) for n,entries in cells.items()])
+    check_two_columns(DoclingParser(converter=SimpleNamespace(convert=lambda path: result)))
+    # A full-width body below aligned headers is ambiguous, not a two-column repair.
+    from app.rag.ingestion.pdf_order import order_pdf_columns
+    doc.texts[3].prov[0].bbox.r = 540
+    original = list(doc.iterate_items(traverse_pictures=True))
+    assert order_pdf_columns(original, doc) == original
+
+
+@pytest.mark.rag_models
+def test_live_two_column_pdf_keeps_section_bodies_with_their_own_headers():
+    check_two_columns(DoclingParser())
