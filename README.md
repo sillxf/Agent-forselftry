@@ -114,6 +114,13 @@ See [component responsibilities and examples](docs/rag_retrieval_pipeline.md).
 
 ### Document processing
 
+`IngestionPipeline` in `app/rag/ingestion/pipeline.py` can run document processing
+independently and return documents, Parents and Children without vector encoding or
+index persistence. It receives the existing parser and chunkers; the caller supplies
+the tokenizer and effective token budget. `KnowledgeRetriever` delegates its document
+processing to this pipeline while retaining the existing index build/save/load behavior.
+See [standalone ingestion usage](docs/rag_retrieval_pipeline.md#独立文档处理第一步提取).
+
 The ingestion-to-chunking path now runs:
 
 ```text

@@ -19,10 +19,9 @@ from app.rag.chunking.parent_chunker import ParentChunker
 from app.rag.embedder import embed_texts, get_model
 from app.rag.indexing.vector_store import FaissVectorStore, VectorStoreInterface
 from app.rag.ingestion.docling_parser import DoclingParser, file_checksum
+from app.rag.ingestion.pipeline import IngestionPipeline, IngestionResult
 from app.rag.loader import discover_documents
 from app.rag.models import DocumentRecord, ParentChunk
-from app.rag.processing.cross_page_merger import CrossPageMerger
-from app.rag.processing.structure_recovery import StructureRecovery
 from app.rag.retrieval.pipeline import RetrievalPipeline
 
 
@@ -87,8 +86,7 @@ class KnowledgeRetriever:
             self._build(signature, files)
 
     def _build(self, signature, files):
-        documents, parents, children = [], [], []
-        seen = set()
+        result = IngestionResult()
         if files:
             tokenizer = self.tokenizer
             child_budget = self.child_max_tokens
@@ -100,29 +98,18 @@ class KnowledgeRetriever:
                 child_budget = min(child_budget, model.max_seq_length - special)
             parent_chunker = ParentChunker(tokenizer, self.parent_max_tokens)
             child_chunker = ChildChunker(tokenizer, child_budget, min(self.overlap_tokens, child_budget - 1))
-            for path in files:
-                checksum = file_checksum(path)
-                if checksum in seen:
-                    continue
-                parsed = self.parser.parse(path)
-                seen.add(checksum)
-                documents.append(parsed.document)
-                blocks = CrossPageMerger().merge(parsed.blocks)
-                blocks = StructureRecovery().recover(blocks)
-                new_parents = parent_chunker.split(blocks, parsed.document)
-                parents.extend(new_parents)
-                for parent in new_parents:
-                    children.extend(child_chunker.split(parent, parsed.document.filename, parsed.document.file_type))
+            ingestion = IngestionPipeline(self.parser, parent_chunker, child_chunker)
+            result = ingestion.run(self.knowledge_dir, files=files)
         # Publish nothing until parsing, embedding and persistence have all succeeded.
-        records = [child.model_dump(mode="json") for child in children]
+        records = [child.model_dump(mode="json") for child in result.children]
         if records:
             vectors = self._embed([record["search_text"] for record in records])
             store = self.store_factory(vectors.shape[1])
             store.add(vectors, records)
         else:
             store = self.store_factory(1)
-        self._save(signature, store, documents, parents)
-        self.attach_index(store, documents, {parent.parent_id: parent for parent in parents})
+        self._save(signature, store, result.documents, result.parents)
+        self.attach_index(store, result.documents, {parent.parent_id: parent for parent in result.parents})
 
     @property
     def pipeline(self):

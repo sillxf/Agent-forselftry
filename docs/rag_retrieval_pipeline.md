@@ -95,3 +95,56 @@ B/C 双路实验复用生产 RRFFusion。早期 crosslingual 实验的外层 Que
 - 真实查询对照不是新一轮模型测评；记录在本地 .pytest_cache/component-parity/，不改历史基线。
 
 本轮完整回归：`python -m pytest -q`，126 passed、10 skipped；跳过的是需显式启用的 PDF/OCR 模型测试。
+
+## 独立文档处理（第一步提取）
+
+`app/rag/ingestion/pipeline.py` 新增 `IngestionPipeline`，依次完成文档发现、内容去重、
+解析、跨页合并、结构恢复与 Parent/Child 切分。输出 `IngestionResult`，仅含 documents、
+parents、children；现有 DocumentRecord、ParentChunk、ChildChunk 模型不变。
+
+Parser 和两个 Chunker 显式传入。Pipeline 自己不创建 Embedding 模型，不调用编码，
+不建立 VectorStore，也不写 metadata.db/current.json。Parser 已有的可选解析归档行为保留。
+支持的格式与原有文档发现逻辑一致，不限于 PDF。
+
+独立检查切分（模型/Tokenizer 由调用方提供；以下沿用应用有效预算计算）：
+
+```python
+from app.config import (
+    RAG_EMBEDDING_MODEL, RAG_PARENT_MAX_TOKENS, RAG_CHILD_MAX_TOKENS,
+    RAG_CHILD_OVERLAP_TOKENS, RAG_KNOWLEDGE_DIR,
+)
+from app.rag.embedder import get_model
+from app.rag.ingestion.docling_parser import DoclingParser
+from app.rag.ingestion.pipeline import IngestionPipeline
+from app.rag.chunking.parent_chunker import ParentChunker
+from app.rag.chunking.child_chunker import ChildChunker
+
+model = get_model(RAG_EMBEDDING_MODEL)  # 调用方显式取得 tokenizer，不执行向量编码
+special = model.tokenizer.num_special_tokens_to_add(pair=False)
+budget = min(RAG_CHILD_MAX_TOKENS, model.max_seq_length - special)
+ingestion = IngestionPipeline(
+    parser=DoclingParser(),
+    parent_chunker=ParentChunker(model.tokenizer, RAG_PARENT_MAX_TOKENS),
+    child_chunker=ChildChunker(
+        model.tokenizer, budget, min(RAG_CHILD_OVERLAP_TOKENS, budget - 1),
+    ),
+)
+result = ingestion.run(RAG_KNOWLEDGE_DIR)  # 也可传入其他 PDF/混合文档目录
+print(len(result.documents), len(result.parents), len(result.children))
+```
+
+调用方也可传入自己的 Tokenizer/Chunker，不必使用或加载 Embedding 模型。
+`KnowledgeRetriever` 仅在实际需要新建索引且有文档时才取得模型 Tokenizer；
+`build=False` 和复用已有索引不会因此提前加载模型。显式传入 Tokenizer 的旧行为不变。
+
+Facade 内部通过 run(..., files=files) 复用索引签名已发现的有序文件列表，
+避免再次扫描目录造成签名与处理集合偏离；普通独立调用只需传目录。
+处理按原有顺序执行并保留相同的内容去重、文件名、Block/Parent/Child ID 和切分预算。
+
+本步只提取 IngestionPipeline：Embedding、VectorStore、SQLite 和索引发布仍在原入口，
+尚未提取 IndexingPipeline 或 SnapshotRepository，也未调整发布/绑定顺序。
+
+本步验证：完整回归 129 passed、10 skipped（PDF/OCR 模型测试默认跳过）；另用本地缓存的
+Docling 模型实际解析 PDF + Markdown，与提取前保存结果逐字段比较，documents、parents、
+children（含 ID）及通过原入口重建后的查询结果完全一致。对照过程使用本地测试 Embedding，
+不是新一轮模型效果评测；独立 Ingestion 调用未执行向量编码或创建向量索引。
