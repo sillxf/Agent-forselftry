@@ -8,6 +8,7 @@ from pathlib import Path
 from statistics import mean
 
 ROOT = Path(__file__).resolve().parents[2]
+from app.config import RAG_EMBEDDING_MODEL
 from evaluation.rag.dataset import Dataset, checksum
 from evaluation.rag.metrics import METRIC_CONTRACT, retrieval_metrics
 from evaluation.rag.runner import annotate, derive_qrels, evaluation_units, portable_record, write_json
@@ -22,7 +23,7 @@ def main():
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--dataset", type=Path, default=ROOT / "tests/rag_benchmark/dataset/questions.jsonl")
     parser.add_argument("--translations", type=Path, default=ROOT / "tests/rag_benchmark/experiments/crosslingual_queries.json")
-    parser.add_argument("--multilingual-model", default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    parser.add_argument("--multilingual-model", default=RAG_EMBEDDING_MODEL)
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--offline", action="store_true")
     parser.add_argument("--require-reviewed", action="store_true")

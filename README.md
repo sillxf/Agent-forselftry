@@ -64,8 +64,11 @@ untrusted reference data. Its analysis output schema is unchanged.
 ### Configuration and indexing
 
 Install `requirements.txt`; see `.env.example` for RAG settings. Relative paths resolve
-against the repository. The default embedding remains `all-MiniLM-L6-v2`; set
-`RAG_EMBEDDING_MODEL=BAAI/bge-m3` to evaluate the larger multilingual candidate.
+against the repository. The default embedding is `BAAI/bge-m3`, using the existing
+Dense + BM25 + RRF Hybrid retrieval. MiniLM is retained as a historical benchmark only.
+Remove an old `RAG_EMBEDDING_MODEL=all-MiniLM-L6-v2` override from your environment
+or change it to `BAAI/bge-m3`; then rebuild the index and restart the running service.
+The dual-query translation experiment is not enabled in production.
 Embedding and PDF layout/OCR models may download on first use.
 
 ```powershell
@@ -79,6 +82,10 @@ Embedding and PDF layout/OCR models may download on first use.
 `build=False` loads/builds on the first search. Initialization reuses an index when
 source hashes, model and chunk settings match. A running process retains its in-memory
 index until explicit rebuild or restart. Identical files are indexed once.
+Model changes create a new index generation; previous generations are retained.
+New BGE indexes use its tokenizer with the configured 400-token child cap, not the
+MiniLM-frozen 254-token chunks used in the A/B/C experiment; its scores are not
+a production acceptance result.
 
 Generated files live in the Git-ignored `app/storage/` directory:
 
@@ -256,3 +263,16 @@ questions. Every label and experimental translation remains pending review.
 BGE-M3 and dual-query comparison code is prepared, but no B/C scores are claimed:
 the model is not cached locally for this offline run. No production embedding or
 retrieval algorithm, Cross-Encoder or Agent refusal judge was introduced.
+
+## Current milestone — 2026-11-02
+
+The current RAG evaluation phase is complete for now: Benchmark V1 and the
+MiniLM/BGE-M3 A/B/C comparison are archived, and `BAAI/bge-m3` is now the default
+embedding with the existing Hybrid retrieval. The local production index was rebuilt;
+Chinese-query API and Agent Top2 retrieval smoke checks passed. Regression tests:
+123 passed, 10 skipped (PDF/OCR model tests requiring explicit opt-in).
+
+Further work on the improvement plan is paused pending a new instruction. This is
+a stopping milestone for this evaluation phase, not completion of all planned Agent
+features; no Reranker, online translation chain or new refusal mechanism is enabled
+by this milestone. Existing service processes need a restart to load the new defaults.

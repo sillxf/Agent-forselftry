@@ -13,6 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
+from app.config import RAG_EMBEDDING_MODEL
 from evaluation.rag.dataset import Dataset, checksum
 from evaluation.rag.report import build_report
 from evaluation.rag.metrics import METRIC_CONTRACT
@@ -26,7 +27,7 @@ def main():
     parser.add_argument("--retriever", choices=["dense", "bm25", "hybrid", "all"], default="hybrid")
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--ks", type=lambda value: [int(k) for k in value.split(",")], help="Score prefixes of one shared ranking, e.g. 1,3,5,10")
-    parser.add_argument("--model", default="all-MiniLM-L6-v2")
+    parser.add_argument("--model", default=RAG_EMBEDDING_MODEL)
     parser.add_argument("--parent-tokens", type=int, default=1600)
     parser.add_argument("--child-tokens", type=int, default=400)
     parser.add_argument("--overlap-tokens", type=int, default=60)
