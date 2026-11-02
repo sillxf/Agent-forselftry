@@ -10,9 +10,6 @@ import numpy as np
 class VectorStoreInterface(Protocol):
     records: list[dict]
 
-    @property
-    def dimension(self) -> int: ...
-
     def add(self, vectors, records): ...
     def search(self, vector, k=10): ...
     def save(self, path): ...
@@ -25,10 +22,6 @@ class FaissVectorStore:
     def __init__(self, dimension: int):
         self.index = faiss.IndexFlatIP(dimension)
         self.records = []
-
-    @property
-    def dimension(self):
-        return self.index.d
 
     @property
     def documents(self):
