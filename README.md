@@ -103,6 +103,15 @@ A generation is published after its files are saved. Old generations are retaine
 automatic cleanup, index repair and multi-user permissions are outside this round.
 Index files are local, trusted application data.
 
+### Composable retrieval
+
+Query-time logic is implemented by `DenseRetriever`, `SparseRetriever`, `RRFFusion`,
+`ParentContextBuilder` and `RetrievalPipeline` under `app/rag/retrieval/`.
+`KnowledgeRetriever` retains index lifecycle and its compatible search API.
+Components can be constructed independently and injected into the pipeline; no
+Reranker, compression or new evaluation phase is enabled by this refactor.
+See [component responsibilities and examples](docs/rag_retrieval_pipeline.md).
+
 ### Document processing
 
 The ingestion-to-chunking path now runs:

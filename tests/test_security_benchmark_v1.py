@@ -5,8 +5,9 @@ from pathlib import Path
 from unittest.mock import Mock
 from types import SimpleNamespace
 
+from app.rag.retrieval.fusion import RRFFusion
 from evaluation.rag.dataset import Dataset
-from evaluation.rag.model_comparison import load_reference, dual_query_rank, fuse_routes
+from evaluation.rag.model_comparison import load_reference, dual_query_rank
 
 ROOT=Path(__file__).resolve().parents[1]
 V1=ROOT/'tests/rag_benchmark/v1'
@@ -48,14 +49,16 @@ def test_all_v1_evidence_resolves_against_the_real_frozen_index():
 
 def test_dual_query_has_two_dense_routes_and_only_english_bm25():
     record=dict(chunk_id='chunk',block_ids=['block'],dense_score=.5)
-    retriever=SimpleNamespace(bm25_top_k=20,_rank_children=Mock(return_value=[record]),
-                             _sparse_search=Mock(return_value=[dict(record,sparse_score=1)]),_restore_parents=Mock(return_value=[]))
+    pipeline=SimpleNamespace(bm25_top_k=20,rank_candidates=Mock(return_value=[record]),
+                             sparse=SimpleNamespace(retrieve=Mock(return_value=[dict(record,sparse_score=1)])),
+                             fusion=RRFFusion(),context_builder=SimpleNamespace(build=Mock(return_value=[])))
+    retriever=SimpleNamespace(pipeline=pipeline)
     result=dual_query_rank(retriever,'中文提问','English query',10)
-    assert [c.args for c in retriever._rank_children.call_args_list]==[('中文提问',10,'dense'),('English query',10,'dense')]
-    retriever._sparse_search.assert_called_once_with('English query',40)
+    assert [c.args for c in pipeline.rank_candidates.call_args_list]==[('中文提问',10,'dense'),('English query',10,'dense')]
+    pipeline.sparse.retrieve.assert_called_once_with('English query',40)
     assert [r['kind'] for r in result['query_routes']]==['dense','dense','bm25']
-    retriever._rank_children.reset_mock()
+    pipeline.rank_candidates.reset_mock()
     dual_query_rank(retriever,'English query','English query',10)
-    retriever._rank_children.assert_called_once_with('English query',10,'dense')
-    fused=fuse_routes([[record,record],[record]])
+    pipeline.rank_candidates.assert_called_once_with('English query',10,'dense')
+    fused=RRFFusion().fuse([[record,record],[record]])
     assert len(fused)==1 and fused[0]['score']==2/61

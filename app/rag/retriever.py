@@ -1,14 +1,13 @@
 """Compatible knowledge search backed by structured, persistent hybrid retrieval."""
 import json
-import re
 import sqlite3
 from contextlib import closing
+from functools import partial
 from pathlib import Path
 from threading import RLock
 from uuid import uuid4
 
 import numpy as np
-from rank_bm25 import BM25Plus
 
 from app.config import (
     RAG_BM25_TOP_K, RAG_CHILD_MAX_TOKENS, RAG_CHILD_OVERLAP_TOKENS,
@@ -24,28 +23,7 @@ from app.rag.loader import discover_documents
 from app.rag.models import DocumentRecord, ParentChunk
 from app.rag.processing.cross_page_merger import CrossPageMerger
 from app.rag.processing.structure_recovery import StructureRecovery
-
-
-def tokenize(text: str) -> list[str]:
-    """Keep security identifiers intact; Chinese does not depend on whitespace."""
-    terms = re.findall(r"[a-z0-9]+(?:[._:/-][a-z0-9]+)*|[\u3400-\u9fff]", text.lower())
-    for run in re.findall(r"[\u3400-\u9fff]{2,}", text):
-        terms.extend(run[i:i + 2] for i in range(len(run) - 1))
-    return terms
-
-
-def reciprocal_rank_fusion(dense_results, sparse_results, rank_constant=60):
-    scores, records = {}, {}
-    for results in (dense_results, sparse_results):
-        for rank, record in enumerate(results, 1):
-            key = record["chunk_id"]
-            scores[key] = scores.get(key, 0.0) + 1.0 / (rank_constant + rank)
-            records[key] = {**records.get(key, {}), **record}
-    keys = sorted(scores, key=lambda key: (
-        -scores[key], -records[key].get("sparse_score", 0.0),
-        -records[key].get("dense_score", -1.0), key,
-    ))
-    return [{**records[key], "score": scores[key]} for key in keys]
+from app.rag.retrieval.pipeline import RetrievalPipeline
 
 
 class KnowledgeRetriever:
@@ -74,8 +52,7 @@ class KnowledgeRetriever:
         self.store: VectorStoreInterface | None = None
         self.parents = {}
         self.documents = []
-        self._postings = {}
-        self._bm25 = None
+        self._pipeline = None
         self._lock = RLock()
         if build:
             self._ensure_index()
@@ -145,18 +122,26 @@ class KnowledgeRetriever:
         else:
             store = self.store_factory(1)
         self._save(signature, store, documents, parents)
-        self.store, self.documents = store, documents
-        self.parents = {parent.parent_id: parent for parent in parents}
-        self._build_sparse()
+        self.attach_index(store, documents, {parent.parent_id: parent for parent in parents})
 
-    def _build_sparse(self):
-        tokens = [tokenize(record["search_text"]) for record in self.store.records]
-        # BM25+ avoids zero/negative IDF for identifiers in tiny knowledge bases.
-        self._bm25 = BM25Plus([terms or ["__empty__"] for terms in tokens]) if tokens else None
-        self._postings = {}
-        for index, terms in enumerate(tokens):
-            for term in set(terms):
-                self._postings.setdefault(term, []).append(index)
+    @property
+    def pipeline(self):
+        """Public composition point for standalone retrieval and evaluation routes."""
+        with self._lock:
+            self._ensure_index()
+            return self._pipeline
+
+    def attach_index(self, store, documents, parents, *, model_name=None):
+        """Bind an in-memory/frozen index as one unit; do not write the current pointer."""
+        with self._lock:
+            model_name = model_name if model_name is not None else self.model_name
+            embed = self.embedding_fn or partial(embed_texts, model_name=model_name)
+            pipeline = RetrievalPipeline.from_index(
+                store, parents, embed=embed,
+                dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k,
+            )
+            self.store, self.documents, self.parents = store, documents, parents
+            self.model_name, self._pipeline = model_name, pipeline
 
     def _save(self, signature, store, documents, parents):
         root = self.storage_dir / "indexes"
@@ -193,70 +178,15 @@ class KnowledgeRetriever:
         with closing(sqlite3.connect(path / "metadata.db")) as connection:
             documents = [DocumentRecord.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM documents")]
             parents = [ParentChunk.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM parents")]
-        self.store, self.documents = store, documents
-        self.parents = {parent.parent_id: parent for parent in parents}
-        self._build_sparse()
+        self.attach_index(store, documents, {parent.parent_id: parent for parent in parents})
         return True
 
-    def _sparse_search(self, query, limit):
-        tokens = tokenize(query)
-        # Keep corpus order before the stable score sort, including tied scores.
-        matches = sorted({index for term in set(tokens) for index in self._postings.get(term, ())})
-        if not matches:
-            return []
-        scores = self._bm25.get_batch_scores(tokens, matches)
-        ranked = sorted(zip(matches, scores), key=lambda item: -item[1])
-        return [{**self.store.records[index], "sparse_score": float(score)}
-                for index, score in ranked[:limit]]
-
-    def _rank_children(self, query, k, strategy="hybrid"):
-        if strategy not in {"dense", "bm25", "hybrid"}:
-            raise ValueError(f"Unknown retrieval strategy: {strategy}")
-        dense, sparse = [], []
-        if strategy in {"dense", "hybrid"}:
-            vector = self._embed([query])[0]
-            dense = self.store.search(vector, max(self.dense_top_k, k * 4))
-        if strategy in {"bm25", "hybrid"}:
-            sparse = self._sparse_search(query, max(self.bm25_top_k, k * 4))
-        if strategy == "hybrid":
-            return reciprocal_rank_fusion(dense, sparse)
-        return dense if strategy == "dense" else sparse
-
-    def _restore_parents(self, ranked, k):
-        results, seen = [], set()
-        for item in ranked:
-            parent = self.parents[item["parent_id"]]
-            if parent.parent_id in seen:
-                continue
-            seen.add(parent.parent_id)
-            results.append({
-                **item, "source": item["source_name"], "chunk_content": item["content"],
-                "content": parent.content, "page_start": parent.page_start, "page_end": parent.page_end,
-                "matched_page_start": item["page_start"], "matched_page_end": item["page_end"],
-                "image_paths": list(dict.fromkeys(b.image_path for b in parent.blocks if b.image_path)),
-            })
-            if len(results) >= k:
-                break
-        return results
-
     def search_rankings(self, query: str, k: int = 5, strategy: str = "hybrid"):
-        """Diagnostic view of child ranks and the independently deduplicated parent ranks."""
+        """Compatible Child and unique-Parent rankings from the composed pipeline."""
         if not query.strip() or k <= 0:
             return {"children": [], "parents": [], "candidate_count": 0}
         with self._lock:
-            self._ensure_index()
-            ranked = self._rank_children(query, k, strategy) if self.store.records else []
-            return {
-                "children": [dict(item, source_block_ids=item["block_ids"]) for item in ranked[:k]],
-                "parents": self._restore_parents(ranked, k),
-                "candidate_count": len(ranked),
-            }
+            return self.pipeline.search_rankings(query, k, strategy)
 
     def search(self, query: str, k: int = 2):
-        if not query.strip() or k <= 0:
-            return []
-        with self._lock:
-            self._ensure_index()
-            if not self.store.records:
-                return []
-            return self._restore_parents(self._rank_children(query, k), k)
+        return self.search_rankings(query, k)["parents"]

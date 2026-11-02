@@ -106,7 +106,7 @@ def main():
                     knowledge_gap_detection="not_evaluated", hallucination_or_abstention="not_evaluated_agent_task"))
             elif row["failure_types"]:
                 # Reproduce the original configured candidate pool, NOT a larger K*4 search.
-                candidates=[dict(r,source_block_ids=r["block_ids"]) for r in retriever._rank_children(question.question,config["retrieval"]["top_k"],strategy)]
+                candidates=[dict(r,source_block_ids=r["block_ids"]) for r in retriever.pipeline.rank_candidates(question.question,config["retrieval"]["top_k"],strategy)]
                 failures.append(dict(question_id=question.id,query=question.question,strategy=strategy,
                     correct_evidence=[e.model_dump() for e in question.relevant_evidence], derived_qrels=row["derived_qrels"],
                     actual_top_k={unit:row[unit] for unit in ("children","parents")}, diagnostics=row["diagnostics"],

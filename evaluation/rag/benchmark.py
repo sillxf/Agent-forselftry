@@ -103,8 +103,8 @@ def main():
             target.mkdir()
         config = dict(base, retrieval=dict(strategy=strategy, top_k=args.top_k, evaluation_ks=args.ks or [args.top_k], ranking_depth=max([args.top_k, *(args.ks or [])]), dense_top_k=args.dense_top_k,
                 bm25_top_k=args.bm25_top_k, candidate_limit_rule="max(configured_top_k, K*4)",
-                rrf_rank_constant=60, bm25=dict(type="BM25Plus", k1=retriever._bm25.k1, b=retriever._bm25.b,
-                                             delta=retriever._bm25.delta), reranker=False))
+                rrf_rank_constant=60, bm25=dict(type="BM25Plus", k1=retriever.pipeline.sparse.bm25.k1, b=retriever.pipeline.sparse.bm25.b,
+                                             delta=retriever.pipeline.sparse.bm25.delta), reranker=False))
         rows = run_benchmark(dataset, retriever, top_k=args.top_k, strategy=strategy, evaluation_ks=args.ks)
         config["ranking_sha256"] = ranking_fingerprint(rows)
         write_json(target / "config.json", config)

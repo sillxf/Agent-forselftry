@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from app.rag.retriever import tokenize
+from app.rag.retrieval.sparse import tokenize
 
 
 def add_manual(factory):
