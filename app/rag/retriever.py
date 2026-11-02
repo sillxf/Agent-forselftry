@@ -69,7 +69,8 @@ class KnowledgeRetriever:
             snapshot = self.repository.load_current(signature)
             if snapshot is not None:
                 self.attach_index(snapshot.store, snapshot.documents,
-                                  {parent.parent_id: parent for parent in snapshot.parents})
+                                  {parent.parent_id: parent for parent in snapshot.parents},
+                                  view_store=snapshot.view_store, view_model_name=snapshot.view_model_name)
             else:
                 self._build(signature, files)
 
@@ -99,9 +100,26 @@ class KnowledgeRetriever:
             store_factory=self.store_factory,
         )
         snapshot = indexing.build(result)
+        self._publish_snapshot(snapshot, signature)
+
+    def build_view_index(self, views):
+        """Publish auxiliary views for the current unchanged source generation; no parsing."""
+        with self._lock:
+            signature, _ = self._signature()
+            snapshot = self.repository.load_current(signature)
+            if snapshot is None:
+                raise ValueError("Build the original index for the current documents/model before adding views")
+            indexing = IndexingPipeline(
+                self.embedding_fn or partial(embed_texts, model_name=self.model_name), self.store_factory)
+            snapshot = indexing.build_views(snapshot, views, model_name=self.model_name)
+            self._publish_snapshot(snapshot, signature)
+
+    def _publish_snapshot(self, snapshot, signature):
         saved = self.repository.save(snapshot, signature)
         parents = {parent.parent_id: parent for parent in snapshot.parents}
-        pipeline = self._prepare_pipeline(snapshot.store, parents, self.model_name)
+        options = {} if snapshot.view_store is None else dict(
+            view_store=snapshot.view_store, view_model_name=snapshot.view_model_name)
+        pipeline = self._prepare_pipeline(snapshot.store, parents, self.model_name, **options)
         # All fallible construction is finished before publishing. Only references switch after it.
         self.repository.publish(saved)
         self._activate_index(snapshot.store, snapshot.documents, parents, pipeline, self.model_name)
@@ -113,17 +131,20 @@ class KnowledgeRetriever:
             self._ensure_index()
             return self._pipeline
 
-    def attach_index(self, store, documents, parents, *, model_name=None):
+    def attach_index(self, store, documents, parents, *, model_name=None, view_store=None, view_model_name=None):
         """Bind an in-memory/frozen index as one unit; do not write the current pointer."""
         with self._lock:
             model_name = model_name if model_name is not None else self.model_name
-            pipeline = self._prepare_pipeline(store, parents, model_name)
+            pipeline = self._prepare_pipeline(store, parents, model_name,
+                                              view_store=view_store, view_model_name=view_model_name)
             self._activate_index(store, documents, parents, pipeline, model_name)
 
-    def _prepare_pipeline(self, store, parents, model_name):
+    def _prepare_pipeline(self, store, parents, model_name, *, view_store=None, view_model_name=None):
+        if view_store is not None and view_model_name != model_name:
+            raise ValueError("View index and original index must use the same embedding model")
         return RetrievalPipeline.from_index(
             store, parents, embed=self.embedding_fn or partial(embed_texts, model_name=model_name),
-            dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k,
+            dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k, view_store=view_store,
         )
 
     def _activate_index(self, store, documents, parents, pipeline, model_name):
@@ -138,5 +159,9 @@ class KnowledgeRetriever:
         with self._lock:
             return self.pipeline.search_rankings(query, k, strategy)
 
-    def search(self, query: str, k: int = 2):
-        return self.search_rankings(query, k)["parents"]
+    @property
+    def retrieval_modes(self):
+        return ("hybrid", "multi_view") if self.pipeline.multi_view_dense is not None else ("hybrid",)
+
+    def search(self, query: str, k: int = 2, *, retrieval_mode: str = "hybrid"):
+        return self.search_rankings(query, k, retrieval_mode)["parents"]

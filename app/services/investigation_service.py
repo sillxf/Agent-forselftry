@@ -18,6 +18,9 @@ from app.tools.alert_tools import (
 )
 
 
+from app.tools.knowledge_tools import knowledge_tool_definition, execute_knowledge_tool
+
+
 class ToolCallLimitError(RuntimeError):
     """The model exceeded the allowed tool-call rounds."""
 
@@ -63,6 +66,7 @@ class InvestigationService:
         analysis = self._run_tool_loop(
             prompt=llm_context,
             alerts=alerts,
+            knowledge=knowledge,
         )
 
         return {
@@ -76,6 +80,7 @@ class InvestigationService:
         self,
         prompt: str,
         alerts: list,
+        knowledge: list,
     ):
         messages = [
             {
@@ -84,12 +89,14 @@ class InvestigationService:
             }
         ]
 
+        tools = [*ALERT_TOOL_DEFINITIONS, knowledge_tool_definition(self.retriever.retrieval_modes)]
+
         for round_index in range(
             self.MAX_TOOL_ROUNDS + 1
         ):
             response = self.llm.chat(
                 messages=messages,
-                tools=ALERT_TOOL_DEFINITIONS,
+                tools=tools,
             )
 
             tool_calls = response["tool_calls"]
@@ -116,11 +123,14 @@ class InvestigationService:
                         tool_call["arguments"]
                     )
 
-                    result = execute_alert_tool(
-                        tool_name=tool_call["name"],
-                        arguments=arguments,
-                        alerts=alerts,
-                    )
+                    if tool_call["name"] == "knowledge_search":
+                        result = execute_knowledge_tool(arguments, self.retriever)
+                        seen = {item["parent_id"] for item in knowledge}
+                        knowledge.extend(item for item in result["results"] if item["parent_id"] not in seen)
+                    else:
+                        result = execute_alert_tool(
+                            tool_name=tool_call["name"], arguments=arguments, alerts=alerts,
+                        )
 
                     tool_output = {
                         "ok": True,

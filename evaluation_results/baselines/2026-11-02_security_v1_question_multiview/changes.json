@@ -1,0 +1,640 @@
+[
+  {
+    "question_id": "rag_003",
+    "query": "Which ATT&CK technique name corresponds to T1078?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.5,
+      "ndcg": 0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_004",
+    "query": "Which OWASP WSTG test identifier covers SQL injection?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.2,
+      "ndcg": 0.38685280723454163
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.2,
+      "ndcg": -0.38685280723454163
+    }
+  },
+  {
+    "question_id": "rag_006",
+    "query": "Can the Windows scripting shell fetch an executable and run it without first writing it to disk?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.5,
+      "ndcg": -0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_007",
+    "query": "Can password guessing be performed without contacting a live authentication service?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_020",
+    "query": "When enumerating SQL-injection inputs, should hidden POST fields, HTTP headers and cookies be included?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.5,
+      "ndcg": 0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_032",
+    "query": "用系统自带脚本环境连接另一台机器执行任务时，资料要求连接方具备什么权限？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.08333333333333331,
+      "ndcg": 0.06932344192660694
+    }
+  },
+  {
+    "question_id": "rag_035",
+    "query": "大量身份各只收到少数几个常见口令的尝试，这种横着铺开的登录行为属于什么模式？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.2,
+      "ndcg": 0.38685280723454163
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.3,
+      "ndcg": -0.2440769463369159
+    }
+  },
+  {
+    "question_id": "rag_037",
+    "query": "某个站点泄露的成对用户名和口令，为什么会被攻击者带到另一个站点再试一次？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.5,
+      "ndcg": 0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_038",
+    "query": "攻击者不认识用户实际输入的密码字符，却拿着窃取的摘要完成认证，这属于哪种做法？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_042",
+    "query": "管理员希望把重复工作保存为可按顺序运行、还能写条件和循环的命令清单，哪种文件机制能做到？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.16666666666666669,
+      "ndcg": 0.13092975357145753
+    }
+  },
+  {
+    "question_id": "rag_043",
+    "query": "办公文档为什么能像小程序一样，在事件触发时自动执行主机任务？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.25,
+      "ndcg": -0.43067655807339306
+    }
+  },
+  {
+    "question_id": "rag_044",
+    "query": "一种常被当成网页专用的脚本语言，能否在没有浏览器页面的运行环境里执行？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.6666666666666667,
+      "ndcg": -0.5
+    }
+  },
+  {
+    "question_id": "rag_045",
+    "query": "不打开浏览器窗口也能运行网页应用格式的独立程序，资料指的是哪个系统工具？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -1.0,
+      "ndcg": -1.0
+    }
+  },
+  {
+    "question_id": "rag_049",
+    "query": "数据库结果不直接出现在页面中时，测试者可以通过什么观察方式重建信息？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.25,
+      "ndcg": -0.43067655807339306
+    }
+  },
+  {
+    "question_id": "rag_050",
+    "query": "查询结果不沿着提交输入的页面返回，而是另走一条通信通道，这属于哪种取数方式？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_051",
+    "query": "梳理可能进入数据库查询的入口时，只查看可见输入框够不够，还应考虑哪些隐藏或附带的请求内容？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.25,
+      "ndcg": 0.43067655807339306
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.25,
+      "ndcg": 0.20025319549806447
+    }
+  },
+  {
+    "question_id": "rag_053",
+    "query": "为什么一本固定出版物不再适合维护所有事件处置的操作细节？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_069",
+    "query": "How can a stolen secret stand in for the characters its owner originally typed when a service authenticates that owner?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.6666666666666667,
+      "ndcg": -0.5
+    }
+  },
+  {
+    "question_id": "rag_070",
+    "query": "为什么攻击者会把一份很短的猜测清单分散用于许多身份，而不把所有尝试押在同一个身份上？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.5,
+      "ndcg": -0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_072",
+    "query": "办公文件原本只是内容载体，哪种内置能力能让它在特定事件发生时自动执行主机任务？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_077",
+    "query": "攻击者已经拿到外站泄露的成对账号密码，再利用用户复用习惯登录目标；这与轮试常见口令的模式如何区分？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.5
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.6666666666666667,
+      "ndcg": 0.5
+    }
+  },
+  {
+    "question_id": "rag_079",
+    "query": "分析目标是获取已登录会话留下的内存凭据，而不是使用现成摘要去认证；应该聚焦哪个安全进程？",
+    "before": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.2,
+      "ndcg": 0.38685280723454163
+    },
+    "delta": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.2,
+      "ndcg": 0.38685280723454163
+    }
+  },
+  {
+    "question_id": "rag_081",
+    "query": "线索明确是由系统脚本引擎解释的微软脚本实现，而非办公文档宏；应找哪个实现？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0
+    },
+    "delta": {
+      "recall": -1.0,
+      "precision": -0.2,
+      "mrr": -0.5,
+      "ndcg": -0.6309297535714575
+    }
+  },
+  {
+    "question_id": "rag_083",
+    "query": "需要远程修改注册表和服务，线索指向一种同名的系统服务与协议，而非仅仅本地命令解释器；它是什么？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.5,
+      "ndcg": -0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_088",
+    "query": "Which retrieval method reconstructs information from database behaviour without receiving it through another channel?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.5,
+      "ndcg": -0.36907024642854247
+    }
+  },
+  {
+    "question_id": "rag_089",
+    "query": "目标将查询结果交给另一条通信链路，而不是直接显示在提交输入的原页面；应归为哪一类？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.5,
+      "ndcg": 0.6309297535714575
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.2,
+      "mrr": 0.2,
+      "ndcg": 0.38685280723454163
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": -0.3,
+      "ndcg": -0.2440769463369159
+    }
+  },
+  {
+    "question_id": "rag_096",
+    "query": "Separate two stages: which process stores credential materials after logon, and how can captured hashes then authenticate without the cleartext password?",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 1.0
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.8772153153380492
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": -0.1227846846619508
+    }
+  },
+  {
+    "question_id": "rag_098",
+    "query": "针对恶意软件事件，网络、认证材料和恢复副本应分别如何处理；已经发现的经验教训是否要等恢复结束才分享？",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6509209298071325
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.04250547381013836
+    }
+  },
+  {
+    "question_id": "rag_100",
+    "query": "先说明少量常见口令遍历许多身份的行为模式，再列出本地暴力破解清单的三项建议；不要声称每项措施与某个指标一一对应。",
+    "before": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6240505200038379
+    },
+    "after": {
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 0.5,
+      "ndcg": 0.6934264036172708
+    },
+    "delta": {
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.06937588361343294
+    }
+  }
+]

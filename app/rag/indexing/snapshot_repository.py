@@ -26,7 +26,15 @@ class SnapshotRepository:
         """Save a fresh generation; leave the current pointer and old files untouched."""
         generation = uuid4().hex
         path = self.root / generation
+        if snapshot.view_store is not None and snapshot.view_model_name != signature["model"]:
+            raise ValueError("View index and original index must use the same embedding model")
         snapshot.store.save(path)
+        if snapshot.view_store is not None:
+            snapshot.view_store.save(path / "views")
+            (path / "views/manifest.json").write_text(json.dumps({
+                "embedding_model": snapshot.view_model_name, "view_type": "question",
+                "count": len(snapshot.view_store.records),
+            }), encoding="utf-8")
         with closing(sqlite3.connect(path / "metadata.db")) as connection, connection:
             connection.executescript("""
                 CREATE TABLE documents (document_id TEXT PRIMARY KEY, data TEXT NOT NULL);
@@ -53,7 +61,14 @@ class SnapshotRepository:
         with closing(sqlite3.connect(path / "metadata.db")) as connection:
             documents = [DocumentRecord.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM documents")]
             parents = [ParentChunk.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM parents")]
-        return IndexSnapshot(store, documents, parents)
+        view_store, view_model = None, None
+        if (path / "views/manifest.json").exists():
+            manifest = json.loads((path / "views/manifest.json").read_text(encoding="utf-8"))
+            view_store = self.store_factory.load(path / "views")
+            view_model = manifest["embedding_model"]
+            if manifest["count"] != len(view_store.records) or store.dimension != view_store.dimension:
+                raise ValueError("Invalid auxiliary index manifest or dimension")
+        return IndexSnapshot(store, documents, parents, view_store, view_model)
 
     def load_current(self, signature: dict) -> IndexSnapshot | None:
         pointer = self.root / "current.json"

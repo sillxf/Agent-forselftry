@@ -30,6 +30,8 @@ def load_sample_alerts():
 
 
 class FakeRetriever:
+    retrieval_modes = ("hybrid",)
+
     def search(self, query, k=3):
         return [
             {

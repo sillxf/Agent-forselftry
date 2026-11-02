@@ -1,0 +1,13 @@
+{
+  "source_chunks_sha256": "7975f4f40ceeecb64a636360eb8511d8478a8a2c51b258cecec371b25f824b73",
+  "generator_model": "gpt-6.1-sol",
+  "prompt_version": "question-view-v1",
+  "batch_size": 8,
+  "source_chunks": 301,
+  "completed": true,
+  "views": 460,
+  "covered_source_chunks": 230,
+  "skipped_source_chunks": 71,
+  "generation_seconds": 222.13380969999707,
+  "views_sha256": "05ce29e4d975d0f60b5261852c45a752a36de344b160c0bc11635376a7212b37"
+}

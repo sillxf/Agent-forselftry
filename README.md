@@ -293,9 +293,10 @@ questions. Every label and experimental translation remains pending review.
 - [100-question source review sheet](tests/rag_benchmark/v1/dataset/review.md)
 - [Actual grouped multi-K results](evaluation_results/baselines/2026-11-01_security_v1_balanced_minilm/hybrid/multik_report.md)
 
-BGE-M3 and dual-query comparison code is prepared, but no B/C scores are claimed:
-the model is not cached locally for this offline run. No production embedding or
-retrieval algorithm, Cross-Encoder or Agent refusal judge was introduced.
+The completed A/B/C comparison is archived in
+`evaluation_results/baselines/2026-11-01_security_v1_bge_m3_abc/abc_report.md`.
+BGE-M3 is now the default embedding. Frozen translated-query experiments do not
+imply an online translation chain, Cross-Encoder or Agent refusal judge.
 
 ## Current milestone — 2026-11-02
 
@@ -309,3 +310,34 @@ Further work on the improvement plan is paused pending a new instruction. This i
 a stopping milestone for this evaluation phase, not completion of all planned Agent
 features; no Reranker, online translation chain or new refusal mechanism is enabled
 by this milestone. Existing service processes need a restart to load the new defaults.
+
+
+## Optional Question Multi-View — 2026-11-02
+
+An experimental `multi_view` mode augments original Dense retrieval with a separate
+index of offline-generated Chinese/English questions. View hits map back to original
+Child/Parent evidence before context building; generated questions never become citations.
+Hybrid remains the default. No automatic retry, router, Summary/Entity views or Reranker.
+
+The Agent now has a `knowledge_search(query, retrieval_mode, top_k)` tool. Its mode enum
+contains `multi_view` only when the active generation includes an auxiliary index.
+`/knowledge/search` also accepts the optional mode; requesting a missing View index
+returns 409 rather than silently running Hybrid. Old generations load unchanged.
+
+The fixed 100-question pilot used the same BGE-M3 vectors, chunks, labels and retrieval
+parameters. The original Hybrid ranking fingerprint is unchanged; neither arm had query errors.
+
+| Parent metric | Hybrid | Question Multi-View |
+| --- | ---: | ---: |
+| All answerable Recall@5 | 94.44% | 84.44% |
+| Chinese → English Recall@5 | 92.31% | 74.36% |
+| All answerable Recall@10 | 97.78% | 97.78% |
+| All answerable MRR@5 | 0.7448 | 0.6807 |
+
+This implementation did **not** improve overall retrieval: one question gained Recall@5,
+ten lost it. Auxiliary views are not published to the current production knowledge base.
+The mode is available for explicit experiments, not recommended as the default or claimed
+as a validated LLM routing improvement. No labels or human-review statuses were changed.
+
+See [generation/build/replay commands](docs/rag_multiview.md) and
+[the full comparison and per-question rank changes](evaluation_results/baselines/2026-11-02_security_v1_question_multiview/comparison.md).

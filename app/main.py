@@ -10,6 +10,7 @@ from app.services.risk_analyzer import (
     analyze_alert
 )
 from app.rag.retriever import KnowledgeRetriever
+from app.rag.retrieval.multiview import MultiViewUnavailable
 from app.llm.client import LLMClient
 from app.config import *
 from pydantic import ValidationError
@@ -66,13 +67,14 @@ def search_knowledge(
         ...,
         description="Question or keyword"
     ),
-    k: int = 3
+    k: int = 3,
+    retrieval_mode: Literal["hybrid", "multi_view"] = "hybrid",
 ):
 
-    results = knowledge_retriever.search(
-        q,
-        k
-    )
+    try:
+        results = knowledge_retriever.search(q, k, retrieval_mode=retrieval_mode)
+    except MultiViewUnavailable as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
     return {
