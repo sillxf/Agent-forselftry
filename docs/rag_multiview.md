@@ -109,3 +109,26 @@ python scripts/run_multiview_experiment.py --offline `
 
 只评估检索，不运行回答生成或人工审核。不可答题不计入普通 Recall/MRR。
 第一轮固定结果见 `evaluation_results/baselines/2026-11-02_security_v1_question_multiview/`。
+
+
+## 实验分支与退步归因
+
+本实验保留于 `codex/experimental-question-multiview`，不是主分支默认能力。
+主分支恢复到管线抽取完成后的稳定代码；本分支保留原始实验和后续归因，便于未来重新评估。
+
+补充归因使用相同冻结模型、索引、问题视图、数据集和候选预算，比较八种路线，未调权重。
+原文 Dense Parent Recall@5 为 96.67%，View Dense 为 75.09%；二者内层融合为 85.00%。
+三路直接融合为 86.67%，两层融合为 84.44%，均低于原 Hybrid 的 94.44%。
+10 道退步题的正确证据 Child 都有 View，问题主要不是漏生成，
+而是问题视图聚焦的细节与查询不一致，弱通道参与等权融合后改变了原文排序。
+嵌套融合还有额外损失，但不是唯一原因；这不是对因素独立贡献的完整分解。
+
+归因结果：`evaluation_results/baselines/2026-11-02_question_multiview_attribution/report.md`。
+重放命令（输出目录必须不存在）：
+
+```powershell
+python -m evaluation.rag.multiview_diagnostics --offline `
+  --output-dir evaluation_results/local_multiview_attribution
+```
+
+本分支的保存不代表效果通过验收，也没有向生产索引发布辅助 View。
