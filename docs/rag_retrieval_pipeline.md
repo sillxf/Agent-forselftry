@@ -148,3 +148,73 @@ Facade 内部通过 run(..., files=files) 复用索引签名已发现的有序�
 Docling 模型实际解析 PDF + Markdown，与提取前保存结果逐字段比较，documents、parents、
 children（含 ID）及通过原入口重建后的查询结果完全一致。对照过程使用本地测试 Embedding，
 不是新一轮模型效果评测；独立 Ingestion 调用未执行向量编码或创建向量索引。
+
+## 独立索引构建（第二步提取）
+
+`app/rag/indexing/pipeline.py` 新增 `IndexingPipeline`，接收已有的 `IngestionResult`：
+
+```text
+IngestionResult(documents / parents / children)
+  → Child.search_text 按原顺序编码
+  → 创建新的 VectorStore 并添加向量/Child 记录
+  → IndexSnapshot(store / documents / parents)
+```
+
+`IndexSnapshot` 是简单的内存结果对象，不是已发布的 Generation，也不是不可变快照管理器。
+文档和 Parent 使用原结果中的列表；Child 记录按原有 model_dump(mode="json") 协议生成。
+使用期间不要原地修改这些元数据。
+
+```python
+from functools import partial
+
+from app.config import RAG_EMBEDDING_MODEL
+from app.rag.embedder import embed_texts
+from app.rag.indexing.pipeline import IndexingPipeline
+from app.rag.indexing.vector_store import FaissVectorStore
+
+# result 为前面 ingestion.run(...) 的输出，只需处理文档一次。
+indexing = IndexingPipeline(
+    embed=partial(embed_texts, model_name=RAG_EMBEDDING_MODEL),
+    store_factory=FaissVectorStore,
+)
+snapshot = indexing.build(result)
+print(len(snapshot.store.records), len(snapshot.documents), len(snapshot.parents))
+
+# 之后复用相同 Chunk：替换编码函数或 store_factory，不再调用 Parser/Chunker。
+rebuilt = indexing.build(result)  # 创建独立的新向量库，不向旧库追加。
+```
+
+要更换 Embedding，只需注入另一个 embed(texts) 可调用对象；要换向量库，传入
+store_factory(dimension)。编码输出沿用 float32，归一化及搜索行为仍由原 FaissVectorStore 处理。
+新模型必须能够容纳已有 search_text；本管线不重切 Chunk，也不自动处理新模型的截断。
+查询编码必须与向量库使用同一模型，不能将新向量绑定到旧查询模型。
+
+可单独装配已有查询管线，不必写磁盘或调用文档处理：
+
+```python
+from app.rag.retrieval.pipeline import RetrievalPipeline
+
+query_pipeline = RetrievalPipeline.from_index(
+    snapshot.store,
+    {parent.parent_id: parent for parent in snapshot.parents},
+    embed=indexing.embed,
+)
+results = query_pipeline.search_rankings("中文问题", k=2)
+```
+
+也可使用原兼容入口的 attach_index，显式传入与该向量库匹配的模型/编码配置。
+独立 build 不需要文档目录，即使原文档暂时不可访问也可以使用内存中的 Chunk 结果。
+没有 Child 时不调用编码函数，继续创建原有的 1 维空索引。
+
+KnowledgeRetriever 现在委托 IngestionPipeline 处理文档、IndexingPipeline 编码建库，
+随后仍调用原 _save 和 attach_index。构造参数、search/search_rankings/build_index、
+索引格式、检索策略、默认 BGE-M3、Top-K 和 Chunk ID 不变。
+本步不迁移 SQLite/current.json，不调整发布/绑定顺序，不抽取 SnapshotRepository，
+不增加模型实验、组件协议或新的运行时机制。
+
+本步验证：完整回归 133 passed、10 skipped（需显式启用的 PDF/OCR 模型测试默认跳过）。
+复用相同 Chunk 注入两种不同维度的测试编码函数，验证新库独立、记录/ID 不变；
+Embedding 或 VectorStore.add 失败时，原内存查询管线和磁盘 current 指针均保留。
+另用真实 BGE-M3 对已有 12 个生产 Chunk 做内存重建，禁止 Parser/Ingestion 调用，
+新旧向量在 1e-6 容差内一致、生产指针未修改；12 组重构前后的本地测试查询输出完全一致。
+这些是行为回归，不是新增模型效果实验，也没有发布新的生产索引。

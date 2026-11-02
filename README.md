@@ -121,6 +121,12 @@ the tokenizer and effective token budget. `KnowledgeRetriever` delegates its doc
 processing to this pipeline while retaining the existing index build/save/load behavior.
 See [standalone ingestion usage](docs/rag_retrieval_pipeline.md#独立文档处理第一步提取).
 
+`IndexingPipeline` in `app/rag/indexing/pipeline.py` accepts that existing chunk result,
+encodes Child `search_text` and returns an in-memory `IndexSnapshot`. Rebuild vectors
+with a different embedding function or vector-store factory without parsing again.
+The original facade still handles persistence and publication; no index format changes.
+See [chunk reuse and indexing examples](docs/rag_retrieval_pipeline.md#独立索引构建第二步提取).
+
 The ingestion-to-chunking path now runs:
 
 ```text

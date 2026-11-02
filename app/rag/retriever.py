@@ -7,8 +7,6 @@ from pathlib import Path
 from threading import RLock
 from uuid import uuid4
 
-import numpy as np
-
 from app.config import (
     RAG_BM25_TOP_K, RAG_CHILD_MAX_TOKENS, RAG_CHILD_OVERLAP_TOKENS,
     RAG_DENSE_TOP_K, RAG_EMBEDDING_MODEL, RAG_KNOWLEDGE_DIR, RAG_OCR_ENABLED,
@@ -18,6 +16,7 @@ from app.rag.chunking.child_chunker import ChildChunker
 from app.rag.chunking.parent_chunker import ParentChunker
 from app.rag.embedder import embed_texts, get_model
 from app.rag.indexing.vector_store import FaissVectorStore, VectorStoreInterface
+from app.rag.indexing.pipeline import IndexingPipeline
 from app.rag.ingestion.docling_parser import DoclingParser, file_checksum
 from app.rag.ingestion.pipeline import IngestionPipeline, IngestionResult
 from app.rag.loader import discover_documents
@@ -65,11 +64,6 @@ class KnowledgeRetriever:
             "files": [{"path": str(path.resolve()), "checksum": file_checksum(path)} for path in files],
         }, files
 
-    def _embed(self, texts):
-        if self.embedding_fn is not None:
-            return np.asarray(self.embedding_fn(texts), dtype="float32")
-        return embed_texts(texts, self.model_name)
-
     def _ensure_index(self):
         with self._lock:
             if self.store is not None:
@@ -100,16 +94,15 @@ class KnowledgeRetriever:
             child_chunker = ChildChunker(tokenizer, child_budget, min(self.overlap_tokens, child_budget - 1))
             ingestion = IngestionPipeline(self.parser, parent_chunker, child_chunker)
             result = ingestion.run(self.knowledge_dir, files=files)
-        # Publish nothing until parsing, embedding and persistence have all succeeded.
-        records = [child.model_dump(mode="json") for child in result.children]
-        if records:
-            vectors = self._embed([record["search_text"] for record in records])
-            store = self.store_factory(vectors.shape[1])
-            store.add(vectors, records)
-        else:
-            store = self.store_factory(1)
-        self._save(signature, store, result.documents, result.parents)
-        self.attach_index(store, result.documents, {parent.parent_id: parent for parent in result.parents})
+        indexing = IndexingPipeline(
+            self.embedding_fn or partial(embed_texts, model_name=self.model_name),
+            store_factory=self.store_factory,
+        )
+        snapshot = indexing.build(result)
+        # Persistence and publication remain unchanged until the repository extraction.
+        self._save(signature, snapshot.store, snapshot.documents, snapshot.parents)
+        self.attach_index(snapshot.store, snapshot.documents,
+                          {parent.parent_id: parent for parent in snapshot.parents})
 
     @property
     def pipeline(self):
