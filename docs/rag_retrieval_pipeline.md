@@ -218,3 +218,82 @@ Embedding 或 VectorStore.add 失败时，原内存查询管线和磁盘 current
 另用真实 BGE-M3 对已有 12 个生产 Chunk 做内存重建，禁止 Parser/Ingestion 调用，
 新旧向量在 1e-6 容差内一致、生产指针未修改；12 组重构前后的本地测试查询输出完全一致。
 这些是行为回归，不是新增模型效果实验，也没有发布新的生产索引。
+
+## 快照仓库与兼容 Facade（第三、四步整理）
+
+`app/rag/indexing/snapshot_repository.py` 提取了原 Retriever 的 SQLite、Generation
+保存/加载和 current.json 管理。KnowledgeRetriever 不再实现 SQL 或文件发布：
+
+```text
+KnowledgeRetriever（兼容入口、默认装配、延迟初始化、进程内锁）
+  ├── IngestionPipeline：解析与切分
+  ├── IndexingPipeline：Child 编码和内存向量库
+  ├── SnapshotRepository：保存、加载、发布磁盘 Generation
+  └── RetrievalPipeline：召回、融合和 Parent 上下文
+```
+
+### Repository 接口
+
+- `save(snapshot, signature)`：保存新的独立目录，返回 `SavedGeneration(generation, signature)`；
+  只有向量库和 SQLite 均写入成功才返回，不修改 current.json。
+- `publish(saved)`：写入临时指针，再以文件 replace 更新 current.json。调用方须先准备好查询组件。
+- `load_current(signature)`：签名匹配时加载；没有指针或签名不匹配返回 None，供 Facade 决定是否构建。
+- `load_generation(generation)`：读取指定 Generation，不切换 current，也不加载 Embedding 模型。
+
+Generation 文件仍为 faiss.index、chunks.jsonl、metadata.db；SQLite 表和指针 JSON 结构、
+INDEX_VERSION=5 均不变。旧索引可直接加载，不需要迁移或重建。
+签名继续由 Facade 使用原有效模型、切分参数和文档指纹生成，Repository 不猜测或改写签名。
+
+### 新版本发布顺序
+
+```text
+处理文档并构建内存索引
+  → 保存独立的新 Generation
+  → 准备 Parent 映射与完整 RetrievalPipeline（含 BM25）
+  → 原子发布 current.json
+  → 安装已经准备好的内存引用
+```
+
+Facade 全程沿用现有 RLock。发布后只有引用赋值，不再执行模型/组件构造、解析或磁盘 I/O。
+向量保存、元数据写入、查询组件构造失败时，旧指针与旧内存对象保持不变；
+临时指针写入/替换失败时同样不切换内存。错误明确向调用方传播，不伪装成功。
+
+旧 Generation 始终保留。失败可能留下未发布的构建目录或临时指针文件，本轮不自动清理，
+它们不会被 load_current 当作当前版本。未增加自动恢复、回滚命令、多进程锁或后台切换。
+这里保证正常进程内的发布顺序，不声称磁盘与内存组成跨进程/断电事务；其他运行中的进程
+仍需显式重建或重启才能切换其内存索引。
+
+### 独立复用
+
+可以使用已有 IndexSnapshot，而不重新处理文档：
+
+```python
+from app.rag.indexing.snapshot_repository import SnapshotRepository
+from app.rag.retrieval.pipeline import RetrievalPipeline
+
+# 使用隔离目录演示，避免覆盖生产指针。
+repository = SnapshotRepository("app/storage/repository-example")
+# signature 应来自与 snapshot 一致的有效配置和源文件指纹，不用于猜测模型。
+saved = repository.save(snapshot, signature)
+prepared = RetrievalPipeline.from_index(
+    snapshot.store,
+    {parent.parent_id: parent for parent in snapshot.parents},
+    embed=indexing.embed,  # 必须与该向量库使用同一编码模型
+)
+repository.publish(saved)
+active_pipeline = prepared
+restored = repository.load_current(signature)
+```
+
+KnowledgeRetriever 的旧构造参数、search、search_rankings、build_index 和 attach_index
+保持不变；attach_index 仍只准备并绑定内存，不发布磁盘版本。没有改变解析/切分、Chunk ID、
+默认 BGE-M3、向量库、Dense/BM25/RRF 算法、Top-K 或 API 响应格式。
+前述第一、二步中的 _save/_load 描述为当时状态；本步已将它们移到 Repository，
+并完成 Facade 整理，不是重建 RAG 框架。
+
+本步验证：完整回归 139 passed、10 skipped（需显式启用的 PDF/OCR 模型测试默认跳过）。
+直接加载历史 MiniLM 冻结 Generation，验证现有文件格式可读、另存后可发布且旧版本保留；
+注入向量保存、SQLite 写入、查询组件准备和指针替换故障，旧指针和旧内存对象均保持可用。
+成功路径测试明确核对 save → prepare → publish → activate 顺序。
+另对 18 组真实 BGE-M3 查询和 FastAPI 路由做重构前后对照，排名、分数、上下文完全一致，
+原生产 Generation 直接复用，没有重新解析或发布新生产版本。

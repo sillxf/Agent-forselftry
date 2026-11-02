@@ -1,11 +1,7 @@
-"""Compatible knowledge search backed by structured, persistent hybrid retrieval."""
-import json
-import sqlite3
-from contextlib import closing
+"""Compatible facade coordinating ingestion, indexing, snapshots and query pipelines."""
 from functools import partial
 from pathlib import Path
 from threading import RLock
-from uuid import uuid4
 
 from app.config import (
     RAG_BM25_TOP_K, RAG_CHILD_MAX_TOKENS, RAG_CHILD_OVERLAP_TOKENS,
@@ -17,10 +13,10 @@ from app.rag.chunking.parent_chunker import ParentChunker
 from app.rag.embedder import embed_texts, get_model
 from app.rag.indexing.vector_store import FaissVectorStore, VectorStoreInterface
 from app.rag.indexing.pipeline import IndexingPipeline
+from app.rag.indexing.snapshot_repository import SnapshotRepository
 from app.rag.ingestion.docling_parser import DoclingParser, file_checksum
 from app.rag.ingestion.pipeline import IngestionPipeline, IngestionResult
 from app.rag.loader import discover_documents
-from app.rag.models import DocumentRecord, ParentChunk
 from app.rag.retrieval.pipeline import RetrievalPipeline
 
 
@@ -47,6 +43,7 @@ class KnowledgeRetriever:
             ocr_enabled=RAG_OCR_ENABLED,
         )
         self.store_factory = store_factory
+        self.repository = SnapshotRepository(self.storage_dir, store_factory=store_factory)
         self.store: VectorStoreInterface | None = None
         self.parents = {}
         self.documents = []
@@ -69,9 +66,12 @@ class KnowledgeRetriever:
             if self.store is not None:
                 return
             signature, files = self._signature()
-            if self._load(signature):
-                return
-            self._build(signature, files)
+            snapshot = self.repository.load_current(signature)
+            if snapshot is not None:
+                self.attach_index(snapshot.store, snapshot.documents,
+                                  {parent.parent_id: parent for parent in snapshot.parents})
+            else:
+                self._build(signature, files)
 
     def build_index(self):
         """Explicitly rebuild after adding/updating/removing knowledge files."""
@@ -99,10 +99,12 @@ class KnowledgeRetriever:
             store_factory=self.store_factory,
         )
         snapshot = indexing.build(result)
-        # Persistence and publication remain unchanged until the repository extraction.
-        self._save(signature, snapshot.store, snapshot.documents, snapshot.parents)
-        self.attach_index(snapshot.store, snapshot.documents,
-                          {parent.parent_id: parent for parent in snapshot.parents})
+        saved = self.repository.save(snapshot, signature)
+        parents = {parent.parent_id: parent for parent in snapshot.parents}
+        pipeline = self._prepare_pipeline(snapshot.store, parents, self.model_name)
+        # All fallible construction is finished before publishing. Only references switch after it.
+        self.repository.publish(saved)
+        self._activate_index(snapshot.store, snapshot.documents, parents, pipeline, self.model_name)
 
     @property
     def pipeline(self):
@@ -115,51 +117,19 @@ class KnowledgeRetriever:
         """Bind an in-memory/frozen index as one unit; do not write the current pointer."""
         with self._lock:
             model_name = model_name if model_name is not None else self.model_name
-            embed = self.embedding_fn or partial(embed_texts, model_name=model_name)
-            pipeline = RetrievalPipeline.from_index(
-                store, parents, embed=embed,
-                dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k,
-            )
-            self.store, self.documents, self.parents = store, documents, parents
-            self.model_name, self._pipeline = model_name, pipeline
+            pipeline = self._prepare_pipeline(store, parents, model_name)
+            self._activate_index(store, documents, parents, pipeline, model_name)
 
-    def _save(self, signature, store, documents, parents):
-        root = self.storage_dir / "indexes"
-        generation = uuid4().hex
-        path = root / generation
-        store.save(path)
-        with closing(sqlite3.connect(path / "metadata.db")) as connection, connection:
-            connection.executescript("""
-                CREATE TABLE documents (document_id TEXT PRIMARY KEY, data TEXT NOT NULL);
-                CREATE TABLE parents (parent_id TEXT PRIMARY KEY, document_id TEXT, data TEXT NOT NULL);
-                CREATE TABLE chunks (chunk_id TEXT PRIMARY KEY, parent_id TEXT, document_id TEXT);
-            """)
-            connection.executemany("INSERT INTO documents VALUES (?, ?)",
-                                   [(doc.document_id, doc.model_dump_json()) for doc in documents])
-            connection.executemany("INSERT INTO parents VALUES (?, ?, ?)",
-                                   [(p.parent_id, p.document_id, p.model_dump_json()) for p in parents])
-            connection.executemany("INSERT INTO chunks VALUES (?, ?, ?)",
-                                   [(r["chunk_id"], r["parent_id"], r["document_id"]) for r in store.records])
-        # Publish a complete generation in one step instead of mixing old/new index files.
-        pointer = root / f".current-{generation}.tmp"
-        pointer.write_text(json.dumps({"generation": generation, "signature": signature}), encoding="utf-8")
-        pointer.replace(root / "current.json")
+    def _prepare_pipeline(self, store, parents, model_name):
+        return RetrievalPipeline.from_index(
+            store, parents, embed=self.embedding_fn or partial(embed_texts, model_name=model_name),
+            dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k,
+        )
 
-    def _load(self, signature):
-        root = self.storage_dir / "indexes"
-        pointer = root / "current.json"
-        if not pointer.exists():
-            return False
-        current = json.loads(pointer.read_text(encoding="utf-8"))
-        if current["signature"] != signature:
-            return False
-        path = root / current["generation"]
-        store = self.store_factory.load(path)
-        with closing(sqlite3.connect(path / "metadata.db")) as connection:
-            documents = [DocumentRecord.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM documents")]
-            parents = [ParentChunk.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM parents")]
-        self.attach_index(store, documents, {parent.parent_id: parent for parent in parents})
-        return True
+    def _activate_index(self, store, documents, parents, pipeline, model_name):
+        """Install prepared references under the facade lock; no construction or I/O."""
+        self.store, self.documents, self.parents = store, documents, parents
+        self.model_name, self._pipeline = model_name, pipeline
 
     def search_rankings(self, query: str, k: int = 5, strategy: str = "hybrid"):
         """Compatible Child and unique-Parent rankings from the composed pipeline."""
