@@ -152,12 +152,12 @@ class KnowledgeRetriever:
         self.store, self.documents, self.parents = store, documents, parents
         self.model_name, self._pipeline = model_name, pipeline
 
-    def search_rankings(self, query: str, k: int = 5, strategy: str = "hybrid"):
+    def search_rankings(self, query: str, k: int = 5, strategy: str = "hybrid", *, candidate_k=None, reranker=None):
         """Compatible Child and unique-Parent rankings from the composed pipeline."""
         if not query.strip() or k <= 0:
             return {"children": [], "parents": [], "candidate_count": 0}
         with self._lock:
-            return self.pipeline.search_rankings(query, k, strategy)
+            return self.pipeline.search_rankings(query, k, strategy, candidate_k=candidate_k, reranker=reranker)
 
     @property
     def retrieval_modes(self):

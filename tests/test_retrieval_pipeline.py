@@ -42,6 +42,27 @@ def test_components_are_replaceable_and_parent_topk_is_independent_of_child_topk
         pipeline.rank_candidates("query", 2, "invalid")
 
 
+def test_candidate_pool_can_be_fixed_and_reranked_without_changing_default_path():
+    a, b = [candidate(key, parent, dense_score=score) for key, parent, score in
+            [("a", "p1", .9), ("b", "p2", .8)]]
+    parents = {key: ParentChunk(parent_id=key, document_id="doc", content="Full " + key)
+               for key in ("p1", "p2")}
+    dense = Mock(); dense.retrieve.return_value = [a, b]
+    sparse = Mock(); sparse.retrieve.return_value = []
+    reranker = Mock()
+    reranker.rerank.return_value = [dict(b, reranker_score=.9), dict(a, reranker_score=.1)]
+    pipeline = RetrievalPipeline(dense, sparse, RRFFusion(), ParentContextBuilder(parents),
+                                 dense_top_k=7, bm25_top_k=9)
+
+    result = pipeline.search_rankings("query", 1, candidate_k=2, reranker=reranker)
+
+    dense.retrieve.assert_called_once_with("query", 2)
+    sparse.retrieve.assert_called_once_with("query", 2)
+    reranker.rerank.assert_called_once()
+    assert [item["chunk_id"] for item in result["children"]] == ["b"]
+    assert result["candidate_count"] == 2
+
+
 def test_rrf_supports_multiple_routes_without_mutating_inputs_or_losing_scores():
     a = candidate("a", "p1", dense_score=.5)
     sparse_a = dict(a, sparse_score=3.0)
