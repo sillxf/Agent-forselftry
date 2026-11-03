@@ -254,7 +254,7 @@ class InvestigationService:
         )
 
         prompt = SECURITY_ANALYSIS_PROMPT.format(
-            alert=alert.description,
+            alert=alert.model_dump_json(),
             risk=risk,
             knowledge=knowledge_text
         )

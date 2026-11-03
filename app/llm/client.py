@@ -13,11 +13,29 @@ class LLMClient:
         api_key,
         base_url,
         model,
+        *,
+        timeout=None,
+        max_retries=None,
+        max_completion_tokens=None,
     ):
         self.api_key = api_key
         self.base_url = base_url
         self.model = model
         self._client = None
+        self.request_options = {}
+        if max_completion_tokens is not None:
+            if max_completion_tokens <= 0:
+                raise ValueError("max_completion_tokens must be positive")
+            self.request_options["max_completion_tokens"] = max_completion_tokens
+        self.client_options = {}
+        if timeout is not None:
+            if timeout <= 0:
+                raise ValueError("timeout must be positive")
+            self.client_options["timeout"] = timeout
+        if max_retries is not None:
+            if max_retries < 0:
+                raise ValueError("max_retries must be nonnegative")
+            self.client_options["max_retries"] = max_retries
 
     def _get_client(self):
         if not self.api_key:
@@ -40,6 +58,7 @@ class LLMClient:
                 self._client = OpenAI(
                     api_key=self.api_key,
                     base_url=self.base_url,
+                    **self.client_options,
                 )
             except OpenAIError as exc:
                 raise LLMConfigurationError(
@@ -57,6 +76,7 @@ class LLMClient:
         request = {
             "model": self.model,
             "messages": messages,
+            **self.request_options,
         }
 
         if tools is not None:
@@ -101,7 +121,9 @@ class LLMClient:
                 "The LLM returned no usable content."
             )
 
+        usage = getattr(response, "usage", None)
         return {
+            "usage": usage.model_dump(mode="json") if usage is not None else None,
             "content": content,
             "tool_calls": tool_calls,
             "assistant_message": (
