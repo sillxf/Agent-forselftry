@@ -1,430 +1,82 @@
-# AI-SecOps-Agent
-
-An AI-assisted security alert investigation system.
-
-## Current features
-
-- Security alert data model
-- List and filter alerts by severity
-- Retrieve a single alert by ID
-- HTTP API tests
-
-## Setup
-
-Create and activate a Python 3.11+ virtual environment (validated with Python 3.13), then run:
-
-    python -m pip install -r requirements.txt
-
-## Start the application
-
-    uvicorn app.main:app --reload
-
-## Run tests
-
-    python -m pytest -q
-
-PDF/OCR corpus tests are opt-in (models may download on first use):
-
-    python -m pytest -q --rag-models
-
-## API documentation
-
-Open http://127.0.0.1:8000/docs
-
-## Roadmap
-
-- Alert normalization and deduplication
-- Asset and event investigation tools
-- Retrieval-augmented generation
-- Agent tool calling
-- Workflow and ReAct comparison
-- Evaluation and observability
-
-## RAG Pipeline
-
-1. Docling parses Markdown, PDF, DOCX, XLSX, PPTX, HTML and images into shared
-   document/block records, retaining headings, available page numbers, tables and pictures.
-2. Cross-page processing removes page furniture and joins continued paragraphs, tables
-   and lists; structure recovery adds rule/layout-based section paths when headings are missing.
-3. Section-aware parents provide context; smaller overlapping children provide retrieval
-   units. Chunking uses the embedding tokenizer and counts source/section prefixes in the
-   model's input budget. Tables retain column/value pairs and are grouped by whole rows.
-4. Normalized embeddings use FAISS cosine retrieval. BM25+ preserves exact security
-   identifiers and uses basic Chinese character/bigram tokens. RRF merges both rankings.
-5. Search restores parent context and keeps source names, document/parent/chunk IDs,
-   section paths, page ranges and picture paths.
-
-`KnowledgeRetriever(build=True/False)`, `build_index()`, `search(query, k=2)` and
-`/knowledge/search?q=...&k=3` remain available. Results retain `source` and `content`;
-`content` is now the parent context and `chunk_content` is the matched fragment.
-`matched_page_start/end` cover the child's source blocks; pageless formats use null.
-The investigation prompt retains source identities and treats retrieved text as
-untrusted reference data. Its analysis output schema is unchanged.
-
-### Configuration and indexing
-
-Install `requirements.txt`; see `.env.example` for RAG settings. Relative paths resolve
-against the repository. The default embedding is `BAAI/bge-m3`, using the existing
-Dense + BM25 + RRF Hybrid retrieval. MiniLM is retained as a historical benchmark only.
-Remove an old `RAG_EMBEDDING_MODEL=all-MiniLM-L6-v2` override from your environment
-or change it to `BAAI/bge-m3`; then rebuild the index and restart the running service.
-The dual-query translation experiment is not enabled in production.
-Embedding and PDF layout/OCR models may download on first use.
-
-```powershell
-# Build explicitly, or rebuild after changing knowledge in a running service:
-.\.venv\Scripts\python.exe -c "from app.rag.retriever import KnowledgeRetriever; KnowledgeRetriever(build=False).build_index()"
-
-# Run offline unit/integration tests without an LLM service:
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-`build=False` loads/builds on the first search. Initialization reuses an index when
-source hashes, model and chunk settings match. A running process retains its in-memory
-index until explicit rebuild or restart. Identical files are indexed once.
-Model changes create a new index generation; previous generations are retained.
-New BGE indexes use its tokenizer with the configured 400-token child cap, not the
-MiniLM-frozen 254-token chunks used in the A/B/C experiment; its scores are not
-a production acceptance result.
-
-Generated files live in the Git-ignored `app/storage/` directory:
-
-```text
-parsed/<checksum>.json + .md       # Docling exports
-images/<checksum>/...             # extracted pictures / original image inputs
-indexes/current.json              # active generation and pipeline settings
-indexes/<generation>/
-  faiss.index
-  chunks.jsonl
-  metadata.db                     # document / parent / child relationships
-```
-
-A generation is published only after its files are saved and its query components
-are successfully prepared. The facade switches its in-memory references after the
-atomic pointer replacement. Pre-publication failures leave the old index active.
-Old generations are retained;
-automatic cleanup, index repair and multi-user permissions are outside this round.
-Index files are local, trusted application data.
-
-### Composable retrieval
-
-Query-time logic is implemented by `DenseRetriever`, `SparseRetriever`, `RRFFusion`,
-`ParentContextBuilder` and `RetrievalPipeline` under `app/rag/retrieval/`.
-`KnowledgeRetriever` is the compatibility facade coordinating ingestion, indexing,
-`SnapshotRepository` persistence and the query pipeline. Its search API is unchanged.
-Components can be constructed independently and injected into the pipeline; no
-Reranker, compression or new evaluation phase is enabled by this refactor.
-See [component responsibilities and examples](docs/rag_retrieval_pipeline.md).
-
-### Document processing
-
-`IngestionPipeline` in `app/rag/ingestion/pipeline.py` can run document processing
-independently and return documents, Parents and Children without vector encoding or
-index persistence. It receives the existing parser and chunkers; the caller supplies
-the tokenizer and effective token budget. `KnowledgeRetriever` delegates its document
-processing to this pipeline; index persistence is delegated to `SnapshotRepository`.
-See [standalone ingestion usage](docs/rag_retrieval_pipeline.md#独立文档处理第一步提取).
-
-`IndexingPipeline` in `app/rag/indexing/pipeline.py` accepts that existing chunk result,
-encodes Child `search_text` and returns an in-memory `IndexSnapshot`. Rebuild vectors
-with a different embedding function or vector-store factory without parsing again.
-The facade delegates persistence and publication to `SnapshotRepository`; index formats
-remain unchanged.
-See [chunk reuse and indexing examples](docs/rag_retrieval_pipeline.md#独立索引构建第二步提取).
-
-`SnapshotRepository` in `app/rag/indexing/snapshot_repository.py` saves/loads generations
-and publishes `current.json`. Build order is now: ingestion → indexing → save a fresh
-generation → prepare query components → publish the pointer → activate in memory.
-Existing generations load without migration; no automatic cleanup, recovery or
-multi-process coordination is introduced. See [snapshot lifecycle](docs/rag_retrieval_pipeline.md#快照仓库与兼容-facade第三四步整理).
-
-The ingestion-to-chunking path now runs:
-
-```text
-DoclingParser -> CrossPageMerger.merge(blocks) -> StructureRecovery.recover(blocks)
-              -> ParentChunker -> ChildChunker -> FAISS + BM25
-```
-
-- Cross-page merging only considers adjacent pages in the same document and section.
-  It joins unfinished sentences, reconciles repeated table headers, appends rows and
-  joins blank-ID row continuations. Ordered lists retain numbering and do not join a
-  restarted sequence. Explicit/repeated page furniture and boundary page numbers are
-  removed. Continuation headings are mapped back to the existing section.
-- Structure recovery uses numbering, source font/line measurements, bold text, indentation,
-  known short topic headings and entity anchors. Unheaded topic groups require agreement
-  between neighbouring paragraphs. Native heading paths remain authoritative.
-- `BlockLayout` stores available layout signals. DOCX font sizes/indents come from source
-  paragraphs; PDF cell heights/font names and page coordinates are used when available.
-  Missing measurements are left unset. Inferred structure is marked `inferred` with a
-  rule name/confidence; ambiguous unheaded content stays `unknown`. No LLM calls are made.
-- `source_block_ids`, page ranges and `merge_reason` retain the provenance of merged
-  evidence. Children inherit the original source IDs. Raw Docling JSON/Markdown archives
-  remain unchanged. The index pipeline version was bumped so old indexes rebuild on load.
-
-These are rule-based heuristics, not a guarantee that ambiguous page layouts can be
-reconstructed. OCR accuracy and unusual continuation patterns need representative-file
-acceptance testing rather than more speculative rules.
-
-### Validation and next steps
-
-`tests/test_api.py` and `tests/test_analysis.py` restore regression coverage for alert
-listing/filtering/detail, health, deduplication, risk, analysis, HTTP errors and typed
-analysis output. Tests use local LLM/embedding doubles instead of a removed production
-`MockLLM` or remote services. The runtime explicitly requires Pydantic v2 and python-docx.
-
-The v1.1 corpus adds 15 checked-in PDF, DOCX, XLSX, PPTX and PNG files with
-checksums, sources and explicit expectations. Four inputs come from NIST/Docling;
-eleven are generated boundary fixtures. See
-[the corpus guide](tests/fixtures/rag_documents/README.md) for provenance, acceptance
-checks and regeneration commands. This is structural regression coverage, not a
-Recall/MRR/NDCG retrieval benchmark.
-
-The four boundary fixes isolate source-image metadata from OCR items, require actual
-list markers before joining cross-page lists, use contextual/layout evidence for
-numbered headings, and align duplicate DOCX paragraphs by source occurrence rather
-than text-key overwrite. Repeated body text with known non-margin coordinates is
-retained. The index pipeline version is now 3, so affected indexes rebuild on load.
-
-The parser requires Docling 2.145+ and pypdfium2 5.14+. Image inputs use full-page OCR.
-PDFs with no native text anywhere use full-page OCR too; text-bearing and mixed PDFs
-retain PDF-aware OCR. Set `RAG_OCR_ENABLED=false` to disable OCR, not PDF layout/table
-processing. The GitHub Actions workflow runs normal regressions, publishes JUnit
-results, and offers a manual full-model run; remote CI execution is separate from
-local validation.
-
-Local Python 3.13 validation: `pip check` passed; `python -m pytest -q` reported
-**55 passed, 8 skipped**; `python -m pytest -q --rag-models` reported **63 passed**
-with cached local Docling/OCR models. Model-enabled coverage includes real scanned
-PDFs and all three image fixtures; skipped tests are not counted as passes.
-
-Deferred: retrieval benchmarks, reranking, VLM/image vectors, neighbour expansion and
-report-level citation evaluation. A single oversized table row stays intact in its
-parent, while children remain token-bounded. Legacy binary Office files, Qdrant and
-knowledge graphs are not introduced.
-
-## Example Investigation Flow
-输入：
-AL-001
-
-系统：
-1. Load alert
-
-2. Calculate risk
-
-3. Retrieve security knowledge
-
-4. Build investigation context
-
-5. Generate analysis
-
-输出：
-Attack:
-Brute Force
-
-Evidence:
-Multiple failed login attempts
-
-Recommendation:
-Block IP
-Enable MFA
-Investigate account
-
-## RAG retrieval benchmark (candidate v0.3.1)
-
-Nine frozen documents and 30 English/Chinese questions are evaluated with Dense,
-BM25Plus and Hybrid RRF. Child retrieval and Parent context have separate metrics.
-
-```powershell
-python scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline
-# Only after real human review:
-python scripts/run_rag_benchmark.py --retriever all --offline --require-reviewed
-```
-
-**All 30 labels still need human review.** AI source checks are not approval.
-`--require-reviewed` rejects pending labels. These are development results, not a
-certified acceptance benchmark or an Agent accuracy/refusal evaluation.
-
-Phase 2 separates table-rule fact IDs, preserves equivalent evidence as OR
-alternatives, tests the existing `result-qrels-v2` metric contract and repairs PDF
-figure-label/heading/column mistakes using source layout. It does not change the
-production embedding model, RRF, Top-K or add a reranker. A separate four-group
-Chinese/English/multilingual/dual-query experiment keeps original queries frozen.
-
-See [the Phase 2 report](docs/rag_benchmark_phase2_report.md),
-[benchmark commands](tests/rag_benchmark/README.md),
-[dataset audit](tests/rag_benchmark/dataset/phase2_audit.md),
-[human worksheet](tests/rag_benchmark/dataset/review.md), and
-[Agent evaluation design — not implemented](docs/agent_evaluation_design.md).
-
-Historical v0.1/v0.2 experiment directories remain unchanged. Their differing
-annotation/metric conventions are recorded in their own reports; do not interpret
-old score-definition changes as retrieval improvements. The latest report records
-actual test/CI results and explicitly distinguishes skipped PDF/OCR tests.
-
-
-For a question-by-question comparison of reference answers, actual HTTP-route
-retrieval and gold-blind LLM-generated answers, see the
-[actual answer review](evaluation_results/baselines/2026-11-01_http_answer_review_candidate_v2/review.md).
-This exploratory evaluation adds generation in its script; `/knowledge/search`
-itself remains a retrieval-only endpoint. Prior named human approvals have been
-withdrawn; development comparisons do not require manually approving each label.
-
-The current development reference is documented in
-[the retrieval reference](docs/rag_retrieval_reference.md): Parent Evidence
-Recall@3 is 92% on 25 answerable questions. This is not generated-answer accuracy.
-
-## Production / evaluation boundary
-
-Production parsing, indexing and retrieval live in `app/rag/`. Dataset runners,
-metrics, experiments and evaluation-only answer generation live in
-[`evaluation/`](evaluation/README.md). The application never imports that package.
-Existing scripts remain CLI entry points. Agent evaluation has its own reserved
-`evaluation/agent/` package; its runner/judges/metrics are not implemented yet.
-
-## Security Benchmark V1 — 100 candidate questions
-
-The extended dataset is isolated in `tests/rag_benchmark/v1/`; the original
-30 questions and historical results remain unchanged. It contains 21 frozen
-sources, cross-language/indirect/confusable-technique cases and 10 unanswerable
-questions. Every label and experimental translation remains pending review.
-
-- [Usage, measured MiniLM results and A/B/C commands](docs/rag_benchmark_expansion.md)
-- [Coverage audit](tests/rag_benchmark/dataset/benchmark_expansion_report.md)
-- [100-question source review sheet](tests/rag_benchmark/v1/dataset/review.md)
-- [Actual grouped multi-K results](evaluation_results/baselines/2026-11-01_security_v1_balanced_minilm/hybrid/multik_report.md)
-
-The completed A/B/C comparison is archived in
-`evaluation_results/baselines/2026-11-01_security_v1_bge_m3_abc/abc_report.md`.
-BGE-M3 is now the default embedding. Frozen translated-query experiments do not
-imply an online translation chain, Cross-Encoder or Agent refusal judge.
-
-## Current milestone — 2026-11-02
-
-The current RAG evaluation phase is complete for now: Benchmark V1 and the
-MiniLM/BGE-M3 A/B/C comparison are archived, and `BAAI/bge-m3` is now the default
-embedding with the existing Hybrid retrieval. The local production index was rebuilt;
-Chinese-query API and Agent Top2 retrieval smoke checks passed. Regression tests:
-123 passed, 10 skipped (PDF/OCR model tests requiring explicit opt-in).
-
-Further work on the improvement plan is paused pending a new instruction. This is
-a stopping milestone for this evaluation phase, not completion of all planned Agent
-features; no Reranker, online translation chain or new refusal mechanism is enabled
-by this milestone. Existing service processes need a restart to load the new defaults.
-
-
-## Optional Question Multi-View — 2026-11-02
-
-An experimental `multi_view` mode augments original Dense retrieval with a separate
-index of offline-generated Chinese/English questions. View hits map back to original
-Child/Parent evidence before context building; generated questions never become citations.
-Hybrid remains the default. No automatic retry, router, Summary/Entity views or Reranker.
-
-The historical experiment exposed retrieval modes to the Agent. The managed runtime
-now exposes only `knowledge_search(query, top_k)`; strategy stays on the server.
-`/knowledge/search` also accepts the optional mode; requesting a missing View index
-returns 409 rather than silently running Hybrid. Old generations load unchanged.
-
-The fixed 100-question pilot used the same BGE-M3 vectors, chunks, labels and retrieval
-parameters. The original Hybrid ranking fingerprint is unchanged; neither arm had query errors.
-
-| Parent metric | Hybrid | Question Multi-View |
-| --- | ---: | ---: |
-| All answerable Recall@5 | 94.44% | 84.44% |
-| Chinese → English Recall@5 | 92.31% | 74.36% |
-| All answerable Recall@10 | 97.78% | 97.78% |
-| All answerable MRR@5 | 0.7448 | 0.6807 |
-
-This implementation did **not** improve overall retrieval: one question gained Recall@5,
-ten lost it. Auxiliary views are not published to the current production knowledge base.
-The mode is available for explicit experiments, not recommended as the default or claimed
-as a validated LLM routing improvement. No labels or human-review statuses were changed.
-
-See [generation/build/replay commands](docs/rag_multiview.md) and
-[the full comparison and per-question rank changes](evaluation_results/baselines/2026-11-02_security_v1_question_multiview/comparison.md).
-
-## Managed knowledge operations (index format 7)
-
-Directory builds register stable logical document IDs in `app/storage/registry.db`,
-preserve immutable bytes in `app/storage/sources/<sha256>/source.<ext>`, and bind
-Parent/Child records to explicit content versions and processing artifacts. Identical
-bytes can be shared without merging different source identities. A registered latest
-version is not necessarily the version currently served: the published generation is
-always authoritative for content. Rebuilds and chunk-configuration changes do not
-create new content versions. Legacy snapshots and checksum-based benchmark labels
-remain readable without rewriting ground truth. Source-addressed retrieval tie keys
-keep logical UUID migration from silently changing Hybrid tie ordering.
-
-### Updates, safety and recovery
-
-- A file lock serializes builders across processes. Expensive parsing/encoding runs
-  outside the query lock; `build_index_async()` exposes an in-process background build.
-- A short SQLite write transaction checks lifecycle revision and publication checks
-  the expected current generation. Concurrent lifecycle edits invalidate stale builds.
-- Queries pin one runtime and filter tombstones and document-level validity bounds
-  before ranking and after optional reranking. Registry failure never bypasses filtering.
-- Other live instances follow the current pointer on their next request. Cold-load
-  leases keep GC from removing a generation while it is being loaded.
-- `current.json` and `previous.json` are published pointers, not arbitrary ready
-  directories. Startup can serve the last intact published index if a rebuild fails.
-- Build jobs persist running/succeeded/failed state, failures and cache counters.
-  An abandoned job is reconciled under the build lock; retry is explicit, not an
-  unbounded automatic retry loop. Rollback never restores deleted visibility and
-  remains pinned across restart until an explicit new build.
-
-### Cache and retention
-
-Unchanged documents reuse checksummed parsing/chunking artifacts; unchanged search
-text reuses checksummed embedding vectors. Corrupt disposable caches are regenerated
-from verified source bytes. Bump `RAG_EMBEDDING_CACHE_REVISION` when embedding weights
-or custom embedding behavior change without a model-name change. Source imports still
-verify bytes, so cache reuse is not a filesystem watcher or a zero-I/O update scheme.
-
-Explicit GC retains current/previous pointers plus the requested retention count,
-uses a default 24-hour grace period and removes only unreferenced generated artifacts
-and embedding-cache entries. It never purges registered source versions. Back up the
-whole storage directory, including registry, source blobs and extracted images.
-
-```powershell
-.venv\Scripts\python.exe scripts/rag_documents.py list
-.venv\Scripts\python.exe scripts/rag_documents.py versions <document-id>
-.venv\Scripts\python.exe scripts/rag_documents.py delete <document-id>
-.venv\Scripts\python.exe scripts/rag_documents.py restore <document-id>
-.venv\Scripts\python.exe scripts/rag_documents.py validity <document-id> --expires-at 2026-12-01T00:00:00+08:00
-# After renaming the source on disk, explicitly preserve its identity:
-.venv\Scripts\python.exe scripts/rag_documents.py rename <document-id> <new-file-path>
-.venv\Scripts\python.exe scripts/rag_documents.py rebuild
-.venv\Scripts\python.exe scripts/rag_documents.py jobs
-.venv\Scripts\python.exe scripts/rag_documents.py rollback <generation-id>
-.venv\Scripts\python.exe scripts/rag_documents.py gc --keep 3
-```
-
-Optional `--storage-dir`/`--knowledge-dir` arguments precede the command. Use an explicit
-rebuild before production format migration rather than making the first query do it.
-Physical source-file deletion is reflected by the next rebuild; use logical `delete`
-for immediate exclusion. A validity command replaces both bounds, and timestamps
-must include a timezone. These are document-level bounds, not historical `as_of` queries.
-
-### Online policy and cost boundaries
-
-The Agent tool is now `knowledge_search(query, top_k)`; server policy owns strategy.
-The HTTP experimental `retrieval_mode=multi_view` remains available for explicit
-experiments only. Automatic Multi-View and an LLM sufficiency checker remain disabled.
-
-`RAG_RETRIEVAL_STRATEGY=hybrid_rerank` opts into lazy BGE reranking with bounded candidates.
-The default two-second wait budget falls back to Hybrid; it does not kill a running
-model thread, and at most one reranking task runs per retriever. Tune the budget to
-measured hardware latency before expecting CPU reranking to finish. Reranker ordering
-and scores cannot replace canonical evidence text. Per-request diagnostics are available
-through `search_with_trace()` and `/knowledge/search?include_trace=true`.
-
-Whole Parent/Child evidence fits within a configurable **character** budget, never a
-falsely advertised exact token budget. Investigations allow at most three knowledge
-searches including initial retrieval, twelve tool calls and a bounded returned-evidence
-character total. Oversized queries and HTTP result counts are rejected.
-
-Offline Question View generation can use independent `RAG_VIEW_LLM_*` credentials/model,
-`--model` and `--base-url`; it preflights `--max-batches` (default 100), caps workers at four
-and disables client retries. Normal builds/queries never invoke the View LLM.
-Still deferred: document-version-level automatic View jobs and semantic quality gates,
-historical time queries, hard source-version purge, true mutable incremental indexes,
-and a benchmark-validated evidence-triggered Multi-View policy.
+# 知序 · Independent RAG
+
+独立的知识库管理与证据检索服务。只有 RAG，不含安全 Agent、告警调查、Agent 循环、旧兼容入口或自动问答。
+
+## 启动
+
+Python 3.11+。首次使用本地模型/解析器可能下载模型。修改前端另需 Node.js 22。
+
+~~~powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+.\.venv\Scripts\python.exe -m app init
+.\.venv\Scripts\python.exe -m app serve --port 8090
+# 另一个终端，使用相同数据目录与模型/凭据环境：
+.\.venv\Scripts\python.exe -m app worker
+~~~
+
+打开 http://127.0.0.1:8090/ 。管理员令牌从 storage/admin.token 读取，不要放进 URL 或提交 Git。
+
+安装后也可使用 rag-service。数据默认只有根 storage 一处；用 --data 或 RAG_SERVICE_DATA 指定其他位置，API、Worker 和运维命令必须保持一致。
+
+## 项目结构
+
+~~~text
+frontend/src/
+  app/                 页面外壳、会话与知识库选择
+  api/                 HTTP 客户端
+  features/            功能自己的页面、状态与操作
+  shared/              展示组件、通用资源读取
+app/
+  main.py, cli.py      启动和命令入口
+  bootstrap.py         唯一组件装配入口，不提供业务转发方法
+  api/                 HTTP 路由、请求模型、认证依赖
+  core/                配置、公共契约、异常、输出脱敏
+  knowledge/           知识库、文档、版本、生命周期、检查
+  ingestion/           文档解析、结构处理、分块
+  indexing/            构建、发布、回滚、清理、任务与 Worker
+  retrieval/           只读查询、策略、过滤、融合、上下文
+  models/              模型配置、模型池、Embedding/Reranker/生成适配器
+  permissions/         Key、授权范围与查询配额
+  audit/               有界审计记录
+  storage/             数据库、向量、索引快照读写代码
+  web/                 前端构建产物，不手工修改
+mcp_server/            只读 MCP 协议和工具
+migrations/            显式离线迁移、备份、恢复
+storage/               运行数据，Git 忽略
+scripts/               源码导出，不含第二套管理命令
+tests/                 一次有界的服务可用性检查
+evaluation/            可选纯指标计算，不运行实验
+docker/, docs/         部署与说明
+~~~
+
+依赖方向：入口 → 对应领域服务 → 管道组件 → 存储/模型适配器。
+
+没有同时负责构建和查询的全能 Runtime，没有转发所有操作的总 Service。构建由 Worker 显式执行，查询只加载已发布索引。前端只共享会话与知识库选择，业务状态由各功能持有。
+
+## 使用闭环
+
+创建知识库 → 上传文档 → 配置模型与构建参数 → 构建发布 → 调试检索 → 创建限定知识库的只读 Key。
+
+支持 Dense、BM25、Hybrid、可选重排、调用方明确请求的 Multi-View 补检；支持文档版本、软删除/恢复、硬清理、索引回滚、备份恢复。返回原文、引用身份与可选检索轨迹，不判断业务证据是否充分，不自动生成答案。
+
+首版是单主机模块化单体：一个 API、一个 Worker，SQLite + FAISS + BM25 + 托管文件。两个进程的模型内存需要合计预算。
+
+详见 [结构说明](docs/architecture.md) 与 [运维说明](docs/operations.md)。
+
+## 开发和必要检查
+
+~~~powershell
+# 前端修改完成后统一构建，写入 app/web：
+cd frontend
+npm ci
+npm run build
+cd ..
+# 完整功能批次后按需检查一次，不调用付费模型、不跑效果实验：
+python -m tests.smoke
+~~~
+
+Docker：docker compose up --build -d，默认仅映射本机 8090。对外发布需要 HTTPS、可信 Host/Origin、数据卷备份及资源限制。
+
+源码导出：python scripts/export_product.py <新的源码包.zip>，包含源码、文档和检查脚本，不含数据、凭据、模型、依赖缓存或历史报告。

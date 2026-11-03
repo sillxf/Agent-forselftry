@@ -1,0 +1,39 @@
+services:
+  init:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: rag-knowledge-service:1.1
+    command: ["rag-service", "init"]
+    volumes: ["rag-data:/data", "rag-models:/models"]
+    environment: &settings
+      RAG_SERVICE_DATA: /data
+      RAG_ALLOWED_HOSTS: ${RAG_ALLOWED_HOSTS:-localhost,127.0.0.1,::1}
+      RAG_MAX_LOADED_MODELS: ${RAG_MAX_LOADED_MODELS:-3}
+      RAG_SEARCH_CONCURRENCY: ${RAG_SEARCH_CONCURRENCY:-4}
+      RAG_VIEW_MAX_REQUESTS_PER_BUILD: ${RAG_VIEW_MAX_REQUESTS_PER_BUILD:-8}
+    restart: "no"
+  api:
+    image: rag-knowledge-service:1.1
+    depends_on:
+      init: {condition: service_completed_successfully}
+    environment: *settings
+    ports: ["127.0.0.1:8090:8090"]
+    volumes: ["rag-data:/data", "rag-models:/models"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health/live')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  worker:
+    image: rag-knowledge-service:1.1
+    command: ["rag-service", "worker"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    environment: *settings
+    volumes: ["rag-data:/data", "rag-models:/models"]
+    restart: unless-stopped
+volumes:
+  rag-data:
+  rag-models:

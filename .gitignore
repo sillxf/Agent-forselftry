@@ -1,12 +1,16 @@
 .venv/
 __pycache__/
-.pytest_cache/
-.env
 *.py[cod]
+.env
+.env.*
+!.env.example
 .DS_Store
-# Local parsed documents, extracted images and generated RAG indexes
-app/storage/
-
-# Keep selected baseline artifacts, not every local benchmark run.
-evaluation_results/*
-!evaluation_results/baselines/
+storage/*
+!storage/.gitignore
+frontend/node_modules/
+.ruff_cache/
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+evaluation/results/

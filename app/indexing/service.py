@@ -1,0 +1,107 @@
+"""Explicit build/publication operations and durable job submission."""
+
+import json
+from app.core.contracts import IndexBuildConfig, JobRequest
+from app.core.serialization import public
+from app.ingestion.docling_parser import DoclingParser
+from app.indexing.builder import IndexBuilder
+
+
+class IndexingService:
+    def __init__(
+        self,
+        root,
+        jobs,
+        bases,
+        models,
+        workspaces,
+        providers,
+        factory,
+        access,
+        audit,
+        parser_factory=None,
+    ):
+        self.root, self.jobs, self.bases, self.models = root, jobs, bases, models
+        self.workspaces, self.providers, self.factory = workspaces, providers, factory
+        self.access, self.audit, self.parser_factory = access, audit, parser_factory
+
+    def submit(self, actor, kb_id, request, *, idempotency=None):
+        configuration = self.access.authorize(actor, kb_id, admin=True)
+        if request.operation == "build":
+            self.models.model(
+                configuration["build"]["embedding_id"], require_enabled=True
+            )
+        if request.operation == "purge":
+            self.workspaces.get(kb_id).registry.get_document(request.document_id)
+        payload = dict(request.model_dump(), configuration=configuration)
+        job = self.jobs.enqueue(kb_id, request.operation, payload, idempotency)
+        self.audit.audit(
+            actor["id"],
+            "job_submitted",
+            kb_id,
+            job_id=job["id"],
+            operation=request.operation,
+        )
+        return job
+
+    def list(self, actor):
+        self.access.authorize(actor, admin=True)
+        return public(self.jobs.jobs())
+
+    def retry(self, actor, job_id):
+        self.access.authorize(actor, admin=True)
+        old = self.jobs.job(job_id)
+        if old["status"] not in {"failed", "interrupted"}:
+            raise ValueError("Only failed/interrupted jobs may be retried")
+        payload = json.loads(old["payload"])
+        request = JobRequest.model_validate(
+            {key: value for key, value in payload.items() if key != "configuration"}
+        )
+        return self.submit(actor, old["kb_id"], request)
+
+    def execute(self, job, payload):
+        workspace = self.workspaces.get(job["kb_id"])
+        configuration = IndexBuildConfig.model_validate(
+            payload["configuration"]["build"]
+        )
+        parser = (
+            self.parser_factory(workspace, configuration)
+            if self.parser_factory
+            else DoclingParser(
+                archive_dir=workspace.storage_dir / "parsed",
+                image_dir=workspace.storage_dir / "images",
+                ocr_enabled=configuration.ocr_enabled,
+            )
+        )
+        builder = IndexBuilder(
+            workspace,
+            configuration,
+            parser,
+            self.providers.embedding,
+            self.factory,
+            progress=lambda stage: self.jobs.progress(job["id"], stage),
+            publication_guard=lambda: self.jobs.build_guard(
+                job["kb_id"], payload["configuration"]["build"]
+            ),
+        )
+        operation = job["operation"]
+        if operation == "build":
+            return {
+                "core_job_id": builder.run(full=payload["full"]),
+                "metrics": builder.last_build_metrics,
+                "current": workspace.repository.current_pointer(),
+            }
+        if operation == "rollback":
+            return {
+                "core_job_id": builder.rollback(payload["generation_id"]),
+                "current": workspace.repository.current_pointer(),
+            }
+        if operation == "purge":
+            from app.knowledge.purge import purge_document
+
+            return purge_document(builder, payload["document_id"])
+        if operation == "gc":
+            from app.indexing.garbage_collector import collect_generations
+
+            return collect_generations(builder)
+        raise ValueError("Unsupported job operation")

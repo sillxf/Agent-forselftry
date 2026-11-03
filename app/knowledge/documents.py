@@ -1,0 +1,143 @@
+from app.knowledge.versioning import restore_version
+
+"""Document commands; HTTP owns streaming, this service owns durable mutations."""
+
+from pathlib import Path
+from uuid import uuid4
+from app.ingestion.docling_parser import SUPPORTED_EXTENSIONS
+from app.core.serialization import public
+
+
+class DocumentService:
+    def __init__(self, workspaces, access, audit):
+        self.workspaces, self.access, self.audit = workspaces, access, audit
+
+    def _workspace(self, actor, kb_id):
+        self.access.authorize(actor, kb_id, admin=True)
+        return self.workspaces.get(kb_id)
+
+    def upload_directory(self, actor, kb_id):
+        return self._workspace(actor, kb_id).knowledge_dir
+
+    def upload(self, actor, kb_id, filename, temporary, document_id=None):
+        runtime = self._workspace(actor, kb_id)
+        if (
+            not filename
+            or len(filename) > 180
+            or Path(filename).name != filename
+            or any(c in filename for c in "/\\:\x00")
+            or any(ord(c) < 32 for c in filename)
+        ):
+            raise ValueError("Use a plain filename")
+        if Path(filename).suffix.lower() not in SUPPORTED_EXTENSIONS:
+            raise ValueError("Unsupported document type")
+        if document_id:
+            document = runtime.registry.get_document(str(document_id))
+            if document.purged_at or document.deleted_at:
+                raise ValueError("Document is unavailable")
+            target = Path(document.source_path)
+            if not target.resolve().is_relative_to(runtime.knowledge_dir.resolve()):
+                raise ValueError(
+                    "External source is not an upload target; migrate it first"
+                )
+            if target.suffix.lower() != Path(filename).suffix.lower():
+                raise ValueError("Document update must retain file type")
+        else:
+            target = runtime.knowledge_dir / uuid4().hex / filename
+        temporary = Path(temporary)
+        size = temporary.stat().st_size
+        if size == 0:
+            raise ValueError("Empty upload")
+        with runtime.lifecycle.source_lock:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            temporary.replace(target)
+            record, version = runtime.lifecycle.import_document(target)
+        self.audit.audit(
+            actor["id"],
+            "document_uploaded",
+            kb_id,
+            document_id=record.document_id,
+            bytes=size,
+        )
+        return public(
+            {
+                "document": record.model_dump(),
+                "version": version.model_dump(),
+                "needs_build": True,
+            }
+        )
+
+    def configure(self, actor, kb_id, document_id, *, metadata=None, view_config=None):
+        runtime = self._workspace(actor, kb_id)
+        if metadata and (
+            len(metadata) > 50
+            or any(len(k) > 100 or len(v) > 2000 for k, v in metadata.items())
+        ):
+            raise ValueError("Metadata exceeds limits")
+        result = runtime.registry.configure(
+            str(document_id), metadata=metadata, view_config=view_config
+        )
+        self.audit.audit(
+            actor["id"], "document_configured", kb_id, document_id=str(document_id)
+        )
+        return public(result.model_dump())
+
+    def validity(self, actor, kb_id, document_id, **validity):
+        result = self._workspace(actor, kb_id).registry.set_validity(
+            str(document_id), **validity
+        )
+        self.audit.audit(
+            actor["id"], "validity_changed", kb_id, document_id=str(document_id)
+        )
+        return public(result.model_dump())
+
+    def deleted(self, actor, kb_id, document_id, value=True):
+        result = self._workspace(actor, kb_id).registry.set_deleted(
+            str(document_id), value
+        )
+        self.audit.audit(
+            actor["id"],
+            "document_deleted" if value else "document_restored",
+            kb_id,
+            document_id=str(document_id),
+        )
+        return public(result.model_dump())
+
+    def restore(self, actor, kb_id, document_id, version_id):
+        result = restore_version(
+            self._workspace(actor, kb_id), str(document_id), str(version_id)
+        )
+        self.audit.audit(
+            actor["id"], "version_selected", kb_id, document_id=str(document_id)
+        )
+        return public(result.model_dump())
+
+    def download(self, actor, kb_id, document_id, version_id):
+        self.access.authorize(actor, kb_id)
+        workspace = self.workspaces.get(kb_id)
+        document = workspace.registry.get_document(document_id)
+        if document.purged_at or document.deleted_at:
+            raise KeyError("Document unavailable")
+        version = next(
+            (
+                v
+                for v in workspace.registry.list_versions(document_id)
+                if v.version_id == version_id
+            ),
+            None,
+        )
+        if version is None:
+            raise KeyError("Version not found")
+        path = Path(version.source_blob_path)
+        if not path.resolve().is_relative_to(
+            (workspace.storage_dir / "sources").resolve()
+        ):
+            raise ValueError("Source is outside the managed root")
+        self.audit.audit(
+            actor["id"],
+            "original_downloaded",
+            kb_id,
+            document_id=document_id,
+            version_id=version_id,
+        )
+        return path, Path(document.source_path).name
