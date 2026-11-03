@@ -1,0 +1,10 @@
+*
+!pyproject.toml
+!rag_service/
+!rag_service/**
+!frontend/
+!frontend/**
+!deploy/
+!deploy/**
+**/__pycache__/
+frontend/node_modules/

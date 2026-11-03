@@ -1,4 +1,8 @@
 """Offline RAG fixtures: real parsing/FAISS, deterministic local embeddings."""
+import os
+os.environ["RAG_EMBEDDED_MODE"] = "true"
+os.environ["RAG_SERVICE_URL"] = ""  # Offline tests must never inherit a real service endpoint from .env.
+
 import hashlib
 import re
 
