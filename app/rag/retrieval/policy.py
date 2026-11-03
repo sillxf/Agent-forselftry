@@ -7,6 +7,8 @@ from pydantic import BaseModel, ConfigDict, Field
 class RetrievalPolicy(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     default_strategy: Literal["hybrid", "hybrid_rerank"] = "hybrid"
+    multi_view_enabled: bool = False
+    supplement_candidate_k: int = Field(default=20, ge=1, le=100)
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     candidate_k: int = Field(default=20, ge=20, le=100)
     max_top_k: int = Field(default=20, ge=1, le=20)

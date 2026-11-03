@@ -2,7 +2,7 @@ import sqlite3
 import json
 from pathlib import Path
 from typing import Literal
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from app.schemas.alert import Alert
 from app.services.alert_deduplicator import (
     deduplicate_alerts
@@ -11,7 +11,6 @@ from app.services.risk_analyzer import (
     analyze_alert
 )
 from app.rag.retriever import KnowledgeRetriever
-from app.rag.retrieval.multiview import MultiViewUnavailable
 from app.llm.client import LLMClient
 from app.config import *
 from pydantic import ValidationError
@@ -35,7 +34,7 @@ llm = LLMClient(
 )
 
 knowledge_retriever = KnowledgeRetriever(
-    build=False
+    build=False, auto_build=False
 )
 
 investigation_service = InvestigationService(
@@ -62,30 +61,11 @@ def load_alerts() -> list[Alert]:
     raw_data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     return [Alert.model_validate(item) for item in raw_data]
 
-@app.get("/knowledge/search")
-def search_knowledge(
-    q: str = Query(
-        ...,
-        description="Question or keyword", min_length=1, max_length=4000
-    ),
-    k: int = Query(default=3, ge=1, le=20),
-    retrieval_mode: Literal["hybrid", "multi_view"] = "hybrid",
-    include_trace: bool = False,
-):
+from app.api.knowledge import create_knowledge_router
+from fastapi.staticfiles import StaticFiles
 
-    try:
-        if include_trace and retrieval_mode == "hybrid":
-            return {"query": q, **knowledge_retriever.search_with_trace(q, k)}
-        results = knowledge_retriever.search(q, k, retrieval_mode=retrieval_mode)
-    except MultiViewUnavailable as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
-    except (ValueError, OSError, sqlite3.DatabaseError) as exc:
-        raise HTTPException(status_code=503, detail="Knowledge index unavailable; inspect build jobs and storage integrity.") from exc
-
-    return {
-        "query": q,
-        "results": results
-    }
+app.include_router(create_knowledge_router(knowledge_retriever, search_provider=lambda: knowledge_retriever))
+app.mount("/knowledge/assets", StaticFiles(directory=Path(__file__).parent / "static/knowledge"), name="knowledge-assets")
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
@@ -176,6 +156,9 @@ def analyze_alert_endpoint(
                     alert_pool=alerts,
                 )
 
+            except (OSError, sqlite3.DatabaseError) as exc:
+                raise HTTPException(status_code=503, detail="Knowledge storage unavailable.") from exc
+
             except LLMConfigurationError as exc:
                 raise HTTPException(
                     status_code=503,
@@ -205,6 +188,9 @@ def analyze_alert_endpoint(
                     status_code=502,
                     detail="LLM response did not match the analysis schema.",
                 ) from exc
+
+            except ValueError as exc:
+                raise HTTPException(status_code=503, detail="Knowledge index unavailable; explicitly build or migrate it first.") from exc
 
             except ToolCallLimitError as exc:
                 raise HTTPException(

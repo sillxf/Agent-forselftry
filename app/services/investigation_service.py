@@ -18,7 +18,8 @@ from app.tools.alert_tools import (
 )
 
 
-from app.tools.knowledge_tools import knowledge_tool_definition, execute_knowledge_tool
+from app.tools.knowledge_tools import (knowledge_tool_definition, execute_knowledge_tool,
+    knowledge_supplement_definition, execute_knowledge_supplement)
 
 
 class ToolCallLimitError(RuntimeError):
@@ -99,6 +100,11 @@ class InvestigationService:
         ]
 
         tools = [*ALERT_TOOL_DEFINITIONS, knowledge_tool_definition()]
+        policy = getattr(getattr(self.retriever, "orchestrator", None), "policy", None)
+        supplement_enabled = getattr(policy, "multi_view_enabled", False) is True
+        if supplement_enabled:
+            tools.append(knowledge_supplement_definition())
+        supplements = 0
 
         knowledge_searches = 1  # Includes the initial investigate() retrieval.
         tool_count = 0
@@ -138,11 +144,17 @@ class InvestigationService:
                         tool_call["arguments"]
                     )
 
-                    if tool_call["name"] == "knowledge_search":
+                    if tool_call["name"] in {"knowledge_search", "knowledge_supplement"}:
                         if knowledge_searches >= self.MAX_KNOWLEDGE_SEARCHES:
                             raise ToolExecutionError("Knowledge search budget exhausted")
                         knowledge_searches += 1
-                        result = execute_knowledge_tool(arguments, self.retriever)
+                        if tool_call["name"] == "knowledge_supplement":
+                            if not supplement_enabled or supplements >= 1:
+                                raise ToolExecutionError("Supplement is disabled or its one-pass budget is exhausted")
+                            supplements += 1
+                            result = execute_knowledge_supplement(arguments, self.retriever)
+                        else:
+                            result = execute_knowledge_tool(arguments, self.retriever)
                         bounded = []
                         for item in result["results"]:
                             if evidence_chars + len(item["content"]) <= self.MAX_EVIDENCE_CHARS:

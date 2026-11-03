@@ -4,6 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from importlib.metadata import version as package_version
 from pathlib import Path
 import sqlite3
+import json
+from uuid import uuid4
 from threading import RLock
 
 from app.config import (
@@ -13,16 +15,11 @@ from app.config import (
     RAG_RERANKER_MODEL, RAG_CONTEXT_CHAR_BUDGET, RAG_RERANKER_TIMEOUT_SECONDS,
     RAG_EMBEDDING_CACHE_REVISION,
 )
-from app.rag.chunking.child_chunker import ChildChunker
-from app.rag.chunking.parent_chunker import ParentChunker
-from app.rag.embedder import embed_texts, get_model
+from app.rag.embedder import embed_texts
 from app.rag.indexing.vector_store import FaissVectorStore, VectorStoreInterface
-from app.rag.indexing.pipeline import IndexingPipeline
 from app.rag.indexing.build_service import BuildService
-from app.rag.indexing.embedding_cache import CachedEmbedder
 from app.rag.indexing.snapshot_repository import SnapshotRepository
 from app.rag.ingestion.docling_parser import DoclingParser, file_checksum
-from app.rag.ingestion.pipeline import IngestionPipeline, IngestionResult
 from app.rag.loader import discover_documents
 from app.rag.lifecycle.registry import DocumentRegistry
 from app.rag.lifecycle.service import LifecycleService
@@ -32,7 +29,7 @@ from app.rag.retrieval.orchestrator import RetrievalOrchestrator
 
 
 class KnowledgeRetriever:
-    INDEX_VERSION = 7
+    INDEX_VERSION = 8
 
     def __init__(
         self, build=True, *, knowledge_dir=None, storage_dir=None, parser=None,
@@ -41,8 +38,9 @@ class KnowledgeRetriever:
         overlap_tokens=RAG_CHILD_OVERLAP_TOKENS, dense_top_k=RAG_DENSE_TOP_K,
         bm25_top_k=RAG_BM25_TOP_K, store_factory=FaissVectorStore,
         cache_enabled=True, embedding_cache_revision=RAG_EMBEDDING_CACHE_REVISION,
-        retrieval_policy=None, reranker_factory=None,
+        retrieval_policy=None, reranker_factory=None, view_llm_factory=None, auto_build=True,
     ):
+        self.auto_build = auto_build
         self.knowledge_dir = Path(knowledge_dir) if knowledge_dir is not None else RAG_KNOWLEDGE_DIR
         self.storage_dir = Path(storage_dir) if storage_dir is not None else RAG_STORAGE_DIR
         self.model_name = model_name
@@ -77,15 +75,37 @@ class KnowledgeRetriever:
         self.last_build_error = None
         self.last_refresh_error = None
         self.build_service = BuildService(self)
+        from app.rag.view_generation import ViewGenerationService
+        self.view_service = ViewGenerationService(self, llm_factory=view_llm_factory)
         policy = retrieval_policy or RetrievalPolicy(
             default_strategy=RAG_RETRIEVAL_STRATEGY, reranker_model=RAG_RERANKER_MODEL,
             max_context_chars=RAG_CONTEXT_CHAR_BUDGET, reranker_timeout_seconds=RAG_RERANKER_TIMEOUT_SECONDS)
+        self._policy_path = self.storage_dir / "retrieval_policy.json"
+        self._policy_override = retrieval_policy is not None
+        self._policy_stamp = None
         self.orchestrator = RetrievalOrchestrator(policy, reranker_factory=reranker_factory)
+        self.refresh_policy()
         if build:
             self._ensure_index()
 
     def _signature(self):
-        files = discover_documents(self.knowledge_dir)
+        files = [p for p in discover_documents(self.knowledge_dir) if not self.registry.is_blocked(p)]
+        known = {str(p.resolve()) for p in files}
+        for document in self.registry.list_documents():
+            path = Path(document.source_path)
+            if not document.deleted_at and not document.purged_at and (document.selected_version_id or not path.resolve().is_relative_to(self.knowledge_dir.resolve())):
+                if not path.is_file() and not document.selected_version_id:
+                    raise ValueError("An explicitly registered external source is missing")
+                if str(path.resolve()) not in known:
+                    files.append(path)
+                    known.add(str(path.resolve()))
+        files.sort(key=lambda p: str(p.resolve()).lower())
+        def checksum(path):
+            if path.is_file():
+                return file_checksum(path)
+            document = self.registry.lookup_path(path)
+            versions = self.registry.list_versions(document.document_id)
+            return next(v.content_hash for v in versions if v.version_id == document.selected_version_id)
         return {
             "version": self.INDEX_VERSION, "model": self._configured_model_name,
             "lifecycle_revision": self.registry.revision,
@@ -100,7 +120,7 @@ class KnowledgeRetriever:
                               if self.tokenizer is not None else "embedding-model-tokenizer"),
                 "tokenizer_name": str(getattr(self.tokenizer, "name_or_path", "")),
             },
-            "files": [{"path": str(path.resolve()), "checksum": file_checksum(path)} for path in files],
+            "files": [{"path": str(path.resolve()), "checksum": checksum(path)} for path in files],
         }, files
 
     def _embed(self):
@@ -108,8 +128,7 @@ class KnowledgeRetriever:
 
     @staticmethod
     def _view_options(snapshot):
-        return {} if snapshot.view_store is None else dict(
-            view_store=snapshot.view_store, view_model_name=snapshot.view_model_name)
+        return dict(view_store=snapshot.view_store, view_model_name=snapshot.view_model_name, sparse=snapshot.sparse)
 
     def _bind_live_filter(self, pipeline, documents):
         if any(document.version_id for document in documents):
@@ -171,6 +190,10 @@ class KnowledgeRetriever:
                 self._load_runtime(snapshot, pointer)
                 if pointer.get("rollback"):
                     return
+        if not self.auto_build:
+            if self.store is None:
+                raise ValueError("No published knowledge index; explicitly build or migrate it first")
+            return
         self.build_service.recover()
         # A last-known published runtime is already visible to other threads here.
         try:
@@ -182,66 +205,24 @@ class KnowledgeRetriever:
             if self.store is None:
                 raise
 
-    def build_index(self):
+    def build_index(self, *, full=False):
         """Synchronous explicit build; old queries continue on their pinned pipeline."""
-        return self.build_service.run()
+        return self.build_service.run(full=full)
 
-    def build_index_async(self):
+    def build_index_async(self, *, full=False):
         """One in-process background request, plus a cross-process single-writer lock."""
         with self._lock:
             if self._build_future is not None and not self._build_future.done():
                 return self._build_future
             if self._executor is None:
                 self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="rag-build")
-            self._build_future = self._executor.submit(self.build_index)
+            self._build_future = self._executor.submit(self.build_index, full=full)
+            def completed(future):
+                error = future.exception()
+                if error is not None:
+                    self.last_build_error = str(error)
+            self._build_future.add_done_callback(completed)
             return self._build_future
-
-    def _assemble_snapshot(self, signature, files):
-        entries = {str(path.resolve()): item for path, item in zip(files, signature["files"], strict=True)}
-        for path in files:
-            existing = self.registry.lookup_path(path)
-            if existing is None or existing.deleted_at is None:
-                self.lifecycle.import_document(path, expected_hash=entries[str(path.resolve())]["checksum"])
-        sources, revision = self.registry.capture_sources(files)
-        signature = dict(signature, lifecycle_revision=revision)
-        result = IngestionResult()
-        if sources:
-            tokenizer, child_budget = self.tokenizer, self.child_max_tokens
-            if tokenizer is None:
-                model = get_model(signature["model"])
-                tokenizer = model.tokenizer
-                special = tokenizer.num_special_tokens_to_add(pair=False)
-                child_budget = min(child_budget, model.max_seq_length - special)
-            parent_chunker = ParentChunker(tokenizer, self.parent_max_tokens)
-            child_chunker = ChildChunker(tokenizer, child_budget, min(self.overlap_tokens, child_budget - 1))
-            ingestion = IngestionPipeline(self.parser, parent_chunker, child_chunker,
-                                          cache_dir=self.storage_dir / "artifacts" if self.cache_enabled else None)
-            processing = {key: value for key, value in signature.items() if key not in {"files", "lifecycle_revision", "embedding_cache_revision"}}
-            processing["effective_child_tokens"] = child_budget
-            for document, version in sources:
-                if version.content_hash != entries[str(Path(document.source_path).resolve())]["checksum"]:
-                    raise ValueError("Source version changed while freezing build inputs")
-            documents = [self.lifecycle.processing_document(document, version, processing) for document, version in sources]
-            result = ingestion.run(self.knowledge_dir, documents=documents)
-        embed = self._embed()
-        cached_embed = None
-        if self.cache_enabled:
-            cached_embed = CachedEmbedder(embed, self.storage_dir / "embedding_cache", {
-                "model": signature["model"], "cache_revision": self.embedding_cache_revision,
-                "sentence_transformers": package_version("sentence-transformers"),
-                "transformers": package_version("transformers"),
-            })
-            embed = cached_embed
-        snapshot = IndexingPipeline(embed, store_factory=self.store_factory).build(result)
-        if cached_embed is not None:
-            snapshot.embedding_cache_keys = [cached_embed.key(item["search_text"]) for item in snapshot.store.records]
-        self.last_build_metrics = {
-            "artifact_cache_hits": ingestion.cache_hits if sources else 0,
-            "parsed_documents": ingestion.cache_misses if sources else 0,
-            "embedding_cache_hits": cached_embed.hits if cached_embed else 0,
-            "encoded_texts": cached_embed.encoded if cached_embed else len(result.children),
-        }
-        return snapshot, signature
 
     def build_view_index(self, views):
         return self.build_service.run(views=views)
@@ -284,12 +265,12 @@ class KnowledgeRetriever:
             self._activate_index(store, documents, parents, pipeline, model_name)
             self._follow_current, self._generation_id = False, None
 
-    def _prepare_pipeline(self, store, parents, model_name, *, view_store=None, view_model_name=None):
+    def _prepare_pipeline(self, store, parents, model_name, *, view_store=None, view_model_name=None, sparse=None):
         if view_store is not None and view_model_name != model_name:
             raise ValueError("View index and original index must use the same embedding model")
         return RetrievalPipeline.from_index(
             store, parents, embed=self.embedding_fn or partial(embed_texts, model_name=model_name),
-            dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k, view_store=view_store,
+            dense_top_k=self.dense_top_k, bm25_top_k=self.bm25_top_k, view_store=view_store, sparse=sparse,
         )
 
     def _activate_index(self, store, documents, parents, pipeline, model_name):
@@ -314,5 +295,42 @@ class KnowledgeRetriever:
             return self.search_rankings(query, k, retrieval_mode)["parents"]
         return self.search_with_trace(query, k)["results"]
 
-    def search_with_trace(self, query, k=5):
-        return self.orchestrator.search(self, query, k)
+    def search_with_trace(self, query, k=5, *, supplement=False, as_of=None):
+        self.refresh_policy()
+        if as_of is not None:
+            from app.rag.lifecycle.versions import HistoricalRetriever
+            snapshot, publication = self.repository.at(as_of)
+            historical = HistoricalRetriever(self, snapshot, publication, as_of)
+            return self.orchestrator.search(historical, query, k, supplement=supplement)
+        return self.orchestrator.search(self, query, k, supplement=supplement)
+
+    def restore_version(self, document_id, version_id):
+        from app.rag.lifecycle.versions import restore_version
+        return restore_version(self, document_id, version_id)
+
+    def purge_document(self, document_id):
+        from app.rag.lifecycle.purge import purge_document
+        return purge_document(self, document_id)
+
+
+    def refresh_policy(self):
+        if self._policy_override or not self._policy_path.exists():
+            return
+        stamp = self._policy_path.stat().st_mtime_ns
+        if stamp != self._policy_stamp:
+            self.orchestrator.policy = RetrievalPolicy.model_validate_json(self._policy_path.read_text(encoding="utf-8"))
+            self._policy_stamp = stamp
+
+    def set_policy(self, policy):
+        policy = RetrievalPolicy.model_validate(policy)
+        self.storage_dir.mkdir(parents=True, exist_ok=True)
+        temporary = self.storage_dir / (".policy-" + uuid4().hex + ".tmp")
+        try:
+            temporary.write_text(policy.model_dump_json(indent=2), encoding="utf-8")
+            temporary.replace(self._policy_path)
+        finally:
+            temporary.unlink(missing_ok=True)
+        self.orchestrator.policy = policy
+        self._policy_stamp = self._policy_path.stat().st_mtime_ns
+        self._policy_override = False
+        return policy

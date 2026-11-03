@@ -4,6 +4,7 @@ import json
 import os
 import tempfile
 from pathlib import Path
+from filelock import FileLock
 
 from app.rag.ingestion.docling_parser import SUPPORTED_EXTENSIONS, file_checksum
 from app.rag.lifecycle.registry import DocumentRegistry
@@ -14,8 +15,16 @@ class LifecycleService:
     def __init__(self, storage_dir, registry=None):
         self.sources = Path(storage_dir) / "sources"
         self.registry = registry if registry is not None else DocumentRegistry(storage_dir)
+        self.source_lock = FileLock(str(Path(storage_dir) / "sources.lock"), timeout=10)
 
     def import_document(self, source_path, *, source_id=None, expected_hash=None):
+        self.registry.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.source_lock:
+            if self.registry.is_blocked(source_path):
+                raise ValueError("Source was purged; automatic reimport is blocked")
+            return self._import_document(source_path, source_id=source_id, expected_hash=expected_hash)
+
+    def _import_document(self, source_path, *, source_id=None, expected_hash=None):
         """Freeze bytes before registering them. Failed capture never advances the registry."""
         source = Path(source_path).resolve(strict=True)
         if not source.is_file() or source.suffix.lower() not in SUPPORTED_EXTENSIONS:

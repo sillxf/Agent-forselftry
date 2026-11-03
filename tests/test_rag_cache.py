@@ -24,7 +24,7 @@ def test_unchanged_build_reuses_parsing_and_embeddings_without_changing_results(
     assert retriever.documents[0] == original_document
     assert retriever.store.records == original_records
     assert retriever.registry.list_jobs()[0]["metrics"] == retriever.last_build_metrics
-    assert retriever.last_build_metrics["artifact_cache_hits"] == 1
+    assert retriever.last_build_metrics["reused_documents"] == 1
     assert retriever.last_build_metrics["parsed_documents"] == 0
     assert retriever.last_build_metrics["encoded_texts"] == 0
     embed.assert_not_called()
@@ -42,9 +42,9 @@ def test_only_changed_document_is_reparsed_and_reencoded(rag_factory):
     b.write_text("# B\n\nUpdated second evidence.", encoding="utf-8")
     retriever.build_index()
     assert parse.call_count == 1
-    assert retriever.last_build_metrics["artifact_cache_hits"] == 1
+    assert retriever.last_build_metrics["reused_documents"] == 1
     assert retriever.last_build_metrics["parsed_documents"] == 1
-    assert retriever.last_build_metrics["embedding_cache_hits"] >= 1
+    assert retriever.last_build_metrics["retained_chunks"] >= 1
     assert retriever.last_build_metrics["encoded_texts"] >= 1
 
 
@@ -65,7 +65,7 @@ def test_corrupt_disposable_caches_are_regenerated_from_verified_sources(rag_fac
     (rag_factory.storage / "artifacts" / (document.artifact_id + ".json")).write_text("bad", encoding="utf-8")
     for path in (rag_factory.storage / "embedding_cache").glob("*.npz"):
         path.write_bytes(b"bad")
-    retriever.build_index()
+    retriever.build_index(full=True)
     assert retriever.last_build_metrics["parsed_documents"] == 1
     assert retriever.last_build_metrics["encoded_texts"] > 0
     assert retriever.search("evidence", 1)

@@ -32,16 +32,16 @@ class BuildService:
             return None
 
     def recover(self):
-        if not self.owner.registry.path.exists():
-            return False
+        self.owner.storage_dir.mkdir(parents=True, exist_ok=True)
         try:
             with self.lock:
-                self.owner.registry.recover_jobs(self._generation(), self._previous_generation())
+                if self.owner.registry.path.exists():
+                    self.owner.registry.recover_jobs(self._generation(), self._previous_generation())
                 return True
         except Timeout:
             return False  # A live builder owns the job; it must not be marked interrupted.
 
-    def run(self, *, views=None):
+    def run(self, *, views=None, full=False):
         owner = self.owner
         owner.storage_dir.mkdir(parents=True, exist_ok=True)
         with self.lock:
@@ -52,7 +52,8 @@ class BuildService:
             try:
                 signature, files = owner._signature()
                 if views is None:
-                    snapshot, signature = owner._assemble_snapshot(signature, files)
+                    from app.rag.indexing.incremental import assemble
+                    snapshot, signature = assemble(owner, signature, files, full=full)
                 else:
                     snapshot = owner.repository.load_current(signature)
                     if snapshot is None:
@@ -82,6 +83,8 @@ class BuildService:
             if manifest is None or any(not doc.version_id for doc in snapshot.documents):
                 raise ValueError("Live rollback requires a managed generation with a manifest")
             owner.registry.eligible_ids(doc.document_id for doc in snapshot.documents)
+            if owner.registry.purged_ids() & {d.document_id for d in snapshot.documents}:
+                raise ValueError("Cannot roll back to purged document content")
             signature = manifest["signature"]
             parents = {parent.parent_id: parent for parent in snapshot.parents}
             pipeline = owner._prepare_pipeline(snapshot.store, parents, signature["model"],

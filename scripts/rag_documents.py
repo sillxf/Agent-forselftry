@@ -36,7 +36,27 @@ def main():
     rename = commands.add_parser("rename", help="Map an already renamed file; content and type must be unchanged")
     rename.add_argument("document_id")
     rename.add_argument("source", type=Path)
-    commands.add_parser("rebuild", help="Explicitly rebuild the configured knowledge directory; may load local models")
+    rebuild = commands.add_parser("rebuild", help="Explicitly build and publish; incrementally reuse unchanged documents")
+    rebuild.add_argument("--full", action="store_true", help="Force all derived indexes to be rebuilt")
+    restore_version = commands.add_parser("restore-version", help="Select historical content, then rebuild to publish")
+    restore_version.add_argument("document_id")
+    restore_version.add_argument("version_id")
+    purge = commands.add_parser("purge", help="Irreversibly purge managed content/history; external backups excluded")
+    purge.add_argument("document_id")
+    purge.add_argument("--confirm", action="store_true", required=True)
+    configure = commands.add_parser("configure", help="Set document metadata or opt-in ViewConfig JSON")
+    configure.add_argument("document_id")
+    configure.add_argument("--metadata-json")
+    configure.add_argument("--views-json")
+    source = commands.add_parser("import", help="Capture a local source; sources outside knowledge-dir are added to the build inputs")
+    source.add_argument("source", type=Path)
+    policy = commands.add_parser("policy", help="Read or replace administrator retrieval policy")
+    policy.add_argument("--json")
+    commands.add_parser("generations", help="List committed publication history")
+    search = commands.add_parser("search", help="Retrieve original evidence, optionally at a historical publication time")
+    search.add_argument("query")
+    search.add_argument("--as-of")
+    search.add_argument("--supplement", action="store_true")
     args = parser.parse_args()
     service = LifecycleService(args.storage_dir)
     try:
@@ -50,21 +70,40 @@ def main():
             output = getattr(service, args.command)(args.document_id).model_dump()
         elif args.command == "validity":
             output = service.set_validity(args.document_id, effective_at=args.effective_at, expires_at=args.expires_at).model_dump()
+        elif args.command == "configure":
+            from app.rag.view_generation import ViewConfig
+            output = service.registry.configure(args.document_id,
+                metadata=json.loads(args.metadata_json) if args.metadata_json else None,
+                view_config=ViewConfig.model_validate_json(args.views_json).model_dump() if args.views_json else None).model_dump()
+        elif args.command == "import":
+            document, version = service.import_document(args.source)
+            output = {"document":document.model_dump(), "version":version.model_dump(), "needs_build":True}
         elif args.command == "rename":
             output = service.rename(args.document_id, args.source).model_dump()
         else:
             from app.rag.retriever import KnowledgeRetriever
             retriever = KnowledgeRetriever(build=False, knowledge_dir=args.knowledge_dir, storage_dir=args.storage_dir)
-            if args.command == "gc":
+            if args.command == "restore-version":
+                output = retriever.restore_version(args.document_id, args.version_id).model_dump()
+            elif args.command == "purge":
+                output = retriever.purge_document(args.document_id)
+            elif args.command == "generations":
+                output = retriever.repository.publications()
+            elif args.command == "search":
+                output = retriever.search_with_trace(args.query, as_of=args.as_of, supplement=args.supplement)
+            elif args.command == "policy":
+                output = (retriever.set_policy(json.loads(args.json)) if args.json else retriever.orchestrator.policy).model_dump()
+            elif args.command == "gc":
                 from app.rag.indexing.maintenance import collect_generations
                 output = collect_generations(retriever.build_service, keep=args.keep, min_age_seconds=args.min_age_seconds)
                 print(json.dumps(output, ensure_ascii=False, indent=2))
                 return
-            if args.command == "rollback":
-                retriever.rollback_generation(args.generation)
-            else:
-                retriever.build_index()
-            output = json.loads((retriever.repository.root / "current.json").read_text(encoding="utf-8"))
+            elif args.command in {"rollback", "rebuild"}:
+                if args.command == "rollback":
+                    retriever.rollback_generation(args.generation)
+                else:
+                    retriever.build_index(full=args.full)
+                output = json.loads((retriever.repository.root / "current.json").read_text(encoding="utf-8"))
     except (KeyError, ValueError, RuntimeError, Timeout, sqlite3.IntegrityError) as exc:
         parser.error(str(exc))
     print(json.dumps(output, ensure_ascii=False, indent=2))

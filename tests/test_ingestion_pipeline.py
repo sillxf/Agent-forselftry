@@ -14,7 +14,7 @@ from conftest import CharacterTokenizer
 
 
 def test_standalone_ingestion_deduplicates_mixed_formats_without_building_an_index(rag_factory, monkeypatch):
-    import app.rag.retriever as retriever_module
+    import app.rag.indexing.incremental as retriever_module
 
     monkeypatch.setattr(retriever_module, "get_model", Mock(side_effect=AssertionError("must not load a model")))
     source = rag_factory.knowledge / "a.md"
@@ -65,7 +65,7 @@ def test_ingestion_empty_input_and_parser_failure_do_not_publish_an_index(tmp_pa
 
 
 def test_facade_preserves_lazy_model_loading_and_effective_child_budget(rag_factory, monkeypatch):
-    import app.rag.retriever as retriever_module
+    import app.rag.indexing.incremental as retriever_module
 
     source = rag_factory.knowledge / "manual.md"
     source.write_text("# Detection\n\n" + "Repeated failed login attempts. " * 12, encoding="utf-8")

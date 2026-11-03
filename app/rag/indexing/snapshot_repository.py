@@ -13,6 +13,7 @@ from app.rag.indexing.vector_store import FaissVectorStore
 from app.rag.models import DocumentRecord, ParentChunk
 from app.rag.ingestion.docling_parser import file_checksum
 from app.rag.views import RetrievalView, validate_views
+from app.rag.retrieval.sparse import SparseRetriever
 
 
 @dataclass(frozen=True)
@@ -52,7 +53,9 @@ class SnapshotRepository:
                                    [(p.parent_id, p.document_id, p.model_dump_json()) for p in snapshot.parents])
             connection.executemany("INSERT INTO chunks VALUES (?, ?, ?)",
                                    [(r["chunk_id"], r["parent_id"], r["document_id"]) for r in snapshot.store.records])
-        files = ["faiss.index", "chunks.jsonl", "metadata.db"]
+        sparse = snapshot.sparse or SparseRetriever(snapshot.store.records)
+        (path / "sparse.json").write_text(json.dumps(sparse.payload(), ensure_ascii=False), encoding="utf-8")
+        files = ["faiss.index", "chunks.jsonl", "metadata.db", "sparse.json"]
         if snapshot.view_store is not None:
             files.extend(["views/faiss.index", "views/chunks.jsonl", "views/manifest.json"])
         manifest = {
@@ -60,6 +63,7 @@ class SnapshotRepository:
             "created_at": datetime.now(timezone.utc).isoformat(), "signature": signature,
             "documents": self._document_refs(snapshot),
             "embedding_cache_keys": snapshot.embedding_cache_keys,
+            "view_assets": self._view_refs(snapshot),
             "counts": {"documents": len(snapshot.documents), "parents": len(snapshot.parents),
                        "children": len(snapshot.store.records)},
             "files": {name: file_checksum(path / name) for name in files},
@@ -83,7 +87,20 @@ class SnapshotRepository:
                 previous.replace(self.root / "previous.json")
             except (OSError, ValueError, KeyError):
                 pass  # Preserve the last known previous pointer if current is damaged.
-        payload = {"generation": saved.generation, "signature": saved.signature}
+        try:
+            old = self.current_pointer()
+        except (ValueError, OSError):
+            old = None
+        publication_id = uuid4().hex
+        publication = {"publication_id": publication_id, "generation": saved.generation,
+                       "published_at": datetime.now(timezone.utc).isoformat(),
+                       "previous_publication_id": old.get("publication_id") if old else None,
+                       "rollback": rollback}
+        history = self.root / "publications"
+        history.mkdir(exist_ok=True)
+        (history / (publication_id + ".json")).write_text(json.dumps(publication), encoding="utf-8")
+        # Only records reachable from the atomically committed pointer count as published.
+        payload = {**publication, "signature": saved.signature}
         if rollback:
             payload["rollback"] = True
         pointer = self.root / f".current-{saved.generation}.tmp"
@@ -113,7 +130,9 @@ class SnapshotRepository:
             view_model = view_manifest["embedding_model"]
             if view_manifest["count"] != len(view_store.records) or store.dimension != view_store.dimension:
                 raise ValueError("Invalid auxiliary index manifest or dimension")
-        snapshot = IndexSnapshot(store, documents, parents, view_store, view_model)
+        sparse_path = path / "sparse.json"
+        sparse = SparseRetriever(store.records, payload=json.loads(sparse_path.read_text(encoding="utf-8"))) if sparse_path.exists() else None
+        snapshot = IndexSnapshot(store, documents, parents, view_store, view_model, sparse=sparse)
         if manifest is not None:
             snapshot.embedding_cache_keys = manifest.get("embedding_cache_keys", [])
         self._validate_snapshot(snapshot)
@@ -121,6 +140,8 @@ class SnapshotRepository:
                                  (expected_signature is not None and expected_signature.get("version", 0) >= 6)):
             raise ValueError("Managed generation is missing its manifest")
         if manifest is not None:
+            if "view_assets" in manifest and manifest["view_assets"] != self._view_refs(snapshot):
+                raise ValueError("View provenance differs from its manifest")
             counts = dict(documents=len(documents), parents=len(parents), children=len(store.records))
             if counts != manifest["counts"] or self._document_refs(snapshot) != manifest["documents"]:
                 raise ValueError("Generation manifest does not match its metadata")
@@ -132,6 +153,21 @@ class SnapshotRepository:
                      artifact_id=doc.artifact_id, content_hash=doc.checksum,
                      processing_signature=doc.processing_signature)
                 for doc in sorted(snapshot.documents, key=lambda document: document.document_id)]
+
+    @staticmethod
+    def _view_refs(snapshot):
+        if snapshot.view_store is None:
+            return []
+        sources = {r["chunk_id"]:r for r in snapshot.store.records}
+        grouped = {}
+        for view in snapshot.view_store.records:
+            source = sources[view["source_child_id"]]
+            key = source["document_id"]
+            item = grouped.setdefault(key, {"document_id":key, "version_id":source.get("version_id"),
+                "artifact_id":source.get("artifact_id"), "count":0, "generator_versions":set()})
+            item["count"] += 1
+            item["generator_versions"].add(view["generator_version"])
+        return [dict(item, generator_versions=sorted(item["generator_versions"])) for _,item in sorted(grouped.items())]
 
     @staticmethod
     def _validate_snapshot(snapshot):
@@ -171,6 +207,9 @@ class SnapshotRepository:
     def _read_manifest(self, generation):
         if not isinstance(generation, str) or not generation or Path(generation).name != generation or generation in {".", ".."}:
             raise ValueError("Invalid generation identifier")
+        revoked_path = self.root / "revoked.json"
+        if revoked_path.exists() and generation in json.loads(revoked_path.read_text(encoding="utf-8")):
+            raise ValueError("Generation was revoked by a hard purge")
         path = self.root / generation
         manifest_path = path / "manifest.json"
         if not manifest_path.exists():
@@ -179,6 +218,10 @@ class SnapshotRepository:
         if manifest["schema_version"] != 1 or manifest["generation_id"] != generation:
             raise ValueError("Invalid generation manifest identity or schema")
         required = {"faiss.index", "chunks.jsonl", "metadata.db"}
+        if "sparse.json" in manifest["files"]:
+            required.add("sparse.json")
+        if manifest["signature"].get("version", 0) >= 8 and "sparse.json" not in required:
+            raise ValueError("Managed generation is missing its sparse index")
         if (path / "views/manifest.json").exists():
             required.update({"views/faiss.index", "views/chunks.jsonl", "views/manifest.json"})
         if set(manifest["files"]) != required:
@@ -217,3 +260,31 @@ class SnapshotRepository:
         if error is not None:
             raise ValueError("No intact published generation is available") from error
         return None
+
+    def publications(self):
+        """Committed publication chain, including rollbacks; never orphan build records."""
+        pointer = self.current_pointer()
+        identity = pointer.get("publication_id") if pointer else None
+        result, seen = [], set()
+        while identity:
+            if identity in seen or len(identity) != 32 or any(c not in "0123456789abcdef" for c in identity):
+                raise ValueError("Invalid publication chain")
+            seen.add(identity)
+            item = json.loads((self.root / "publications" / (identity + ".json")).read_text(encoding="utf-8"))
+            if item["publication_id"] != identity:
+                raise ValueError("Invalid publication record identity")
+            item["available"] = (self.root / item["generation"] / "manifest.json").exists()
+            result.append(item)
+            identity = item["previous_publication_id"]
+        return result
+
+    def at(self, timestamp):
+        from app.rag.lifecycle.versions import parse_time
+        target = parse_time(timestamp)
+        for item in self.publications():
+            if parse_time(item["published_at"]) <= target:
+                if not item["available"]:
+                    raise ValueError("Requested historical publication was purged or collected")
+                manifest = self._read_manifest(item["generation"])
+                return self.load_generation(item["generation"]), dict(item, signature=manifest["signature"])
+        raise ValueError("No retained publication exists at the requested time")

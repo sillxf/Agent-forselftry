@@ -18,9 +18,9 @@ class RetrievalPipeline:
         self.bm25_top_k = bm25_top_k
 
     @classmethod
-    def from_index(cls, store, parents, *, embed, dense_top_k=20, bm25_top_k=20, view_store=None):
+    def from_index(cls, store, parents, *, embed, dense_top_k=20, bm25_top_k=20, view_store=None, sparse=None):
         """Bind all query components to the same already loaded index snapshot."""
-        return cls(DenseRetriever(store, embed), SparseRetriever(store.records), RRFFusion(),
+        return cls(DenseRetriever(store, embed), sparse or SparseRetriever(store.records), RRFFusion(),
                    ParentContextBuilder(parents), dense_top_k=dense_top_k, bm25_top_k=bm25_top_k,
                    multi_view_dense=MultiViewDenseRetriever(store, view_store, embed) if view_store is not None else None)
 

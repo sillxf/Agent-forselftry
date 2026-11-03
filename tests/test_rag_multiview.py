@@ -127,6 +127,9 @@ def test_http_and_tool_modes_are_explicit_and_unavailable_mode_is_not_a_fallback
     assert output["results"]
     with pytest.raises(ValueError):
         execute_knowledge_tool({"query": "contain", "retrieval_mode": "multi_view"}, retriever)
+    retriever.set_policy(dict(multi_view_enabled=True))
+    # No real model needed: an unavailable optional ranker exercises HTTP fallback.
+    retriever.orchestrator._factory = Mock(side_effect=RuntimeError("offline"))
     assert client.get("/knowledge/search", params={"q": "contain", "retrieval_mode": "multi_view"}).status_code == 200
 
 

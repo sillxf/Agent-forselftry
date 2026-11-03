@@ -20,6 +20,7 @@ class DocumentRecord(BaseModel):
     artifact_id: str | None = None
     source_blob_path: str | None = None
     processing_signature: dict[str, Any] | None = None
+    lifecycle_state: dict[str, Any] | None = None
 
 
 class KnowledgeDocument(BaseModel):
@@ -33,6 +34,10 @@ class KnowledgeDocument(BaseModel):
     deleted_at: str | None = None
     effective_at: str | None = None
     expires_at: str | None = None
+    selected_version_id: str | None = None
+    purged_at: str | None = None
+    metadata: dict[str, str] = Field(default_factory=dict)
+    view_config: dict[str, Any] = Field(default_factory=dict)
 
 
 class DocumentVersion(BaseModel):

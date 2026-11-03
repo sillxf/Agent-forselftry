@@ -36,6 +36,8 @@ class FaissVectorStore:
 
     def add(self, vectors, records):
         matrix = np.array(vectors, dtype="float32", copy=True, order="C")
+        if matrix.ndim != 2 or matrix.shape != (len(records), self.dimension) or not np.isfinite(matrix).all():
+            raise ValueError("Invalid embedding matrix shape or nonfinite values")
         faiss.normalize_L2(matrix)
         self.index.add(matrix)
         self.records.extend(records)
@@ -48,6 +50,18 @@ class FaissVectorStore:
         scores, positions = self.index.search(query, min(k, len(self.records)))
         return [{**self.records[int(pos)], "dense_score": float(score)}
                 for score, pos in zip(scores[0], positions[0])]
+
+    def updated(self, remove_ids, vectors, records):
+        """Mutate a private FAISS clone, never the store serving current queries."""
+        result = type(self)(self.dimension)
+        result.index = faiss.clone_index(self.index)
+        positions = np.asarray([i for i, r in enumerate(self.records) if r["chunk_id"] in remove_ids], dtype="int64")
+        if len(positions):
+            result.index.remove_ids(positions)
+        result.records = [dict(r) for r in self.records if r["chunk_id"] not in remove_ids]
+        if records:
+            result.add(vectors, records)
+        return result
 
     def save(self, path):
         path = Path(path)

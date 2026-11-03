@@ -110,7 +110,7 @@ class IngestionPipeline:
         if self.cache_dir is None:
             return
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        payload = dict(artifact_id=document.artifact_id, title=result.documents[0].title,
+        payload = dict(document_id=document.document_id, version_id=document.version_id, artifact_id=document.artifact_id, title=result.documents[0].title,
                        parents=[item.model_dump(mode="json") for item in result.parents],
                        children=[item.model_dump(mode="json") for item in result.children])
         digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()

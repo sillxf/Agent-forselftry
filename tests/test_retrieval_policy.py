@@ -20,7 +20,7 @@ def test_default_policy_is_hybrid_and_does_not_load_optional_models(rag_factory)
     detailed = retriever.search_with_trace("login", 5)
     assert detailed["results"] == retriever.search_rankings("login", 5)["parents"]
     assert detailed["trace"]["strategy"] == "hybrid"
-    assert detailed["trace"]["multi_view"] == "disabled_unvalidated"
+    assert detailed["trace"]["multi_view"] == "disabled"
     assert detailed["trace"]["generation_id"] == retriever._generation_id
     factory.assert_not_called()
 
