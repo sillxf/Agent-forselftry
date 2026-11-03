@@ -56,7 +56,10 @@ class ChildChunker:
                     ends = [b.page_end or b.page_number for b in group if b.page_number is not None]
                     chunks.append(ChildChunk(
                         chunk_id=str(uuid5(NAMESPACE_URL, f"{parent.parent_id}:child:{len(chunks)}")),
+                        retrieval_key=str(uuid5(NAMESPACE_URL, f"{parent.retrieval_key or parent.parent_id}:child:{len(chunks)}")),
                         parent_id=parent.parent_id, document_id=parent.document_id,
+                        version_id=parent.version_id, artifact_id=parent.artifact_id,
+                        source_checksum=parent.source_checksum,
                         source_name=source_name, file_type=file_type, content=piece, search_text=search_text,
                         page_start=min(pages) if pages else None, page_end=max(ends) if ends else None,
                         section_path=parent.section_path, chunk_type=kind,

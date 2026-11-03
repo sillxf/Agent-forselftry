@@ -16,6 +16,34 @@ class DocumentRecord(BaseModel):
     checksum: str
     title: str | None = None
     version: str = ""
+    version_id: str | None = None
+    artifact_id: str | None = None
+    source_blob_path: str | None = None
+    processing_signature: dict[str, Any] | None = None
+
+
+class KnowledgeDocument(BaseModel):
+    """Mutable source identity; the published generation owns the served version."""
+    document_id: str
+    source_key: str
+    source_path: str
+    latest_version_id: str | None = None
+    created_at: str
+    updated_at: str
+    deleted_at: str | None = None
+    effective_at: str | None = None
+    expires_at: str | None = None
+
+
+class DocumentVersion(BaseModel):
+    """Immutable source bytes, independent of parsing and indexing configuration."""
+    version_id: str
+    document_id: str
+    version_number: int
+    content_hash: str
+    source_blob_path: str
+    file_type: str
+    created_at: str
 
 
 class BlockLayout(BaseModel):
@@ -62,7 +90,11 @@ class ParsedDocument(BaseModel):
 
 class ParentChunk(BaseModel):
     parent_id: str = Field(default_factory=lambda: str(uuid4()))
+    retrieval_key: str | None = None
     document_id: str
+    version_id: str | None = None
+    artifact_id: str | None = None
+    source_checksum: str | None = None
     section_path: list[str] = Field(default_factory=list)
     content: str
     page_start: int | None = None
@@ -72,8 +104,12 @@ class ParentChunk(BaseModel):
 
 class ChildChunk(BaseModel):
     chunk_id: str = Field(default_factory=lambda: str(uuid4()))
+    retrieval_key: str | None = None
     parent_id: str
     document_id: str
+    version_id: str | None = None
+    artifact_id: str | None = None
+    source_checksum: str | None = None
     source_name: str
     file_type: str = ""
     content: str

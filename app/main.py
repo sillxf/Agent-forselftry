@@ -1,3 +1,4 @@
+import sqlite3
 import json
 from pathlib import Path
 from typing import Literal
@@ -65,17 +66,21 @@ def load_alerts() -> list[Alert]:
 def search_knowledge(
     q: str = Query(
         ...,
-        description="Question or keyword"
+        description="Question or keyword", min_length=1, max_length=4000
     ),
-    k: int = 3,
+    k: int = Query(default=3, ge=1, le=20),
     retrieval_mode: Literal["hybrid", "multi_view"] = "hybrid",
+    include_trace: bool = False,
 ):
 
     try:
+        if include_trace and retrieval_mode == "hybrid":
+            return {"query": q, **knowledge_retriever.search_with_trace(q, k)}
         results = knowledge_retriever.search(q, k, retrieval_mode=retrieval_mode)
     except MultiViewUnavailable as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
-
+    except (ValueError, OSError, sqlite3.DatabaseError) as exc:
+        raise HTTPException(status_code=503, detail="Knowledge index unavailable; inspect build jobs and storage integrity.") from exc
 
     return {
         "query": q,

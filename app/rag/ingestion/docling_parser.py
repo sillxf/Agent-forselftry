@@ -70,13 +70,13 @@ class DoclingParser:
             })
         return self._converters[full_page_ocr]
 
-    def parse(self, file_path: str | Path) -> ParsedDocument:
+    def parse(self, file_path: str | Path, *, source_name: str | None = None) -> ParsedDocument:
         path = Path(file_path).resolve(strict=True)
         if not path.is_file() or path.suffix.lower() not in SUPPORTED_EXTENSIONS:
             raise ValueError(f"Unsupported knowledge file: {path.name}")
         checksum = file_checksum(path)
         record = DocumentRecord(
-            document_id=checksum, filename=path.name, file_type=path.suffix.lower().lstrip("."),
+            document_id=checksum, filename=source_name or path.name, file_type=path.suffix.lower().lstrip("."),
             source_path=str(path), checksum=checksum, version=checksum,
         )
         full_page_ocr = (self.converter is None and self.ocr_enabled
@@ -152,7 +152,7 @@ class DoclingParser:
                         image_path = str(target.resolve())
                 # A placeholder is explicitly metadata, not a generated description.
                 if not text:
-                    text = f"[Image in {path.name}; no extracted text]"
+                    text = f"[Image in {record.filename}; no extracted text]"
             elif label == "list_item":
                 kind = "list"
             elif label == "code":
@@ -182,7 +182,7 @@ class DoclingParser:
             blocks.insert(0, ContentBlock(
                 block_id=str(uuid5(NAMESPACE_URL, checksum + ":source-image")),
                 document_id=checksum, block_type="image", page_number=1, page_end=1,
-                text="\n".join(b.text for b in blocks) or f"[Image in {path.name}; no extracted text]",
+                text="\n".join(b.text for b in blocks) or f"[Image in {record.filename}; no extracted text]",
                 image_path=image_path, caption=None, structure_source="unknown",
                 related_block_ids=[block.block_id for block in blocks],
             ))

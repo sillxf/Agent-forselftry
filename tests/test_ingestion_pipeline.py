@@ -32,11 +32,22 @@ def test_standalone_ingestion_deduplicates_mixed_formats_without_building_an_ind
     assert result.parents and result.children
     assert not rag_factory.storage.exists()
     assert not list(rag_factory.knowledge.rglob("faiss.index"))
-    # The existing facade must produce exactly the same records, text, ordering and IDs.
+    # Managed ingestion retains logical sources, but its text and source anchors
+    # must still agree with standalone/frozen ingestion for each original file.
     retriever = rag_factory()
-    assert result.documents == retriever.documents
-    assert result.parents == list(retriever.parents.values())
-    assert [child.model_dump(mode="json") for child in result.children] == retriever.store.records
+    assert len(retriever.documents) == 3
+    for document in result.documents:
+        managed = next(item for item in retriever.documents if item.filename == document.filename)
+        assert managed.checksum == document.checksum
+        old_parents = [parent for parent in result.parents if parent.document_id == document.document_id]
+        new_parents = [parent for parent in retriever.parents.values() if parent.document_id == managed.document_id]
+        assert [parent.content for parent in old_parents] == [parent.content for parent in new_parents]
+        assert [[block.block_id for block in parent.blocks] for parent in old_parents] == [
+            [block.block_id for block in parent.blocks] for parent in new_parents]
+        old_children = [child for child in result.children if child.document_id == document.document_id]
+        new_children = [item for item in retriever.store.records if item["document_id"] == managed.document_id]
+        assert [child.search_text for child in old_children] == [item["search_text"] for item in new_children]
+        assert [child.block_ids for child in old_children] == [item["block_ids"] for item in new_children]
 
 
 def test_ingestion_empty_input_and_parser_failure_do_not_publish_an_index(tmp_path):

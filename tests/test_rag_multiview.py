@@ -120,11 +120,13 @@ def test_http_and_tool_modes_are_explicit_and_unavailable_mode_is_not_a_fallback
     assert client.get("/knowledge/search", params={"q": "isolate"}).status_code == 200
     assert client.get("/knowledge/search", params={"q": "isolate", "retrieval_mode": "multi_view"}).status_code == 409
     assert client.get("/knowledge/search", params={"q": "isolate", "retrieval_mode": "invalid"}).status_code == 422
-    definition = knowledge_tool_definition(retriever.retrieval_modes)
-    assert definition["function"]["parameters"]["properties"]["retrieval_mode"]["enum"] == ["hybrid"]
+    definition = knowledge_tool_definition()
+    assert "retrieval_mode" not in definition["function"]["parameters"]["properties"]
     install_views(retriever)
-    output = execute_knowledge_tool({"query": "contain", "retrieval_mode": "multi_view", "top_k": 1}, retriever)
-    assert output["retrieval_mode"] == "multi_view" and output["results"]
+    output = execute_knowledge_tool({"query": "isolate", "top_k": 1}, retriever)
+    assert output["results"]
+    with pytest.raises(ValueError):
+        execute_knowledge_tool({"query": "contain", "retrieval_mode": "multi_view"}, retriever)
     assert client.get("/knowledge/search", params={"q": "contain", "retrieval_mode": "multi_view"}).status_code == 200
 
 
@@ -136,14 +138,14 @@ def test_agent_can_explicitly_call_knowledge_tool_and_returns_its_original_evide
     install_views(retriever)
     llm = Mock()
     llm.chat.side_effect = [
-        {"tool_calls": [{"id": "search1", "name": "knowledge_search", "arguments": json.dumps({"query": "contain", "retrieval_mode": "multi_view"})}],
+        {"tool_calls": [{"id": "search1", "name": "knowledge_search", "arguments": json.dumps({"query": "isolate"})}],
          "assistant_message": {"role": "assistant", "content": ""}},
         {"tool_calls": [], "content": json.dumps({"attack_type": "test", "confidence": 0.5, "evidence": ["Isolate the compromised host."], "recommendations": []})},
     ]
     result = InvestigationService(retriever, llm).investigate(load_alerts()[0])
     assert result["knowledge"]
     tools = llm.chat.call_args_list[0].kwargs["tools"]
-    assert tools[-1]["function"]["parameters"]["properties"]["retrieval_mode"]["enum"] == ["hybrid", "multi_view"]
+    assert "retrieval_mode" not in tools[-1]["function"]["parameters"]["properties"]
     tool_message = llm.chat.call_args_list[-1].kwargs["messages"][-1]
     evidence = json.loads(tool_message["content"])["result"]["results"][0]
     assert "Isolate" in evidence["content"] and "How to contain" not in evidence["content"]

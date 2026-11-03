@@ -22,8 +22,10 @@ class ParentChunker:
             pages = [b.page_number for b in current if b.page_number is not None]
             ends = [b.page_end or b.page_number for b in current if b.page_number is not None]
             parents.append(ParentChunk(
-                parent_id=str(uuid5(NAMESPACE_URL, f"{document.document_id}:parent:{len(parents)}")),
-                document_id=document.document_id,
+                parent_id=str(uuid5(NAMESPACE_URL, f"{document.artifact_id or document.document_id}:parent:{len(parents)}")),
+                retrieval_key=str(uuid5(NAMESPACE_URL, f"{document.checksum if document.artifact_id else document.document_id}:parent:{len(parents)}")),
+                document_id=document.document_id, version_id=document.version_id,
+                artifact_id=document.artifact_id, source_checksum=document.checksum,
                 section_path=current[0].section_path,
                 content="\n\n".join(b.text for b in current if b.text),
                 page_start=min(pages) if pages else None,

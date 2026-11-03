@@ -18,6 +18,7 @@ class RRFFusion:
                 records[key] = {**records.get(key, {}), **record}
         keys = sorted(scores, key=lambda key: (
             -scores[key], -records[key].get("sparse_score", 0.0),
-            -records[key].get("dense_score", -1.0), key,
+            -records[key].get("dense_score", -1.0),
+            records[key].get("retrieval_key") or key, records[key].get("source_name", ""), key,
         ))
         return [{**records[key], "score": scores[key]} for key in keys]

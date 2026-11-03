@@ -3,7 +3,7 @@ import hashlib
 import json
 import time
 
-from evaluation.rag.dataset import normalize
+from evaluation.rag.dataset import matches_source, normalize
 from evaluation.rag.metrics import retrieval_metrics
 from evaluation.rag.multik import failure_analysis
 
@@ -17,7 +17,8 @@ def map_evidence(result, evidence):
     ids = set(result["source_block_ids"])
     content = normalize(result["content"])
     return [e.evidence_id for e in evidence if any(
-        a.document_id == result["document_id"] and ids & set(a.source_block_ids)
+        matches_source(a, result["document_id"], result.get("source_checksum"),
+                       result.get("source_name", result.get("source"))) and ids & set(a.source_block_ids)
         and normalize(a.text_quote) in content for a in e.anchors())]
 
 
@@ -38,7 +39,9 @@ def annotate(results, question, retriever, *, parent=False):
 def evaluation_units(retriever):
     """The complete indexed universe, independent of query strategy and returned ranks."""
     children = [dict(item, source_block_ids=item["block_ids"]) for item in retriever.store.records]
+    documents = {d.document_id: d for d in retriever.documents}
     parents = [{"parent_id": p.parent_id, "document_id": p.document_id, "content": p.content,
+                "source_checksum": p.source_checksum, "source_name": documents[p.document_id].filename,
                 "source_block_ids": list(dict.fromkeys(key for b in p.blocks
                     for key in (b.source_block_ids or [b.block_id])))} for p in retriever.parents.values()]
     return {"children": children, "parents": parents}

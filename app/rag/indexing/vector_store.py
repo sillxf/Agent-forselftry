@@ -66,4 +66,6 @@ class FaissVectorStore:
         store = cls(index.d)
         store.index = index
         store.records = [json.loads(line) for line in (path / "chunks.jsonl").read_text(encoding="utf-8").splitlines()]
+        if store.index.ntotal != len(store.records):
+            raise ValueError("Vector count differs from chunk metadata")
         return store

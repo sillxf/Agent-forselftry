@@ -36,7 +36,7 @@ def rag_factory(tmp_path):
     def create(build=True, **options):
         defaults = dict(knowledge_dir=knowledge, storage_dir=storage, tokenizer=CharacterTokenizer(),
                         embedding_fn=LocalEmbedder(), model_name="test-local-v1",
-                        child_max_tokens=240, overlap_tokens=25)
+                        child_max_tokens=240, overlap_tokens=25, cache_enabled=False)
         defaults.update(options)
         return KnowledgeRetriever(build=build, **defaults)
 

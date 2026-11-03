@@ -1,5 +1,5 @@
 """Build an in-memory vector index from existing chunks; no parsing or persistence."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -16,6 +16,7 @@ class IndexSnapshot:
     parents: list[ParentChunk]
     view_store: VectorStoreInterface | None = None
     view_model_name: str | None = None
+    embedding_cache_keys: list[str] = field(default_factory=list)
 
 
 class IndexingPipeline:
@@ -45,4 +46,4 @@ class IndexingPipeline:
             raise ValueError("View embedding dimension differs from the original index")
         store = self.store_factory(vectors.shape[1])
         store.add(vectors, [dict(view.model_dump(mode="json"), chunk_id=view.view_id) for view in views])
-        return IndexSnapshot(snapshot.store, snapshot.documents, snapshot.parents, store, model_name)
+        return IndexSnapshot(snapshot.store, snapshot.documents, snapshot.parents, store, model_name, snapshot.embedding_cache_keys)

@@ -3,12 +3,16 @@ import json
 import sqlite3
 from contextlib import closing
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
+from filelock import FileLock
 
 from app.rag.indexing.pipeline import IndexSnapshot
 from app.rag.indexing.vector_store import FaissVectorStore
 from app.rag.models import DocumentRecord, ParentChunk
+from app.rag.ingestion.docling_parser import file_checksum
+from app.rag.views import RetrievalView, validate_views
 
 
 @dataclass(frozen=True)
@@ -24,6 +28,7 @@ class SnapshotRepository:
 
     def save(self, snapshot: IndexSnapshot, signature: dict) -> SavedGeneration:
         """Save a fresh generation; leave the current pointer and old files untouched."""
+        self._validate_snapshot(snapshot)
         generation = uuid4().hex
         path = self.root / generation
         if snapshot.view_store is not None and snapshot.view_model_name != signature["model"]:
@@ -47,28 +52,141 @@ class SnapshotRepository:
                                    [(p.parent_id, p.document_id, p.model_dump_json()) for p in snapshot.parents])
             connection.executemany("INSERT INTO chunks VALUES (?, ?, ?)",
                                    [(r["chunk_id"], r["parent_id"], r["document_id"]) for r in snapshot.store.records])
+        files = ["faiss.index", "chunks.jsonl", "metadata.db"]
+        if snapshot.view_store is not None:
+            files.extend(["views/faiss.index", "views/chunks.jsonl", "views/manifest.json"])
+        manifest = {
+            "schema_version": 1, "generation_id": generation,
+            "created_at": datetime.now(timezone.utc).isoformat(), "signature": signature,
+            "documents": self._document_refs(snapshot),
+            "embedding_cache_keys": snapshot.embedding_cache_keys,
+            "counts": {"documents": len(snapshot.documents), "parents": len(snapshot.parents),
+                       "children": len(snapshot.store.records)},
+            "files": {name: file_checksum(path / name) for name in files},
+        }
+        (path / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         return SavedGeneration(generation, signature)
 
-    def publish(self, saved: SavedGeneration) -> None:
+    def publish(self, saved: SavedGeneration, *, rollback=False) -> None:
         """Publish only after the caller has prepared a usable query pipeline."""
+        manifest = self._read_manifest(saved.generation)
+        if manifest is None or manifest["signature"] != saved.signature:
+            raise ValueError("Generation manifest does not match the publication signature")
+        current = self.root / "current.json"
+        if current.exists():
+            # Keep a previously published pointer, never an unpublished ready directory.
+            try:
+                old = json.loads(current.read_text(encoding="utf-8"))
+                self._read_manifest(old["generation"])
+                previous = self.root / ".previous.tmp"
+                previous.write_text(json.dumps(old), encoding="utf-8")
+                previous.replace(self.root / "previous.json")
+            except (OSError, ValueError, KeyError):
+                pass  # Preserve the last known previous pointer if current is damaged.
+        payload = {"generation": saved.generation, "signature": saved.signature}
+        if rollback:
+            payload["rollback"] = True
         pointer = self.root / f".current-{saved.generation}.tmp"
-        pointer.write_text(json.dumps({"generation": saved.generation, "signature": saved.signature}), encoding="utf-8")
+        pointer.write_text(json.dumps(payload), encoding="utf-8")
         pointer.replace(self.root / "current.json")
 
-    def load_generation(self, generation: str) -> IndexSnapshot:
+    def load_generation(self, generation: str, *, expected_signature=None) -> IndexSnapshot:
+        if not isinstance(generation, str) or not generation or Path(generation).name != generation or generation in {".", ".."}:
+            raise ValueError("Invalid generation identifier")
+        # A short cold-load lease prevents retention from removing files mid-load.
+        with FileLock(str(self.root / f".read-{generation}.lock"), timeout=10):
+            return self._load_generation(generation, expected_signature=expected_signature)
+
+    def _load_generation(self, generation, *, expected_signature=None):
         path = self.root / generation
+        manifest = self._read_manifest(generation)
+        if manifest is not None and expected_signature is not None and manifest["signature"] != expected_signature:
+            raise ValueError("Current pointer differs from the generation manifest")
         store = self.store_factory.load(path)
         with closing(sqlite3.connect(path / "metadata.db")) as connection:
             documents = [DocumentRecord.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM documents")]
             parents = [ParentChunk.model_validate_json(row[0]) for row in connection.execute("SELECT data FROM parents")]
         view_store, view_model = None, None
         if (path / "views/manifest.json").exists():
-            manifest = json.loads((path / "views/manifest.json").read_text(encoding="utf-8"))
+            view_manifest = json.loads((path / "views/manifest.json").read_text(encoding="utf-8"))
             view_store = self.store_factory.load(path / "views")
-            view_model = manifest["embedding_model"]
-            if manifest["count"] != len(view_store.records) or store.dimension != view_store.dimension:
+            view_model = view_manifest["embedding_model"]
+            if view_manifest["count"] != len(view_store.records) or store.dimension != view_store.dimension:
                 raise ValueError("Invalid auxiliary index manifest or dimension")
-        return IndexSnapshot(store, documents, parents, view_store, view_model)
+        snapshot = IndexSnapshot(store, documents, parents, view_store, view_model)
+        if manifest is not None:
+            snapshot.embedding_cache_keys = manifest.get("embedding_cache_keys", [])
+        self._validate_snapshot(snapshot)
+        if manifest is None and (any(document.version_id for document in documents) or
+                                 (expected_signature is not None and expected_signature.get("version", 0) >= 6)):
+            raise ValueError("Managed generation is missing its manifest")
+        if manifest is not None:
+            counts = dict(documents=len(documents), parents=len(parents), children=len(store.records))
+            if counts != manifest["counts"] or self._document_refs(snapshot) != manifest["documents"]:
+                raise ValueError("Generation manifest does not match its metadata")
+        return snapshot
+
+    @staticmethod
+    def _document_refs(snapshot):
+        return [dict(document_id=doc.document_id, version_id=doc.version_id,
+                     artifact_id=doc.artifact_id, content_hash=doc.checksum,
+                     processing_signature=doc.processing_signature)
+                for doc in sorted(snapshot.documents, key=lambda document: document.document_id)]
+
+    @staticmethod
+    def _validate_snapshot(snapshot):
+        documents = {doc.document_id: doc for doc in snapshot.documents}
+        parents = {parent.parent_id: parent for parent in snapshot.parents}
+        if len(documents) != len(snapshot.documents) or len(parents) != len(snapshot.parents):
+            raise ValueError("Duplicate document or parent identity")
+        for document in snapshot.documents:
+            if document.version_id and (not document.artifact_id or not document.source_blob_path):
+                raise ValueError("Managed document is missing its artifact or immutable source reference")
+        for parent in snapshot.parents:
+            document = documents.get(parent.document_id)
+            if document is None:
+                raise ValueError("Parent has no document")
+            if document.version_id and (parent.version_id != document.version_id or
+                                        parent.artifact_id != document.artifact_id or
+                                        parent.source_checksum != document.checksum):
+                raise ValueError("Parent belongs to a different document version or artifact")
+        identities = set()
+        for record in snapshot.store.records:
+            parent = parents.get(record["parent_id"])
+            if parent is None or record["document_id"] != parent.document_id:
+                raise ValueError("Child has no matching parent/document")
+            if record["chunk_id"] in identities:
+                raise ValueError("Duplicate child identity")
+            identities.add(record["chunk_id"])
+            if parent.version_id and (record.get("version_id") != parent.version_id or
+                                      record.get("artifact_id") != parent.artifact_id or
+                                      record.get("source_checksum") != parent.source_checksum):
+                raise ValueError("Child belongs to a different document version or artifact")
+
+        if snapshot.view_store is not None:
+            views = [RetrievalView.model_validate({key: value for key, value in record.items() if key != "chunk_id"})
+                     for record in snapshot.view_store.records]
+            validate_views(views, snapshot.store.records)
+
+    def _read_manifest(self, generation):
+        if not isinstance(generation, str) or not generation or Path(generation).name != generation or generation in {".", ".."}:
+            raise ValueError("Invalid generation identifier")
+        path = self.root / generation
+        manifest_path = path / "manifest.json"
+        if not manifest_path.exists():
+            return None  # Frozen generations predate manifests and remain readable.
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest["schema_version"] != 1 or manifest["generation_id"] != generation:
+            raise ValueError("Invalid generation manifest identity or schema")
+        required = {"faiss.index", "chunks.jsonl", "metadata.db"}
+        if (path / "views/manifest.json").exists():
+            required.update({"views/faiss.index", "views/chunks.jsonl", "views/manifest.json"})
+        if set(manifest["files"]) != required:
+            raise ValueError("Invalid generation manifest asset list")
+        for name, expected in manifest["files"].items():
+            if file_checksum(path / name) != expected:
+                raise ValueError(f"Generation asset checksum mismatch: {name}")
+        return manifest
 
     def load_current(self, signature: dict) -> IndexSnapshot | None:
         pointer = self.root / "current.json"
@@ -77,4 +195,25 @@ class SnapshotRepository:
         current = json.loads(pointer.read_text(encoding="utf-8"))
         if current["signature"] != signature:
             return None
-        return self.load_generation(current["generation"])
+        return self.load_generation(current["generation"], expected_signature=signature)
+
+
+    def current_pointer(self):
+        path = self.root / "current.json"
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+    def load_published(self):
+        """Recover only committed pointers; orphan build directories are never selected."""
+        error = None
+        for name in ("current.json", "previous.json"):
+            path = self.root / name
+            if not path.exists():
+                continue
+            try:
+                pointer = json.loads(path.read_text(encoding="utf-8"))
+                return self.load_generation(pointer["generation"], expected_signature=pointer["signature"]), pointer
+            except (OSError, ValueError, KeyError, sqlite3.DatabaseError) as exc:
+                error = exc
+        if error is not None:
+            raise ValueError("No intact published generation is available") from error
+        return None
