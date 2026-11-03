@@ -56,6 +56,42 @@ export function useDocuments() {
     await reload();
     setMessage("已保存；影响索引的配置需构建发布后生效。");
   }
+  async function deleteDocument(d: Data) {
+    setMessage("正在删除“" + d.name + "”及其索引、原件和缓存…");
+    let result: Data;
+    try {
+      result = await api(
+        "/knowledge-bases/" +
+          kb +
+          "/documents/" +
+          d.document_id +
+          "?confirm=true",
+        { method: "DELETE" },
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        message === "Knowledge maintenance is busy"
+          ? "暂时无法删除：知识库正在构建或维护，请结束后重试。没有提交后台任务。"
+          : "删除未完成，请检查后重试；没有提交后台任务。" + message,
+      );
+    }
+    if (selection.current === kb) {
+      setDetail(null);
+      setDocId("");
+    }
+    try {
+      await reload();
+    } catch {
+      setMessage("删除已完成，但列表刷新失败，请刷新页面。");
+      return;
+    }
+    setMessage(
+      "删除完成，文档已从检索和文档列表中移除。" +
+        (result.external_original_preserved ? "外部原件未删除。" : "") +
+        "外部备份不在删除范围内。",
+    );
+  }
   async function download(d: Data) {
     const blob = await api(
       "/knowledge-bases/" +
@@ -84,6 +120,7 @@ export function useDocuments() {
     upload,
     patchDoc,
     download,
+    deleteDocument,
     job,
   };
 }

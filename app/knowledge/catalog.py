@@ -9,24 +9,28 @@ class KnowledgeBaseRepository:
     def __init__(self, database):
         self.root, self.connect = database.root, database.connect
 
-    def kb(self, identity):
+    def kb(self, identity, *, include_deleting=False):
         with self.connect() as c:
             row = c.execute(
                 "SELECT * FROM knowledge_bases WHERE id=?", (identity,)
             ).fetchone()
         if row is None:
             raise KeyError("Knowledge base not found")
-        return dict(id=row["id"], revision=row["revision"], **json.loads(row["data"]))
+        data = json.loads(row["data"])
+        if data.get("deleting") and not include_deleting:
+            raise ValueError(
+                "Knowledge base deletion is incomplete; retry deletion from the overview"
+            )
+        return dict(id=row["id"], revision=row["revision"], **data)
 
     def list_kbs(self):
         with self.connect() as c:
-            ids = [
-                r[0]
+            return [
+                dict(id=r["id"], revision=r["revision"], **json.loads(r["data"]))
                 for r in c.execute(
-                    "SELECT id FROM knowledge_bases ORDER BY json_extract(data,'$.created_at') DESC,id"
+                    "SELECT * FROM knowledge_bases ORDER BY json_extract(data,'$.created_at') DESC,id"
                 )
             ]
-        return [self.kb(i) for i in ids]
 
     def create_kb(self, value, *, identity=None):
         value = KnowledgeBaseCreate.model_validate(value).model_dump()
@@ -56,3 +60,22 @@ class KnowledgeBaseRepository:
             ):
                 raise ValueError("Configuration changed; refresh before saving")
         return self.kb(identity)
+
+    def begin_delete(self, identity):
+        with self.connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            row = c.execute(
+                "SELECT data FROM knowledge_bases WHERE id=?", (identity,)
+            ).fetchone()
+            if row is None:
+                raise KeyError("Knowledge base not found")
+            value = json.loads(row[0])
+            value["deleting"] = True
+            c.execute(
+                "UPDATE knowledge_bases SET data=?,revision=revision+1 WHERE id=?",
+                (json.dumps(value), identity),
+            )
+
+    def finish_delete(self, identity):
+        with self.connect() as c:
+            c.execute("DELETE FROM knowledge_bases WHERE id=?", (identity,))

@@ -34,8 +34,9 @@ class DocumentInspectionService:
                     if path.exists()
                     else "plan_unavailable"
                 )
-                if purge_state != "completed":
-                    state = "purge_incomplete"
+                if purge_state == "completed":
+                    continue  # Keep the internal tombstone, not a deleted row in the UI.
+                state = "purge_incomplete"
             versions = r.registry.list_versions(d.document_id)
             served = published.get(d.document_id)
             output.append(
@@ -48,6 +49,7 @@ class DocumentInspectionService:
                         purge_state=purge_state,
                         published=served,
                         needs_build=not d.purged_at
+                        and not d.deleted_at
                         and (
                             not served
                             or served.get("version_id")

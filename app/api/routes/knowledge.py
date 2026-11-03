@@ -14,6 +14,14 @@ def create_router(service, actor, admin, application):
     def create_base(body: KnowledgeBaseCreate, who=Depends(admin)):
         return service.knowledge.create(who, body)
 
+    @app.delete("/api/v1/knowledge-bases/{kb_id}")
+    def delete_base(kb_id: UUID, confirm: bool = Query(False), who=Depends(admin)):
+        if not confirm:
+            raise ValueError("Permanent knowledge base deletion requires confirm=true")
+        result = service.knowledge.delete(who, kb_id.hex)
+        service.retrieval.sessions.discard(kb_id.hex)
+        return result
+
     @app.put("/api/v1/knowledge-bases/{kb_id}")
     def configure(
         kb_id: UUID,

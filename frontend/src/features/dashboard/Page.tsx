@@ -10,6 +10,7 @@ export default function OverviewPage() {
     busy,
     current,
     docs,
+    deleteBase,
     job,
     kb,
     reload,
@@ -45,22 +46,43 @@ export default function OverviewPage() {
         <section className="panel">
           <div className="section-label">KNOWLEDGE SPACES</div>
           <h2>你的知识库</h2>
+          {!bases.length && (
+            <div className="empty">暂无知识库，请创建一个知识库开始使用。</div>
+          )}
           {bases.map((b) => (
-            <button
-              className={"base-card " + (b.id === kb ? "chosen" : "")}
-              key={b.id}
-              onClick={() => setKb(b.id)}
-            >
-              <span className="base-icon">▤</span>
-              <div>
-                <strong>{b.name}</strong>
-                <p>{b.description || "尚未添加描述"}</p>
-                <small>
-                  {short(b.id)} · 配置 v{b.revision}
-                </small>
-              </div>
-              <span>↗</span>
-            </button>
+            <div className="base-entry" key={b.id}>
+              <button
+                className={"base-card " + (b.id === kb ? "chosen" : "")}
+                onClick={() => setKb(b.id)}
+                disabled={busy}
+              >
+                <span className="base-icon">▤</span>
+                <div>
+                  <strong>{b.name}</strong>
+                  <p>
+                    {b.deleting
+                      ? "删除未完成，已停止服务；请重试删除。"
+                      : b.description || "尚未添加描述"}
+                  </p>
+                  <small>
+                    {short(b.id)} · 配置 v{b.revision}
+                  </small>
+                </div>
+                <span>↗</span>
+              </button>
+              {admin && (
+                <button
+                  className="danger"
+                  disabled={busy}
+                  aria-label={
+                    (b.deleting ? "重试删除知识库 " : "删除知识库 ") + b.name
+                  }
+                  onClick={() => deleteBase(b)}
+                >
+                  {b.deleting ? "重试删除" : "删除知识库"}
+                </button>
+              )}
+            </div>
           ))}
           {admin && (
             <form
@@ -86,38 +108,52 @@ export default function OverviewPage() {
                 required
                 maxLength={120}
               />
-              <button>＋ 创建</button>
+              <button disabled={busy}>＋ 创建</button>
             </form>
           )}
         </section>
         <section className="panel">
           <div className="section-label">PUBLICATION</div>
           <h2>当前服务状态</h2>
-          <dl>
-            <dt>生效索引</dt>
-            <dd>{short(status.current?.generation)}</dd>
-            <dt>生效 Embedding</dt>
-            <dd>{status.active_embedding || "尚未发布"}</dd>
-            <dt>期望 Embedding</dt>
-            <dd>{current?.build.embedding_id}</dd>
-            <dt>配置状态</dt>
-            <dd>{status.configuration_pending ? "待构建 / 发布" : "已生效"}</dd>
-            <dt>Multi-View 查询</dt>
-            <dd>
-              {current?.profile.multi_view_enabled ? "允许明确补检" : "关闭"}
-            </dd>
-          </dl>
-          <div className="note">
-            RAG 返回原始证据，不判断业务证据是否充分，也不自动生成答案。
-          </div>
-          {admin && (
-            <button
-              className="primary"
-              disabled={busy || !kb}
-              onClick={() => void act(() => job())}
-            >
-              构建并发布 →
-            </button>
+          {!current || current.deleting ? (
+            <div className="empty">
+              {current?.deleting
+                ? "该知识库删除未完成，已停止服务；请在左侧重试删除。"
+                : "创建或选择知识库后，可查看当前服务状态。"}
+            </div>
+          ) : (
+            <>
+              <dl>
+                <dt>生效索引</dt>
+                <dd>{short(status.current?.generation)}</dd>
+                <dt>生效 Embedding</dt>
+                <dd>{status.active_embedding || "尚未发布"}</dd>
+                <dt>期望 Embedding</dt>
+                <dd>{current?.build.embedding_id}</dd>
+                <dt>配置状态</dt>
+                <dd>
+                  {status.configuration_pending ? "待构建 / 发布" : "已生效"}
+                </dd>
+                <dt>Multi-View 查询</dt>
+                <dd>
+                  {current?.profile.multi_view_enabled
+                    ? "允许明确补检"
+                    : "关闭"}
+                </dd>
+              </dl>
+              <div className="note">
+                RAG 返回原始证据，不判断业务证据是否充分，也不自动生成答案。
+              </div>
+              {admin && (
+                <button
+                  className="primary"
+                  disabled={busy || !kb || current?.deleting}
+                  onClick={() => void act(() => job())}
+                >
+                  构建并发布 →
+                </button>
+              )}
+            </>
           )}
         </section>
       </div>

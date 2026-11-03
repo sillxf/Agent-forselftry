@@ -132,6 +132,16 @@ function Shell() {
                 读取管理员令牌。
               </small>
             </section>
+          ) : [1, 2, 4, 5].includes(page) && (!kb || current?.deleting) ? (
+            <section className="panel">
+              <h2>{current?.deleting ? "知识库删除未完成" : "暂无知识库"}</h2>
+              <p>
+                {current?.deleting
+                  ? "该库已停止服务，请到知识总览重试删除。"
+                  : "请先到知识总览创建知识库。"}
+              </p>
+              <button onClick={() => setPage(0)}>前往知识总览</button>
+            </section>
           ) : (
             <>
               {page === 0 && <OverviewPage />}

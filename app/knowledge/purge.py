@@ -42,13 +42,13 @@ def remove_managed(path, root):
         path.unlink(missing_ok=True)
 
 
-def purge_document(owner, document_id):
+def purge_document(workspace, document_id):
     if not re.fullmatch(r"[0-9a-fA-F-]{36}", document_id):
         raise ValueError("Invalid document identifier")
-    root = owner.storage_dir.resolve()
+    root = workspace.storage_dir.resolve()
     plan_path = root / "purges" / (document_id + ".json")
-    with owner.lock, owner.lifecycle.source_lock:
-        document = owner.registry.get_document(document_id)
+    with FileLock(str(root / "build.lock"), timeout=0), workspace.lifecycle.source_lock:
+        document = workspace.registry.get_document(document_id)
         if plan_path.exists():
             plan = json.loads(plan_path.read_text(encoding="utf-8"))
             if plan["status"] == "completed":
@@ -58,9 +58,9 @@ def purge_document(owner, document_id):
                 raise ValueError(
                     "Purge recovery plan is missing; restore storage before proceeding"
                 )
-            versions = owner.registry.list_versions(document_id)
+            versions = workspace.registry.list_versions(document_id)
             generations = []
-            for path in owner.repository.root.iterdir():
+            for path in workspace.repository.root.glob("*"):
                 if not path.is_dir() or not re.fullmatch(r"[0-9a-f]{32}", path.name):
                     continue
                 try:
@@ -91,17 +91,22 @@ def purge_document(owner, document_id):
                 "created_at": datetime.now(timezone.utc).isoformat(),
             }
             atomic_json(plan_path, plan)
-        job = owner.registry.start_job("purge", owner._generation())
+        current = workspace.repository.current_pointer()
+        job = workspace.registry.start_job(
+            "purge", current["generation"] if current else None
+        )
         try:
             if not document.purged_at:
-                owner.registry.mark_purged(
+                workspace.registry.mark_purged(
                     document_id
                 )  # All old in-memory runtimes fail closed now.
-            published = owner.repository.load_published()
-            if not published or published[1]["signature"].get("version", 0) < 8:
+            published = workspace.repository.load_published()
+            if published and published[1]["signature"].get("version", 0) < 8:
                 raise ValueError("Publish a managed format-8 generation before purging")
-            snapshot, pointer = published
-            if any(d.document_id == document_id for d in snapshot.documents):
+            snapshot, pointer = published if published else (None, None)
+            if snapshot and any(
+                d.document_id == document_id for d in snapshot.documents
+            ):
                 excluded = {
                     r["chunk_id"]
                     for r in snapshot.store.records
@@ -145,41 +150,56 @@ def purge_document(owner, document_id):
                     embedding_cache_keys=retained_keys,
                     sparse=sparse,
                 )
-                signature, _ = owner._signature()
-                owner._publish_snapshot(
-                    cleaned,
-                    signature,
-                    job_id=job,
-                    expected_generation=pointer["generation"],
+                # Deletion only removes existing vectors; it must not load models,
+                # parse sources or adopt a pending build configuration.
+                signature = {
+                    **pointer["signature"],
+                    "lifecycle_revision": workspace.registry.revision,
+                    "files": [
+                        f
+                        for f in pointer["signature"].get("files", [])
+                        if f["path"] != plan["source_path"]
+                    ],
+                }
+                saved = workspace.repository.save(cleaned, signature)
+                workspace.registry.update_job_output(
+                    job, signature["lifecycle_revision"], saved.generation
                 )
+                with workspace.registry.publication_guard(
+                    signature["lifecycle_revision"]
+                ):
+                    if workspace.repository.current_pointer() != current:
+                        raise RuntimeError("Current generation changed during deletion")
+                    workspace.repository.publish(saved)
             # A retry may already be serving the clean generation.
-            revoked_path = owner.repository.root / "revoked.json"
+            revoked_path = workspace.repository.root / "revoked.json"
             revoked = set(
                 json.loads(revoked_path.read_text()) if revoked_path.exists() else []
             )
             revoked.update(plan["generations"])
             atomic_json(revoked_path, sorted(revoked))
-            previous = owner.repository.root / "previous.json"
+            previous = workspace.repository.root / "previous.json"
             if (
                 previous.exists()
                 and json.loads(previous.read_text())["generation"] in revoked
             ):
                 previous.unlink()  # Never recover to a snapshot containing purged material.
             for identity in plan["generations"]:
-                if identity == owner.repository.current_pointer()["generation"]:
+                pointer = workspace.repository.current_pointer()
+                if pointer and identity == pointer["generation"]:
                     raise ValueError("Cannot remove the current generation")
                 with FileLock(
-                    str(owner.repository.root / (".read-" + identity + ".lock")),
+                    str(workspace.repository.root / (".read-" + identity + ".lock")),
                     timeout=10,
                 ):
                     remove_managed(
-                        owner.repository.root / identity, owner.repository.root
+                        workspace.repository.root / identity, workspace.repository.root
                     )
             others = [
                 v
-                for d in owner.registry.list_documents()
+                for d in workspace.registry.list_documents()
                 if d.document_id != document_id
-                for v in owner.registry.list_versions(d.document_id)
+                for v in workspace.registry.list_versions(d.document_id)
             ]
             shared_hashes = {v.content_hash for v in others}
             for digest in plan["source_hashes"]:
@@ -209,7 +229,7 @@ def purge_document(owner, document_id):
                         remove_managed(path, root / directory)
             # Remove unreferenced vectors, retaining caches needed by other snapshots.
             referenced, referenced_artifacts = set(), set()
-            for manifest in owner.repository.root.glob("*/manifest.json"):
+            for manifest in workspace.repository.root.glob("*/manifest.json"):
                 if re.fullmatch(r"[0-9a-f]{32}", manifest.parent.name):
                     retained_manifest = json.loads(manifest.read_text(encoding="utf-8"))
                     referenced.update(retained_manifest.get("embedding_cache_keys", []))
@@ -233,12 +253,12 @@ def purge_document(owner, document_id):
                     remove_managed(path, root / "embedding_cache")
             source = Path(plan["source_path"])
             external_preserved = not source.resolve().is_relative_to(
-                owner.knowledge_dir.resolve()
+                workspace.knowledge_dir.resolve()
             )
             if not external_preserved:
-                remove_managed(source, owner.knowledge_dir)
-            owner.registry.finish_purge(document_id)
-            with closing(sqlite3.connect(owner.registry.path)) as connection:
+                remove_managed(source, workspace.knowledge_dir)
+            workspace.registry.finish_purge(document_id)
+            with closing(sqlite3.connect(workspace.registry.path)) as connection:
                 connection.execute("VACUUM")
             result = {
                 "document_id": document_id,
@@ -248,7 +268,7 @@ def purge_document(owner, document_id):
                 "completed_at": datetime.now(timezone.utc).isoformat(),
             }
             atomic_json(plan_path, result)
-            owner.registry.finish_job(
+            workspace.registry.finish_job(
                 job, metrics={"purged_generations": len(plan["generations"])}
             )
             return result
@@ -256,5 +276,5 @@ def purge_document(owner, document_id):
             plan["status"] = "failed"
             plan["error"] = type(exc).__name__
             atomic_json(plan_path, plan)
-            owner.registry.finish_job(job, error=exc)
+            workspace.registry.finish_job(job, error=exc)
             raise

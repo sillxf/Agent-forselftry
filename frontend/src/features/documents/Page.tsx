@@ -2,6 +2,13 @@ import { useDocuments } from "./useDocuments";
 import { DocumentViewSettings } from "../multiview/DocumentSettings";
 import { Json, short, stamp, type Data } from "../../shared/ui";
 
+const documentStatusLabels: Record<string, string> = {
+  published: "已发布",
+  uploaded: "已上传",
+  deleted: "回收站",
+  purge_incomplete: "删除未完成",
+};
+
 export default function DocumentsPage() {
   const {
     act,
@@ -13,6 +20,7 @@ export default function DocumentsPage() {
     docId,
     docs,
     download,
+    deleteDocument,
     inspect,
     job,
     kb,
@@ -59,7 +67,7 @@ export default function DocumentsPage() {
           <h2>
             文档 <span>{docs.length}</span>
           </h2>
-          <small>上传不等于发布 · 原件和生成产物分离</small>
+          <small>上传后需构建 · 删除立即执行，不需要后台任务</small>
         </div>
         <div className="table-wrap">
           <table>
@@ -99,7 +107,7 @@ export default function DocumentsPage() {
                           "badge " + (d.status === "published" ? "green" : "")
                         }
                       >
-                        {d.status}
+                        {documentStatusLabels[d.status] || d.status}
                       </span>
                       {d.needs_build && (
                         <span className="badge amber">待构建</span>
@@ -241,6 +249,7 @@ export default function DocumentsPage() {
                                     有效期
                                   </button>
                                   <button
+                                    disabled={busy}
                                     onClick={() =>
                                       void act(async () => {
                                         await api(
@@ -248,43 +257,49 @@ export default function DocumentsPage() {
                                             kb +
                                             "/documents/" +
                                             d.document_id +
-                                            (d.deleted_at ? "/undelete" : ""),
-                                          {
-                                            method: d.deleted_at
-                                              ? "POST"
-                                              : "DELETE",
-                                          },
+                                            (d.deleted_at
+                                              ? "/undelete"
+                                              : "/trash"),
+                                          { method: "POST" },
                                         );
+                                        setDetail(null);
                                         await reload();
+                                        setMessage(
+                                          d.deleted_at
+                                            ? "文档已恢复。"
+                                            : "已移入回收站，立即停止检索；可以恢复。",
+                                        );
                                       })
                                     }
                                   >
-                                    {d.deleted_at ? "恢复文档" : "软删除"}
+                                    {d.deleted_at
+                                      ? "从回收站恢复"
+                                      : "移入回收站（可恢复）"}
                                   </button>
                                 </>
                               )}
-                              {d.purge_state !== "completed" && (
-                                <button
-                                  className="danger"
-                                  onClick={() => {
-                                    if (
-                                      confirm(
-                                        "永久清理会撤销包含该文档的旧快照，可能影响其他文档的历史访问；外部备份不在范围内。确认？",
-                                      )
-                                    )
-                                      void act(() =>
-                                        job("purge", {
-                                          document_id: d.document_id,
-                                          confirm: true,
-                                        }),
-                                      );
-                                  }}
-                                >
-                                  永久 / 继续清理
-                                </button>
-                              )}
                             </div>
                           </details>
+                        )}
+                        {admin && (
+                          <button
+                            className="danger"
+                            disabled={busy}
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "删除“" +
+                                    d.name +
+                                    "”？将立即删除本服务中的原件、版本、索引和缓存，不可恢复。包含它的旧快照也会移除，可能影响其他文档的历史访问。外部原件和备份不在范围内。",
+                                )
+                              )
+                                void act(() => deleteDocument(d));
+                            }}
+                          >
+                            {d.status === "purge_incomplete"
+                              ? "重试删除"
+                              : "删除"}
+                          </button>
                         )}
                       </div>
                     </td>

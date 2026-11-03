@@ -110,7 +110,7 @@ class SnapshotRepository:
         return SavedGeneration(generation, signature)
 
     def publish(self, saved: SavedGeneration, *, rollback=False) -> None:
-        """Publish only after the caller has prepared a usable query pipeline."""
+        """Publish a validated snapshot under the caller's single-writer guard."""
         manifest = self._read_manifest(saved.generation)
         if manifest is None or manifest["signature"] != saved.signature:
             raise ValueError(

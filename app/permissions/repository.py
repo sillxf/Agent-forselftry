@@ -9,11 +9,12 @@ class KeyRepository:
         self.connect, self.kb = connect, knowledge_base
 
     def create_key(self, value):
-        for kb in value.knowledge_base_ids:
-            self.kb(kb)
         identity = uuid4().hex
         token = "rag_" + identity + "." + secrets.token_urlsafe(32)
         with self.connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            for kb in value.knowledge_base_ids:
+                self.kb(kb)
             c.execute(
                 "INSERT INTO api_keys(id,name,digest,scopes,rpm) VALUES (?,?,?,?,?)",
                 (
@@ -78,3 +79,18 @@ class KeyRepository:
     def revoke(self, identity):
         with self.connect() as c:
             c.execute("UPDATE api_keys SET revoked=1 WHERE id=?", (identity,))
+
+    def remove_scope(self, kb_id):
+        with self.connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            for row in c.execute("SELECT id,scopes FROM api_keys").fetchall():
+                scopes = json.loads(row["scopes"])
+                if kb_id not in scopes:
+                    continue
+                scopes = [scope for scope in scopes if scope != kb_id]
+                c.execute(
+                    "UPDATE api_keys SET scopes=?,revoked=CASE WHEN ? THEN revoked ELSE 1 END WHERE id=?",
+                    (json.dumps(scopes), bool(scopes), row["id"]),
+                )
+                if not scopes:
+                    c.execute("DELETE FROM quota WHERE key_id=?", (row["id"],))

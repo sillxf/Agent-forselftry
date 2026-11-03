@@ -90,7 +90,17 @@ def create_router(service, actor, admin, application):
         )
 
     @app.delete("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}")
-    def delete(kb_id: UUID, document_id: UUID, who=Depends(admin)):
+    def delete(
+        kb_id: UUID, document_id: UUID, confirm: bool = Query(False), who=Depends(admin)
+    ):
+        if not confirm:
+            raise ValueError(
+                "Permanent deletion requires confirm=true; use POST .../trash for recoverable removal"
+            )
+        return service.indexing.delete_document(who, kb_id.hex, str(document_id))
+
+    @app.post("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}/trash")
+    def trash(kb_id: UUID, document_id: UUID, who=Depends(admin)):
         return service.documents.deleted(who, kb_id.hex, str(document_id))
 
     @app.post("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}/undelete")

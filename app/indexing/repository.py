@@ -16,6 +16,9 @@ class JobRepository:
         encoded = json.dumps(payload, sort_keys=True)
         with self.connect() as c:
             c.execute("BEGIN IMMEDIATE")
+            self.kb(
+                kb_id
+            )  # Recheck under the write transaction; deletion cannot race enqueue.
             if idempotency:
                 old = c.execute(
                     "SELECT * FROM jobs WHERE idempotency=?", (idempotency,)
@@ -47,6 +50,29 @@ class JobRepository:
                 ),
             )
         return self.job(identity)
+
+    def delete_for_base(self, kb_id):
+        with self.connect() as c:
+            c.execute("DELETE FROM jobs WHERE kb_id=?", (kb_id,))
+
+    def complete_pending_purges(self, kb_id, document_id, result):
+        """Retire only still-queued duplicates of a completed direct deletion."""
+        with self.connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            rows = c.execute(
+                "SELECT id,payload FROM jobs WHERE kb_id=? AND operation='purge' AND status='queued'",
+                (kb_id,),
+            ).fetchall()
+            for row in rows:
+                if json.loads(row["payload"]).get("document_id") == document_id:
+                    c.execute(
+                        "UPDATE jobs SET status='succeeded',stage='completed',result=?,error=NULL,updated=? WHERE id=?",
+                        (
+                            json.dumps({"output": result, "completed_directly": True}),
+                            time.time(),
+                            row["id"],
+                        ),
+                    )
 
     def job(self, identity):
         with self.connect() as c:

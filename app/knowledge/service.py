@@ -1,5 +1,6 @@
 """Knowledge-base configuration and publication inspection commands."""
 
+from uuid import uuid4
 from app.core.serialization import public
 
 
@@ -17,18 +18,63 @@ class KnowledgeService:
     def create(self, actor, configuration):
         self.access.authorize(actor, admin=True)
         self.validate_config(configuration)
-        result = self.repository.create_kb(configuration.model_dump())
-        self.audit.audit(actor["id"], "knowledge_base_created", result["id"])
-        return result
+        identity = uuid4().hex
+        with self.workspaces.maintenance_lock(identity):
+            result = self.repository.create_kb(
+                configuration.model_dump(), identity=identity
+            )
+            self.audit.audit(actor["id"], "knowledge_base_created", result["id"])
+            return result
 
     def configure(self, actor, kb_id, configuration, revision):
-        self.access.authorize(actor, kb_id, admin=True)
-        self.validate_config(configuration)
-        result = self.repository.configure(kb_id, configuration.model_dump(), revision)
-        self.audit.audit(
-            actor["id"], "configuration_changed", kb_id, revision=result["revision"]
-        )
-        return result
+        with self.workspaces.maintenance_lock(kb_id):
+            self.access.authorize(actor, kb_id, admin=True)
+            self.validate_config(configuration)
+            result = self.repository.configure(
+                kb_id, configuration.model_dump(), revision
+            )
+            self.audit.audit(
+                actor["id"], "configuration_changed", kb_id, revision=result["revision"]
+            )
+            return result
+
+    def delete(self, actor, kb_id):
+        from filelock import FileLock
+        from app.knowledge.purge import remove_managed
+
+        self.access.authorize(actor, admin=True)
+        with self.workspaces.maintenance_lock(kb_id):
+            bases = self.repository.root / "bases"
+            base = bases / kb_id
+            if base.is_symlink() or not base.resolve().is_relative_to(
+                self.repository.root.resolve()
+            ):
+                raise ValueError("Refusing deletion outside the managed data root")
+            try:
+                self.repository.kb(kb_id, include_deleting=True)
+            except KeyError:
+                if base.exists():
+                    raise
+                return {"id": kb_id, "status": "completed"}
+            # Legacy build/source locks are a preflight check. The outer gate keeps
+            # all current API/Worker writers out while the directory is removed.
+            storage = base / "storage"
+            if storage.exists():
+                with (
+                    FileLock(str(storage / "build.lock"), timeout=0),
+                    FileLock(str(storage / "sources.lock"), timeout=0),
+                ):
+                    pass
+            self.repository.begin_delete(
+                kb_id
+            )  # Durable, fail-closed on any partial removal.
+            remove_managed(base, bases)
+            self.jobs.delete_for_base(kb_id)
+            self.access.keys.remove_scope(kb_id)
+            self.repository.finish_delete(kb_id)
+            self.workspaces.discard(kb_id)
+            self.audit.audit(actor["id"], "knowledge_base_deleted", kb_id)
+            return {"id": kb_id, "status": "completed"}
 
     def generations(self, actor, kb_id):
         self.access.authorize(actor, kb_id, admin=True)
@@ -102,5 +148,6 @@ class KnowledgeService:
             "published": sum(
                 bool(self.workspaces.get(k["id"]).repository.current_pointer())
                 for k in bases
+                if not k.get("deleting")
             ),
         }

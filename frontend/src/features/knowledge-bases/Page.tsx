@@ -1,3 +1,4 @@
+import { useKnowledgeBaseDeletion } from "./useKnowledgeBaseDeletion";
 import { useKnowledgeSettings } from "./useKnowledgeSettings";
 import { RetrievalFields } from "../retrieval-settings/Fields";
 import { Json, short, stamp, type Data } from "../../shared/ui";
@@ -6,11 +7,21 @@ export default function SettingsPage() {
   const { act, admin, busy, current, kb, models, saveConfig } =
     useKnowledgeSettings();
 
+  const deleteBase = useKnowledgeBaseDeletion();
   if (!current) return null;
   return admin ? (
     <section className="panel" key={kb + "-" + current.revision}>
       <div className="section-label">BUILD ≠ QUERY</div>
-      <h2>配置版本 {current.revision}</h2>
+      <div className="section-heading">
+        <h2>配置版本 {current.revision}</h2>
+        <button
+          className="danger"
+          disabled={busy}
+          onClick={() => deleteBase(current)}
+        >
+          删除知识库
+        </button>
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();

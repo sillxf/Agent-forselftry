@@ -32,7 +32,9 @@ class IndexingService:
                 configuration["build"]["embedding_id"], require_enabled=True
             )
         if request.operation == "purge":
-            self.workspaces.get(kb_id).registry.get_document(request.document_id)
+            raise ValueError(
+                "Use DELETE /knowledge-bases/{kb_id}/documents/{document_id}?confirm=true; deletion runs immediately"
+            )
         payload = dict(request.model_dump(), configuration=configuration)
         job = self.jobs.enqueue(kb_id, request.operation, payload, idempotency)
         self.audit.audit(
@@ -59,49 +61,63 @@ class IndexingService:
         )
         return self.submit(actor, old["kb_id"], request)
 
-    def execute(self, job, payload):
-        workspace = self.workspaces.get(job["kb_id"])
-        configuration = IndexBuildConfig.model_validate(
-            payload["configuration"]["build"]
-        )
-        parser = (
-            self.parser_factory(workspace, configuration)
-            if self.parser_factory
-            else DoclingParser(
-                archive_dir=workspace.storage_dir / "parsed",
-                image_dir=workspace.storage_dir / "images",
-                ocr_enabled=configuration.ocr_enabled,
-            )
-        )
-        builder = IndexBuilder(
-            workspace,
-            configuration,
-            parser,
-            self.providers.embedding,
-            self.factory,
-            progress=lambda stage: self.jobs.progress(job["id"], stage),
-            publication_guard=lambda: self.jobs.build_guard(
-                job["kb_id"], payload["configuration"]["build"]
-            ),
-        )
-        operation = job["operation"]
-        if operation == "build":
-            return {
-                "core_job_id": builder.run(full=payload["full"]),
-                "metrics": builder.last_build_metrics,
-                "current": workspace.repository.current_pointer(),
-            }
-        if operation == "rollback":
-            return {
-                "core_job_id": builder.rollback(payload["generation_id"]),
-                "current": workspace.repository.current_pointer(),
-            }
-        if operation == "purge":
+    def delete_document(self, actor, kb_id, document_id):
+        with self.workspaces.maintenance_lock(kb_id):
             from app.knowledge.purge import purge_document
 
-            return purge_document(builder, payload["document_id"])
-        if operation == "gc":
-            from app.indexing.garbage_collector import collect_generations
+            self.access.authorize(actor, kb_id, admin=True)
+            result = purge_document(self.workspaces.get(kb_id), document_id)
+            self.jobs.complete_pending_purges(kb_id, document_id, result)
+            self.audit.audit(
+                actor["id"], "document_purged", kb_id, document_id=document_id
+            )
+            return result
 
-            return collect_generations(builder)
-        raise ValueError("Unsupported job operation")
+    def execute(self, job, payload):
+        with self.workspaces.maintenance_lock(job["kb_id"]):
+            workspace = self.workspaces.get(job["kb_id"])
+            if job["operation"] == "purge":
+                # Existing queues remain resumable without initializing a parser/model.
+                from app.knowledge.purge import purge_document
+
+                return purge_document(workspace, payload["document_id"])
+            configuration = IndexBuildConfig.model_validate(
+                payload["configuration"]["build"]
+            )
+            parser = (
+                self.parser_factory(workspace, configuration)
+                if self.parser_factory
+                else DoclingParser(
+                    archive_dir=workspace.storage_dir / "parsed",
+                    image_dir=workspace.storage_dir / "images",
+                    ocr_enabled=configuration.ocr_enabled,
+                )
+            )
+            builder = IndexBuilder(
+                workspace,
+                configuration,
+                parser,
+                self.providers.embedding,
+                self.factory,
+                progress=lambda stage: self.jobs.progress(job["id"], stage),
+                publication_guard=lambda: self.jobs.build_guard(
+                    job["kb_id"], payload["configuration"]["build"]
+                ),
+            )
+            operation = job["operation"]
+            if operation == "build":
+                return {
+                    "core_job_id": builder.run(full=payload["full"]),
+                    "metrics": builder.last_build_metrics,
+                    "current": workspace.repository.current_pointer(),
+                }
+            if operation == "rollback":
+                return {
+                    "core_job_id": builder.rollback(payload["generation_id"]),
+                    "current": workspace.repository.current_pointer(),
+                }
+            if operation == "gc":
+                from app.indexing.garbage_collector import collect_generations
+
+                return collect_generations(builder)
+            raise ValueError("Unsupported job operation")

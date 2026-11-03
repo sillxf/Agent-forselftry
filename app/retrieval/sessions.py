@@ -64,3 +64,8 @@ class QuerySessions:
                     self._items.popitem(last=False)
             self._items.move_to_end(key)
             return self._items[key]
+
+    def discard(self, kb_id):
+        with self._lock:
+            for key in [key for key in self._items if key[0] == kb_id]:
+                del self._items[key]

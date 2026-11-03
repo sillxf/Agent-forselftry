@@ -91,7 +91,7 @@ def run():
             json={"version_id": first_version},
         )
         checks.append("versions-and-rollback")
-        request("DELETE", f"/knowledge-bases/{kb}/documents/{document}")
+        request("POST", f"/knowledge-bases/{kb}/documents/{document}/trash")
         assert request("POST", "/search", json=query)["results"] == []
         request("POST", f"/knowledge-bases/{kb}/documents/{document}/undelete")
         assert request("POST", "/search", json=query)["results"]
@@ -121,7 +121,10 @@ def run():
         assert mcp.status_code == 200, mcp.text
         assert len(mcp.json()["result"]["tools"]) == 6
         checks.append("mcp-tools")
-        job("purge", document_id=document, confirm=True)
+        deleted = request(
+            "DELETE", f"/knowledge-bases/{kb}/documents/{document}?confirm=true"
+        )
+        assert deleted["status"] == "completed"
         assert request("POST", "/search", json=query)["results"] == []
         checks.append("purge")
     from migrations.service_data import backup_service, restore_service
