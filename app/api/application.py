@@ -11,10 +11,11 @@ from fastapi.staticfiles import StaticFiles
 from filelock import Timeout, FileLock
 from app.bootstrap import create_services
 from app.api.dependencies import actor, admin
+from app.api.console_session import ConsoleSession
 from app.core.exceptions import AccessDenied, BusyError
 
 
-def create_app(service=None, *, with_mcp=True):
+def create_app(service=None, *, with_mcp=True, local_console=False):
     service = service or create_services(
         os.getenv("RAG_SERVICE_DATA", str(Path.cwd() / "storage"))
     )
@@ -43,6 +44,7 @@ def create_app(service=None, *, with_mcp=True):
         openapi_url=None,
     )
     app.state.services = service
+    console = ConsoleSession(enabled=local_console)
     allowed_hosts = set(
         os.getenv("RAG_ALLOWED_HOSTS", "localhost,127.0.0.1,::1").split(",")
     )
@@ -57,12 +59,27 @@ def create_app(service=None, *, with_mcp=True):
             f"{request.url.scheme}://{request.url.netloc}"
         }:
             return JSONResponse({"detail": "Cross-origin request rejected"}, 403)
+        if request.url.path == "/api/v1/console/session":
+            return console.handle(request)
         if request.url.path.startswith(("/api/", "/mcp")):
             auth = request.headers.get("authorization", "")
             try:
-                request.state.actor = service.access.authenticate(
-                    auth.removeprefix("Bearer ") if auth.startswith("Bearer ") else ""
-                )
+                if (
+                    not auth
+                    and request.url.path.startswith("/api/")
+                    and console.authenticate(request)
+                ):
+                    request.state.actor = {
+                        "id": "local-console",
+                        "admin": True,
+                        "scopes": None,
+                    }
+                else:
+                    request.state.actor = service.access.authenticate(
+                        auth.removeprefix("Bearer ")
+                        if auth.startswith("Bearer ")
+                        else ""
+                    )
             except AccessDenied:
                 return JSONResponse(
                     {"detail": "Valid Bearer credentials required"},

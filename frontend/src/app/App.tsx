@@ -18,6 +18,9 @@ function Shell() {
     bases,
     busy,
     connected,
+    connecting,
+    localConsole,
+    connectLocal,
     current,
     kb,
     logout,
@@ -76,7 +79,9 @@ function Shell() {
                 刷新
               </button>
             )}
-            <button onClick={logout}>退出</button>
+            <button disabled={busy || connecting} onClick={() => void logout()}>
+              退出
+            </button>
           </div>
         </header>
         <div className="workspace">
@@ -100,7 +105,26 @@ function Shell() {
               </select>
             )}
           </div>
-          {!connected ? (
+          {connecting ? (
+            <section className="panel">
+              <h2>正在打开工作台…</h2>
+            </section>
+          ) : !connected && localConsole ? (
+            <section className="panel">
+              <h2>本地工作台已断开</h2>
+              <button
+                className="primary"
+                disabled={busy}
+                onClick={() =>
+                  void act(async () => {
+                    await connectLocal();
+                  })
+                }
+              >
+                重新打开工作台
+              </button>
+            </section>
+          ) : !connected ? (
             <section className="panel login">
               <div className="section-label">CONNECT YOUR WORKSPACE</div>
               <h2>连接你的知识服务</h2>

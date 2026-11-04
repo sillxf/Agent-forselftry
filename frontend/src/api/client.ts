@@ -6,7 +6,8 @@ export async function request(
   const r = await fetch("/api/v1" + path, {
     ...options,
     headers: {
-      Authorization: "Bearer " + token,
+      "X-Console-Request": "1",
+      ...(token ? { Authorization: "Bearer " + token } : {}),
       ...(typeof options.body === "string"
         ? { "Content-Type": "application/json" }
         : {}),

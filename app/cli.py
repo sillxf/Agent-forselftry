@@ -17,6 +17,7 @@ def main():
     serve = subs.add_parser("serve")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8090)
+    serve.add_argument("--local-console", action="store_true")
     worker = subs.add_parser("worker")
     worker.add_argument("--once", action="store_true")
     worker.add_argument("--desktop-safe-start", action="store_true")
@@ -32,6 +33,12 @@ def main():
     migrate.add_argument("--backup", required=True)
     migrate.add_argument("--writers-stopped", action="store_true")
     args = parser.parse_args()
+    if (
+        args.command == "serve"
+        and args.local_console
+        and args.host not in {"127.0.0.1", "::1", "localhost"}
+    ):
+        parser.error("--local-console requires a loopback --host")
     root = Path(args.data).resolve()
     if args.command == "mcp-stdio":
         from mcp_server.server import stdio
@@ -88,7 +95,11 @@ def main():
         import uvicorn
         from app.api import create_app
 
-        uvicorn.run(create_app(service), host=args.host, port=args.port)
+        uvicorn.run(
+            create_app(service, local_console=args.local_console),
+            host=args.host,
+            port=args.port,
+        )
     elif args.command == "worker":
         from app.indexing.worker import Worker
 

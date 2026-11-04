@@ -89,6 +89,9 @@ try {
             & $python -m app --data $dataRoot init *> (Join-Path $logs 'initialize.log')
             if ($LASTEXITCODE -ne 0) { throw "初始化失败，请查看 $logs\initialize.log" }
         }
+        if ($state -and (Test-OwnedProcess $state.server) -and $state.server.command -notmatch '--local-console') {
+            Stop-OwnedProcess $state.server
+        }
         if ($state -and (Test-OwnedProcess $state.server)) {
             $url = $state.url
         } else {
@@ -98,7 +101,7 @@ try {
                 throw "端口 $Port 已被占用，未关闭或接管其他进程。请先停止此前手工启动的服务。"
             }
             $state = [pscustomobject]@{ project = $projectRoot; data = $dataRoot; url = $url; server = $null; worker = $null }
-            $state.server = Start-ServiceProcess 'server' @('-m', 'app', '--data', $dataRoot, 'serve', '--host', '127.0.0.1', '--port', "$Port")
+            $state.server = Start-ServiceProcess 'server' @('-m', 'app', '--data', $dataRoot, 'serve', '--host', '127.0.0.1', '--port', "$Port", '--local-console')
             $created += $state.server
             Save-State
         }
