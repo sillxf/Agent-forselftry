@@ -11,8 +11,10 @@ class Worker:
         self.jobs = indexing.jobs
         self.audit = indexing.audit
 
-    def run_once(self):
-        job = self.jobs.claim()
+    def run_once(self, *, skip_legacy_purge=False, confirmed_after=None):
+        job = self.jobs.claim(
+            skip_legacy_purge=skip_legacy_purge, confirmed_after=confirmed_after
+        )
         if job is None:
             return False
         usage = []
@@ -50,11 +52,23 @@ class Worker:
             usage_context.reset(context)
         return True
 
-    def run(self, *, once=False):
+    def run(self, *, once=False, desktop_safe_start=False):
         with FileLock(str(self.indexing.root / "worker.lock"), timeout=0):
             self.jobs.recover()
+            cutoff = None
+            if desktop_safe_start:
+                marker = self.indexing.root / "desktop-worker-cutoff"
+                if not marker.exists():
+                    marker.write_text(str(time.time()), encoding="ascii")
+                cutoff = float(marker.read_text(encoding="ascii"))
+                self.jobs.hold_legacy_purges()
+                (self.indexing.root / "desktop-worker-ready").write_text(
+                    "1", encoding="ascii"
+                )
             while True:
-                if not self.run_once():
+                if not self.run_once(
+                    skip_legacy_purge=desktop_safe_start, confirmed_after=cutoff
+                ):
                     if once:
                         break
                     time.sleep(1)

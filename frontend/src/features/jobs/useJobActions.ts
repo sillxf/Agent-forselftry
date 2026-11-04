@@ -10,7 +10,9 @@ export function useJobActions() {
     });
     await reload();
     setMessage(
-      "任务已排队 " + short(j.id) + "，由 Worker 执行；旧发布仍然服务。",
+      "已提交后台处理，任务编号 " +
+        short(j.id) +
+        "。请在“任务与发布”查看进度；成功前本次操作尚未完成。",
     );
   }
   return job;

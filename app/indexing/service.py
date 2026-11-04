@@ -48,11 +48,29 @@ class IndexingService:
 
     def list(self, actor):
         self.access.authorize(actor, admin=True)
-        return public(self.jobs.jobs())
+        rows = public(self.jobs.jobs())
+        marker = self.root / "desktop-worker-cutoff"
+        cutoff = float(marker.read_text(encoding="ascii")) if marker.exists() else None
+        for job in rows:
+            job["awaiting_confirmation"] = bool(
+                cutoff is not None
+                and job["status"] == "queued"
+                and job["updated"] < cutoff
+            )
+        return rows
 
     def retry(self, actor, job_id):
         self.access.authorize(actor, admin=True)
         old = self.jobs.job(job_id)
+        marker = self.root / "desktop-worker-cutoff"
+        if (
+            old["status"] == "queued"
+            and old["operation"] != "purge"
+            and marker.exists()
+            and old["updated"] < float(marker.read_text(encoding="ascii"))
+        ):
+            self.access.authorize(actor, old["kb_id"], admin=True)
+            return self.jobs.confirm_queued(job_id)
         if old["status"] not in {"failed", "interrupted"}:
             raise ValueError("Only failed/interrupted jobs may be retried")
         payload = json.loads(old["payload"])

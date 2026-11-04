@@ -46,18 +46,33 @@ def path_key(path):
 
 
 class DocumentRegistry:
-    def __init__(self, storage_dir):
+    def __init__(self, storage_dir, *, access_guard=None):
+        self.access_guard = access_guard
         self.path = Path(storage_dir) / "registry.db"
         self._initialized = False
 
     @contextmanager
     def _connection(self):
+        if self.access_guard is not None:
+            self.access_guard()
+        if self._initialized and not self.path.exists():
+            raise ValueError("Managed registry was removed; refusing to recreate it")
         if (self.path.parent / "service-cutover.json").exists():
             raise ValueError(
                 "Legacy storage was migrated; use the independent service or restore the pre-migration backup"
             )
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with closing(sqlite3.connect(self.path, timeout=10)) as connection:
+        if not self._initialized:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+        # Existing registries are opened without CREATE: a deletion between the
+        # existence check and connect must not resurrect an empty metadata file.
+        target = (
+            self.path.resolve().as_uri() + "?mode=rw"
+            if self._initialized
+            else self.path
+        )
+        with closing(
+            sqlite3.connect(target, timeout=10, uri=self._initialized)
+        ) as connection:
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             connection.execute("PRAGMA secure_delete = ON")

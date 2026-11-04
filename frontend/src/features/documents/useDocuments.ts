@@ -69,6 +69,16 @@ export function useDocuments() {
         { method: "DELETE" },
       );
     } catch (error) {
+      if (selection.current === kb) {
+        setDetail(null);
+        setDocId("");
+      }
+      // Partial deletion is fail-closed; refresh so its retry action is visible.
+      try {
+        await reload();
+      } catch {
+        /* Preserve the deletion error if refresh also fails. */
+      }
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(
         message === "Knowledge maintenance is busy"

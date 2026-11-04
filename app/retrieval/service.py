@@ -87,6 +87,27 @@ class RetrievalService:
                         generation_id=output["trace"]["generation_id"],
                     )
                 )
+            # Model/reranker work may outlive a deletion. Recheck the live base
+            # and document visibility before assembling a successful response.
+            for identity in request.knowledge_base_ids:
+                self.access.authorize(actor, identity)
+                registry = self.sessions.workspaces.get(identity).registry
+                requested = {
+                    item["document_id"]
+                    for item in candidates
+                    if item["knowledge_base_id"] == identity
+                }
+                allowed = registry.eligible_ids(requested)
+                if request.as_of:
+                    # Historical lifecycle was checked against the publication;
+                    # only permanent purges override that historical visibility.
+                    allowed = requested - registry.purged_ids()
+                candidates = [
+                    item
+                    for item in candidates
+                    if item["knowledge_base_id"] != identity
+                    or item["document_id"] in allowed
+                ]
             candidates.sort(
                 key=lambda x: (
                     -x["cross_kb_rank_score"],

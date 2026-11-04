@@ -39,7 +39,7 @@ export default function JobsPage() {
           </button>
         </div>
         <p>
-          需要单独运行 Worker。中断不会自动重复付费生成；核对发布状态后再重试。
+          双击根目录“启动.cmd”会自动开启后台处理。中断任务请核对发布状态后再重试。
         </p>
         <table>
           <thead>
@@ -60,7 +60,9 @@ export default function JobsPage() {
                   </small>
                 </td>
                 <td>
-                  <span className="badge">{j.status}</span>
+                  <span className="badge">
+                    {j.awaiting_confirmation ? "待确认执行" : j.status}
+                  </span>
                   <small>{j.stage}</small>
                 </td>
                 <td>{stamp(j.created)}</td>
@@ -74,20 +76,28 @@ export default function JobsPage() {
                       }}
                     />
                   </details>
-                  {["failed", "interrupted"].includes(j.status) && (
-                    <button
-                      onClick={() =>
-                        void act(async () => {
-                          await api("/jobs/" + j.id + "/retry", {
-                            method: "POST",
-                          });
-                          await reload();
-                        })
-                      }
-                    >
-                      明确重试
-                    </button>
-                  )}
+                  {j.operation === "purge" &&
+                    ["failed", "interrupted"].includes(j.status) && (
+                      <small>
+                        该历史删除未完成。请到“文档与内容”核对并直接删除。
+                      </small>
+                    )}
+                  {(["failed", "interrupted"].includes(j.status) ||
+                    j.awaiting_confirmation) &&
+                    j.operation !== "purge" && (
+                      <button
+                        onClick={() =>
+                          void act(async () => {
+                            await api("/jobs/" + j.id + "/retry", {
+                              method: "POST",
+                            });
+                            await reload();
+                          })
+                        }
+                      >
+                        {j.awaiting_confirmation ? "确认执行" : "明确重试"}
+                      </button>
+                    )}
                 </td>
               </tr>
             ))}

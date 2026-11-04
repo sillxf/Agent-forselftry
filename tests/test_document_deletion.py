@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import tempfile
+import sqlite3
 import unittest
 from unittest.mock import patch
 
@@ -458,6 +459,114 @@ class DocumentDeletionTests(unittest.TestCase):
         self.assertEqual(self.request("GET", "/knowledge-bases"), [])
         keys = {item["id"]: item for item in self.request("GET", "/keys")}
         self.assertTrue(keys[key["id"]]["revoked"])
+
+    def test_cached_registry_cannot_recreate_deleted_knowledge_base(self):
+        document = self.upload("target.md")
+        registry = self.workspace.registry
+        self.request("DELETE", f"/knowledge-bases/{self.kb}?confirm=true")
+        base = self.service.root / "bases" / self.kb
+        with self.assertRaises((KeyError, ValueError, OSError, sqlite3.DatabaseError)):
+            registry.set_deleted(document)
+        self.assertFalse(
+            base.exists(), "A stale registry recreated the deleted directory"
+        )
+
+    def test_search_started_before_base_deletion_cannot_return_deleted_evidence(self):
+        document = self.upload("target.md")
+        self.build()
+        runtime = self.service.retrieval.sessions.get(self.kb)
+        search = runtime.orchestrator.search
+
+        def delete_after_search(*args, **kwargs):
+            output = search(*args, **kwargs)
+            self.assertTrue(output["results"])
+            self.service.knowledge.delete(
+                self.service.access.authenticate(TOKEN), self.kb
+            )
+            return output
+
+        with patch.object(
+            runtime.orchestrator, "search", side_effect=delete_after_search
+        ):
+            response = self.response(
+                "POST",
+                "/search",
+                json={
+                    "query": "evidence",
+                    "knowledge_base_ids": [self.kb],
+                    "top_k": 10,
+                },
+            )
+        self.assertEqual(response.status_code, 404, response.text)
+        self.assertNotIn(document, response.text)
+
+    def test_search_finished_during_document_deletion_filters_stale_results(self):
+        target = self.upload("target.md")
+        survivor = self.upload("survivor.md", b"survivor evidence")
+        self.build()
+        runtime = self.service.retrieval.sessions.get(self.kb)
+        search = runtime.orchestrator.search
+
+        def delete_after_search(*args, **kwargs):
+            output = search(*args, **kwargs)
+            self.service.indexing.delete_document(
+                self.service.access.authenticate(TOKEN), self.kb, target
+            )
+            return output
+
+        with patch.object(
+            runtime.orchestrator, "search", side_effect=delete_after_search
+        ):
+            self.assertEqual(self.search_ids(), {survivor})
+
+    def test_historical_search_still_uses_published_lifecycle_after_trash(self):
+        document = self.upload("target.md")
+        self.build()
+        at = self.workspace.repository.current_pointer()["published_at"]
+        self.request("POST", self.path(document) + "/trash")
+        self.assertEqual(self.search_ids(), set())
+        result = self.request(
+            "POST",
+            "/search",
+            json={
+                "query": "evidence",
+                "knowledge_base_ids": [self.kb],
+                "as_of": at,
+            },
+        )
+        self.assertEqual({r["document_id"] for r in result["results"]}, {document})
+
+    def test_desktop_worker_holds_old_queue_but_runs_new_builds(self):
+        jobs = self.service.indexing.jobs
+        old_build = jobs.enqueue(self.kb, "build", {})
+        old_purge = jobs.enqueue(self.kb, "purge", {"document_id": "not-executed"})
+        worker = Worker(self.service.indexing)
+        with patch.object(
+            self.service.indexing,
+            "execute",
+            side_effect=AssertionError("legacy work must not run"),
+        ):
+            worker.run(once=True, desktop_safe_start=True)
+        self.assertEqual(jobs.job(old_build["id"])["status"], "queued")
+        self.assertEqual(jobs.job(old_purge["id"])["status"], "interrupted")
+        admin = self.service.access.authenticate(TOKEN)
+        listed = {j["id"]: j for j in self.service.indexing.list(admin)}
+        self.assertTrue(listed[old_build["id"]]["awaiting_confirmation"])
+        new_build = jobs.enqueue(self.kb, "build", {})
+        later_purge = jobs.enqueue(self.kb, "purge", {"document_id": "never-automatic"})
+        with patch.object(self.service.indexing, "execute", return_value={}) as execute:
+            worker.run(once=True, desktop_safe_start=True)
+        self.assertEqual(execute.call_count, 1)
+        self.assertEqual(execute.call_args.args[0]["id"], new_build["id"])
+        self.assertEqual(jobs.job(new_build["id"])["status"], "succeeded")
+        self.assertEqual(jobs.job(later_purge["id"])["status"], "interrupted")
+        self.assertEqual(jobs.job(old_build["id"])["status"], "queued")
+        self.service.indexing.retry(admin, old_build["id"])
+        with patch.object(self.service.indexing, "execute", return_value={}) as execute:
+            worker.run(once=True, desktop_safe_start=True)
+        self.assertEqual(execute.call_count, 1)
+        self.assertEqual(execute.call_args.args[0]["id"], old_build["id"])
+        self.assertEqual(jobs.job(old_build["id"])["status"], "succeeded")
 
 
 if __name__ == "__main__":

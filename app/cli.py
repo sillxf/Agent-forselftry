@@ -19,6 +19,7 @@ def main():
     serve.add_argument("--port", type=int, default=8090)
     worker = subs.add_parser("worker")
     worker.add_argument("--once", action="store_true")
+    worker.add_argument("--desktop-safe-start", action="store_true")
     subs.add_parser("mcp-stdio")
     backup = subs.add_parser("backup")
     backup.add_argument("destination")
@@ -91,7 +92,9 @@ def main():
     elif args.command == "worker":
         from app.indexing.worker import Worker
 
-        Worker(service.indexing).run(once=args.once)
+        Worker(service.indexing).run(
+            once=args.once, desktop_safe_start=args.desktop_safe_start
+        )
     elif args.command == "migrate-legacy":
         from migrations.service_data import migrate_legacy
 

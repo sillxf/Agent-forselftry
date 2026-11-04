@@ -18,6 +18,8 @@ FOLDERS = (
 )
 FILES = (
     "README.md",
+    "启动.cmd",
+    "停止.cmd",
     "AGENTS.md",
     "pyproject.toml",
     "requirements.txt",

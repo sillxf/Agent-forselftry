@@ -44,7 +44,9 @@ class Workspaces:
                     with self.maintenance_lock(kb_id):
                         self.knowledge_base(kb_id)
                         knowledge.mkdir(parents=True, exist_ok=True)
-                registry = DocumentRegistry(storage)
+                registry = DocumentRegistry(
+                    storage, access_guard=lambda: self.knowledge_base(kb_id)
+                )
                 self._items[kb_id] = Workspace(
                     knowledge,
                     storage,

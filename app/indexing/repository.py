@@ -98,11 +98,19 @@ class JobRepository:
                 (time.time(),),
             )
 
-    def claim(self):
+    def hold_legacy_purges(self):
+        with self.connect() as c:
+            return c.execute(
+                "UPDATE jobs SET status='interrupted',stage='interrupted',error=?,updated=? WHERE operation='purge' AND status='queued'",
+                ("历史删除任务未执行。请到文档页核对后直接删除。", time.time()),
+            ).rowcount
+
+    def claim(self, *, skip_legacy_purge=False, confirmed_after=None):
         with self.connect() as c:
             c.execute("BEGIN IMMEDIATE")
             row = c.execute(
-                "SELECT * FROM jobs WHERE status='queued' ORDER BY created LIMIT 1"
+                "SELECT * FROM jobs WHERE status='queued' AND (?=0 OR operation!='purge') AND (? IS NULL OR updated>=?) ORDER BY created LIMIT 1",
+                (skip_legacy_purge, confirmed_after, confirmed_after),
             ).fetchone()
             if not row:
                 return None
@@ -111,6 +119,14 @@ class JobRepository:
                 (time.time(), row["id"]),
             )
             return dict(row)
+
+    def confirm_queued(self, identity):
+        with self.connect() as c:
+            c.execute(
+                "UPDATE jobs SET updated=? WHERE id=? AND status='queued'",
+                (time.time(), identity),
+            )
+        return self.job(identity)
 
     def progress(self, identity, stage):
         with self.connect() as c:
