@@ -37,7 +37,7 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
 
     app = FastAPI(
         title="RAG Knowledge Service",
-        version="1.1.0",
+        version="1.2.0",
         lifespan=lifespan,
         docs_url=None,
         redoc_url=None,
