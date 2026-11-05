@@ -112,6 +112,16 @@ export default function DocumentsPage() {
                       {d.needs_build && (
                         <span className="badge amber">待构建</span>
                       )}
+                      {d.hidden_reason && (
+                        <span className="badge amber">
+                          {d.hidden_reason === "superseded"
+                            ? "已被取代，不参与检索"
+                            : "不在有效期，不参与检索"}
+                        </span>
+                      )}
+                      {d.review_due && (
+                        <span className="badge amber">到期待复核</span>
+                      )}
                     </td>
                     <td>
                       {d.versions.length} 个版本
@@ -247,6 +257,86 @@ export default function DocumentsPage() {
                                     }}
                                   >
                                     有效期
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const review_after = prompt(
+                                        "复核日期 ISO8601（带时区），空表示不提醒。只做提醒，不影响检索",
+                                        d.review_after || "",
+                                      );
+                                      if (review_after === null) return;
+                                      void act(async () => {
+                                        await api(
+                                          "/knowledge-bases/" +
+                                            kb +
+                                            "/documents/" +
+                                            d.document_id +
+                                            "/review",
+                                          {
+                                            method: "PUT",
+                                            body: JSON.stringify({
+                                              review_after:
+                                                review_after || null,
+                                            }),
+                                          },
+                                        );
+                                        await reload();
+                                      });
+                                    }}
+                                  >
+                                    复核日期
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const others = docs.filter(
+                                        (x) =>
+                                          x.document_id !== d.document_id &&
+                                          !x.purged_at,
+                                      );
+                                      const choice = prompt(
+                                        "输入取代本文档的新文档序号，空表示取消取代关系：\n" +
+                                          others
+                                            .map(
+                                              (x, i) => i + 1 + ". " + x.name,
+                                            )
+                                            .join("\n"),
+                                        "",
+                                      );
+                                      if (choice === null) return;
+                                      const target = choice.trim()
+                                        ? others[Number(choice) - 1]
+                                        : null;
+                                      if (choice.trim() && !target) {
+                                        setMessage("序号无效，未修改。");
+                                        return;
+                                      }
+                                      void act(async () => {
+                                        await api(
+                                          "/knowledge-bases/" +
+                                            kb +
+                                            "/documents/" +
+                                            d.document_id +
+                                            "/superseded-by",
+                                          {
+                                            method: "PUT",
+                                            body: JSON.stringify({
+                                              superseded_by:
+                                                target?.document_id || null,
+                                            }),
+                                          },
+                                        );
+                                        await reload();
+                                        setMessage(
+                                          target
+                                            ? "已设为被“" +
+                                                target.name +
+                                                "”取代，立即停止检索本文档。"
+                                            : "已取消取代关系。",
+                                        );
+                                      });
+                                    }}
+                                  >
+                                    被新文档取代
                                   </button>
                                   <button
                                     disabled={busy}

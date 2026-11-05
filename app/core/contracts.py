@@ -32,7 +32,6 @@ class RetrievalProfile(RetrievalPolicy):
     default_strategy: Literal["dense", "bm25", "hybrid", "hybrid_rerank"] = "hybrid"
     reranker_id: str = "default-reranker"
     candidate_k: int = Field(20, ge=1, le=100)
-    parent_context: bool = True
 
 
 class KnowledgeBaseCreate(Contract):
@@ -44,6 +43,9 @@ class KnowledgeBaseCreate(Contract):
 
 class SearchRequest(Contract):
     query: str = Field(min_length=1, max_length=4000)
+    # Optional caller rewrites of the same question (e.g. translated into the
+    # document language). Each is retrieved and fused by RRF; the server calls no LLM.
+    queries: list[str] = Field(default_factory=list, max_length=4)
     knowledge_base_ids: list[str] = Field(min_length=1, max_length=5)
     top_k: int = Field(5, ge=1, le=20)
     mode: Literal["default", "high_recall"] = "default"
@@ -56,6 +58,8 @@ class SearchRequest(Contract):
     def valid(self):
         if not self.query.strip():
             raise ValueError("Query must not be blank")
+        if any(not q.strip() or len(q) > 4000 for q in self.queries):
+            raise ValueError("Each additional query must be 1-4000 non-blank characters")
         if len(set(self.knowledge_base_ids)) != len(self.knowledge_base_ids):
             raise ValueError("Duplicate knowledge base")
         if len(self.filters) > 10:

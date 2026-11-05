@@ -178,6 +178,9 @@ class SnapshotRepository:
         ):
             raise ValueError("Current pointer differs from the generation manifest")
         store = self.store_factory.load(path)
+        for record in store.records:
+            # Removed in 1.2 (never used by retrieval); older generations still carry it.
+            record.pop("entities", None)
         with closing(sqlite3.connect(path / "metadata.db")) as connection:
             documents = [
                 DocumentRecord.model_validate_json(row[0])

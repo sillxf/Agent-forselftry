@@ -47,6 +47,10 @@ class KnowledgeDocument(BaseModel):
     expires_at: str | None = None
     selected_version_id: str | None = None
     purged_at: str | None = None
+    # Informational: listed as due for human review; never changes visibility.
+    review_after: str | None = None
+    # Hidden from live retrieval while this replacement exists and is not deleted.
+    superseded_by: str | None = None
     metadata: dict[str, str] = Field(default_factory=dict)
     view_config: dict[str, Any] = Field(default_factory=dict)
 
@@ -139,5 +143,4 @@ class ChildChunk(BaseModel):
     table_data: list[dict[str, Any]] | None = None
     block_ids: list[str] = Field(default_factory=list)
     image_paths: list[str] = Field(default_factory=list)
-    entities: list[str] = Field(default_factory=list)
     structure_source: StructureSource = "original"

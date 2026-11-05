@@ -15,6 +15,16 @@ class Validity(BaseModel):
     expires_at: str | None = None
 
 
+class Review(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    review_after: str | None = None
+
+
+class Supersede(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    superseded_by: UUID | None = None
+
+
 class RestoreVersion(BaseModel):
     model_config = ConfigDict(extra="forbid")
     version_id: UUID

@@ -67,7 +67,7 @@ docker/, docs/         部署与说明
 
 创建知识库 → 上传文档 → 配置模型与构建参数 → 构建发布 → 调试检索 → 创建限定知识库的只读 Key。
 
-支持 Dense、BM25、Hybrid、可选重排、调用方明确请求的 Multi-View 补检；支持文档版本、软删除/恢复、硬清理、索引回滚、备份恢复。返回原文、引用身份与可选检索轨迹，不判断业务证据是否充分，不自动生成答案。
+支持 Dense、BM25、Hybrid、可选重排、调用方明确请求的 Multi-View 补检，以及调用方提供的多查询融合（queries，例如补一条文档语言的翻译）；支持文档版本、软删除/恢复、有效期、复核日期、新文档取代旧文档、硬清理、索引回滚、备份恢复。返回原文、引用身份与可选检索轨迹，上下文按 token 计预算，不判断业务证据是否充分，不自动生成答案。
 
 首版是单主机模块化单体：一个 API、一个 Worker，SQLite + FAISS + BM25 + 托管文件。两个进程的模型内存需要合计预算。
 
@@ -82,8 +82,11 @@ npm ci
 npm run build
 cd ..
 # 完整功能批次后按需检查一次，不调用付费模型、不跑效果实验：
+python -m unittest discover -s tests -p "test_*.py"
 python -m tests.smoke
 ~~~
+
+改动分块、向量模型或检索策略时，用冻结基准跑一次效果对比，不必每次都跑：见 [evaluation/README.md](evaluation/README.md)。容量问题用 scripts/load_test.py 实测。
 
 Docker：docker compose up --build -d，默认仅映射本机 8090。对外发布需要 HTTPS、可信 Host/Origin、数据卷备份及资源限制。
 

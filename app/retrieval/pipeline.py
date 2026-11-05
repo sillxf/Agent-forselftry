@@ -28,6 +28,7 @@ class RetrievalPipeline:
         self.eligibility = (
             None  # Bound only for live managed runtimes, never frozen evaluation.
         )
+        self.count_tokens = None  # Bound by PipelineFactory to the snapshot tokenizer.
         self.dense = dense
         self.sparse = sparse
         self.fusion = fusion
@@ -61,8 +62,20 @@ class RetrievalPipeline:
         )
 
     def rank_candidates(
-        self, query: str, k: int, strategy: str = "hybrid", *, candidate_k=None
+        self,
+        query: str,
+        k: int,
+        strategy: str = "hybrid",
+        *,
+        candidate_k=None,
+        extra_queries=(),
     ) -> list[dict]:
+        """Rank Child candidates for one question.
+
+        extra_queries are caller-supplied rewrites of the same question (translation,
+        expanded terms). Every route of every query enters one equal-weight RRF, the
+        same flat fusion as the measured cross-language experiment.
+        """
         if not query.strip() or k <= 0:
             return []
         if strategy not in {"dense", "bm25", "hybrid", "multi_view"}:
@@ -80,15 +93,17 @@ class RetrievalPipeline:
         allowed = self.eligibility() if self.eligibility is not None else None
         if allowed == set():
             return []
-        dense, sparse = [], []
+        queries = list(dict.fromkeys(q.strip() for q in [query, *extra_queries]))
+        queries = [q for q in queries if q]
 
-        def retrieve(route, name, limit):
+        def retrieve(route, name, limit, text, index):
             started = perf_counter()
-            rows = self._retrieve(route, query, limit, allowed)
+            rows = self._retrieve(route, text, limit, allowed)
             if hasattr(self, "route_trace"):
                 self.route_trace.append(
                     {
                         "stage": name,
+                        "query_index": index,
                         "elapsed_ms": (perf_counter() - started) * 1000,
                         "candidates": [
                             {
@@ -102,16 +117,22 @@ class RetrievalPipeline:
                 )
             return rows
 
-        if strategy in {"dense", "hybrid"}:
-            dense = retrieve(self.dense, "dense", dense_limit)
-        if strategy == "multi_view":
-            dense = retrieve(self.multi_view_dense, "multi_view", dense_limit)
-        if strategy in {"bm25", "hybrid", "multi_view"}:
-            sparse = retrieve(self.sparse, "sparse", sparse_limit)
-        if strategy in {"hybrid", "multi_view"}:
-            ranked = self.fusion.fuse([dense, sparse])
-            return ranked[:candidate_k] if candidate_k is not None else ranked
-        return dense if strategy == "dense" else sparse
+        routes = []
+        for index, text in enumerate(queries):
+            if strategy in {"dense", "hybrid"}:
+                routes.append(retrieve(self.dense, "dense", dense_limit, text, index))
+            if strategy == "multi_view":
+                routes.append(
+                    retrieve(self.multi_view_dense, "multi_view", dense_limit, text, index)
+                )
+            if strategy in {"bm25", "hybrid", "multi_view"}:
+                routes.append(
+                    retrieve(self.sparse, "sparse", sparse_limit, text, index)
+                )
+        if len(routes) == 1:
+            return routes[0]  # Single route keeps its native scores and order.
+        ranked = self.fusion.fuse(routes)
+        return ranked[:candidate_k] if candidate_k is not None else ranked
 
     @staticmethod
     def _retrieve(route, query, limit, allowed):

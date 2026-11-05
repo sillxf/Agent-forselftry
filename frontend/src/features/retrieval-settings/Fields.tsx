@@ -41,7 +41,7 @@ export function RetrievalFields({
           ["supplement_candidate_k", "补检额外候选数"],
           ["reranker_timeout_seconds", "重排超时（秒）"],
           ["max_top_k", "最终返回数上限"],
-          ["max_context_chars", "上下文字符预算"],
+          ["max_context_tokens", "上下文 token 预算"],
         ].map(([name, label]) => (
           <label key={name}>
             {label}

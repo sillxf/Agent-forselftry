@@ -6,6 +6,7 @@ export function usePlayground() {
   const workspace = useWorkspace();
   const { api, kb } = workspace;
   const [query, setQuery] = useState(""),
+    [extraQueries, setExtraQueries] = useState(""),
     [supplement, setSupplement] = useState(false),
     [filter, setFilter] = useState(""),
     [asOf, setAsOf] = useState("");
@@ -30,6 +31,11 @@ export function usePlayground() {
   async function runSearch(compare = false) {
     const body = {
       query,
+      queries: extraQueries
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .slice(0, 4),
       knowledge_base_ids: [kb],
       top_k: k,
       filters: filters(),
@@ -62,6 +68,8 @@ export function usePlayground() {
     ...workspace,
     query,
     setQuery,
+    extraQueries,
+    setExtraQueries,
     supplement,
     setSupplement,
     filter,

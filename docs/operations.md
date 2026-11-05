@@ -14,7 +14,17 @@ API 与 Worker 使用同一数据根和模型/凭据环境。管理员受信任�
 
 备份前停止 API 和 Worker。使用 rag-service --data ./storage backup <新备份目录>；恢复使用 rag-service restore <备份目录> <新数据目录>。命令检查锁、校验备份，恢复到新目录，不覆盖活动数据。不是加密备份或介质安全擦除。旧单库迁移见 migrate-legacy --help，必须停写并指定外部备份。
 
-检索接口 POST /api/v1/search，输入 query、knowledge_base_ids、top_k；按需提供 filters、as_of、include_trace、supplement。调用方自行判断业务证据是否充分。
+检索接口 POST /api/v1/search，输入 query、knowledge_base_ids、top_k；按需提供 queries、filters、as_of、include_trace、supplement。调用方自行判断业务证据是否充分。
+
+queries 是同一问题的最多 4 条改写，由调用方提供（服务端不调用 LLM）。每条查询都走 Dense 和 BM25，所有路由一起做等权 RRF。中文问题查英文文档时，补一条英文翻译效果最明显：冻结基准上 MRR@5 从 74 升到 89（见 evaluation/README.md）。改写只换说法，不要加入用户没有问的内容。
+
+返回上下文按 token 计预算（知识库检索策略里的 max_context_tokens，默认 8000，即 5 个默认 Parent），用的是快照自己的向量模型分词器，与分块的单位一致；每条结果带 context_tokens。超预算的 Parent 先降级为匹配的 Child，仍放不下才跳过。1.2 之前保存的 max_context_chars 会被忽略并使用默认值，因为字符与 token 的比例随语言变化，无法换算。多个知识库同时检索时，若都由同一个重排模型打分，按重排分数合并；否则按各库内排名做 RRF。
+
+并发：同时执行的检索数由 RAG_SEARCH_CONCURRENCY（默认 4）限制，超出的请求最多排队 RAG_SEARCH_QUEUE_SECONDS（默认 10 秒），仍无空位才返回 503 和 Retry-After。本地模型推理在进程内串行，模型忙超过 RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS 也返回 503（此前被误报为存储错误）。被拒绝的请求不消耗 Key 的每分钟配额。用 scripts/load_test.py 在自己的机器上测出吞吐后再决定是否扩容。
+
+文档生命周期还有两项。复核日期（PUT .../documents/{id}/review，review_after）只做提醒：到期后管理台显示“到期待复核”，不影响检索，也不会让正在运行的构建失效。取代关系（PUT .../documents/{id}/superseded-by）表示新文档替代旧文档：新文档必须已构建发布，否则请求被拒绝，以免旧内容在下次构建前从检索中消失；设置后，只要新文档未删除且已生效，旧文档立即不参与检索，不需要重建索引；新文档进回收站或取消关系后旧文档恢复可见。拒绝自我取代和循环。as_of 历史查询使用发布时记录的取代关系。管理台的文档状态会写明不参与检索的原因（已被取代或不在有效期）。
+
+升级到 1.2：每个知识库的 registry.db 首次打开时自动从 schema 4 升到 5（新增 review_after、superseded_by 两列）。升级不可回退，旧版本代码无法打开升级后的库，升级前先用 backup 命令备份。已发布的索引不需要重建；旧快照里不再使用的 entities 字段在加载时丢弃。
 
 HTTP MCP 位于 /mcp；stdio 使用 rag-service mcp-stdio 或 python -m mcp_server.server，通过 RAG_SERVICE_URL/TOKEN 连接同一 REST 服务，不能绕过权限。
 

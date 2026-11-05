@@ -23,6 +23,9 @@ class FakeEmbedding:
     def tokenizer_and_limit(self):
         return Tokenizer(), 8192
 
+    def count_tokens(self, text):
+        return len(Tokenizer().encode(text))
+
     def embed_documents(self, texts):
         self.calls.append(("documents", texts))
         return self.encode(texts)

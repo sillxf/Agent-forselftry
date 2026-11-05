@@ -60,6 +60,7 @@ def assemble(owner, signature, files, *, full=False):
             "effective_at": document.effective_at,
             "expires_at": document.expires_at,
             "deleted_at": document.deleted_at,
+            "superseded_by": document.superseded_by,
         }
         documents.append(record)
     # A changed embedding space/revision or unsupported custom backend must rebuild vectors.

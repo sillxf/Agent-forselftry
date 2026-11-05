@@ -135,7 +135,7 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
 
     @app.exception_handler(BusyError)
     async def busy(request, exc):
-        return JSONResponse({"detail": str(exc)}, 503)
+        return JSONResponse({"detail": str(exc)}, 503, headers={"Retry-After": "2"})
 
     @app.exception_handler(OSError)
     async def storage(request, exc):

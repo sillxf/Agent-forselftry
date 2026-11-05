@@ -94,6 +94,45 @@ class DocumentService:
             )
             return public(result.model_dump())
 
+    def review(self, actor, kb_id, document_id, review_after):
+        with self.workspaces.maintenance_lock(kb_id):
+            result = self._workspace(actor, kb_id).registry.set_review_after(
+                str(document_id), review_after
+            )
+            self.audit.audit(
+                actor["id"], "review_date_changed", kb_id, document_id=str(document_id)
+            )
+            return public(result.model_dump())
+
+    def supersede(self, actor, kb_id, document_id, replacement_id):
+        with self.workspaces.maintenance_lock(kb_id):
+            workspace = self._workspace(actor, kb_id)
+            if replacement_id is not None:
+                # The old document disappears from search at once; its replacement
+                # must already be searchable, or the content would vanish until a build.
+                pointer = workspace.repository.current_pointer()
+                manifest = (
+                    workspace.repository._read_manifest(pointer["generation"])
+                    if pointer
+                    else None
+                )
+                published = {d["document_id"] for d in (manifest or {}).get("documents", [])}
+                if replacement_id not in published:
+                    raise ValueError(
+                        "Build and publish the replacement document before superseding"
+                    )
+            result = workspace.registry.set_superseded_by(
+                str(document_id), replacement_id
+            )
+            self.audit.audit(
+                actor["id"],
+                "document_superseded" if replacement_id else "supersede_cleared",
+                kb_id,
+                document_id=str(document_id),
+                replacement_id=replacement_id,
+            )
+            return public(result.model_dump())
+
     def deleted(self, actor, kb_id, document_id, value=True):
         with self.workspaces.maintenance_lock(kb_id):
             result = self._workspace(actor, kb_id).registry.set_deleted(

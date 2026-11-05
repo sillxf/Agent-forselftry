@@ -6,6 +6,8 @@ from contextvars import ContextVar
 from threading import RLock
 import os
 
+from app.core.exceptions import BusyError
+
 usage_context = ContextVar("model_usage", default=None)
 
 
@@ -23,7 +25,9 @@ class ModelPool:
         if not self.lock.acquire(
             timeout=float(os.getenv("RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS", "5"))
         ):
-            raise TimeoutError("Local model capacity is busy")
+            # BusyError maps to 503 "busy"; TimeoutError is an OSError and was
+            # reported as a storage failure.
+            raise BusyError("Local model capacity is busy; retry later")
         try:
             if key not in self.models:
                 while len(self.models) >= self.max_loaded:

@@ -3,7 +3,13 @@ from uuid import UUID
 import os, tempfile
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import FileResponse
-from app.api.schemas.knowledge import DocumentPatch, Validity, RestoreVersion
+from app.api.schemas.knowledge import (
+    DocumentPatch,
+    Validity,
+    RestoreVersion,
+    Review,
+    Supersede,
+)
 
 
 def create_router(service, actor, admin, application):
@@ -87,6 +93,21 @@ def create_router(service, actor, admin, application):
     def validity(kb_id: UUID, document_id: UUID, body: Validity, who=Depends(admin)):
         return service.documents.validity(
             who, kb_id.hex, str(document_id), **body.model_dump()
+        )
+
+    @app.put("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}/review")
+    def review(kb_id: UUID, document_id: UUID, body: Review, who=Depends(admin)):
+        return service.documents.review(
+            who, kb_id.hex, str(document_id), body.review_after
+        )
+
+    @app.put("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}/superseded-by")
+    def supersede(kb_id: UUID, document_id: UUID, body: Supersede, who=Depends(admin)):
+        return service.documents.supersede(
+            who,
+            kb_id.hex,
+            str(document_id),
+            str(body.superseded_by) if body.superseded_by else None,
         )
 
     @app.delete("/api/v1/knowledge-bases/{kb_id}/documents/{document_id}")

@@ -1,8 +1,10 @@
-from threading import BoundedSemaphore
-from app.retrieval.filters import filtered_pipeline
-
 """Query authorization, filtering, bounded execution and typed evidence output."""
+
+from threading import BoundedSemaphore
+import os
 from time import perf_counter
+
+from app.retrieval.filters import filtered_pipeline
 from types import SimpleNamespace
 from uuid import uuid4
 import hashlib
@@ -22,14 +24,22 @@ class RetrievalService:
             audit,
         )
         self.slots = BoundedSemaphore(concurrency)
+        # A short bounded wait turns bursts into latency instead of instant 503s.
+        # Load test, 8 clients / 4 slots: 75 of 80 requests failed without waiting.
+        self.queue_seconds = float(os.getenv("RAG_SEARCH_QUEUE_SECONDS", "10"))
 
     def search(self, actor, request):
         request = SearchRequest.model_validate(request)
         for identity in request.knowledge_base_ids:
             self.access.authorize(actor, identity)
-        self.keys.reserve(actor)
-        if not self.slots.acquire(blocking=False):
+        if not self.slots.acquire(timeout=self.queue_seconds):
             raise BusyError("Search capacity is busy; retry later")
+        try:
+            # Count quota only for admitted requests; a 503 must not use it up.
+            self.keys.reserve(actor)
+        except BaseException:
+            self.slots.release()
+            raise
         started = perf_counter()
         usage = []
         context = usage_context.set(usage)
@@ -37,6 +47,7 @@ class RetrievalService:
             candidates = []
             traces = []
             versions = []
+            budgets, rerankers = [], set()
             for identity in request.knowledge_base_ids:
                 kb = self.bases.kb(identity)
                 runtime = self.sessions.get(identity)
@@ -47,16 +58,15 @@ class RetrievalService:
                     request.query,
                     request.top_k,
                     supplement=supplement,
+                    extra_queries=request.queries,
+                )
+                budgets.append(runtime.orchestrator.policy.max_context_tokens)
+                rerankers.add(
+                    runtime.orchestrator.policy.reranker_model
+                    if output["trace"]["reranker_used"]
+                    else None
                 )
                 for rank, item in enumerate(output["results"], 1):
-                    if not kb["profile"].get("parent_context", True):
-                        item = dict(
-                            item,
-                            content=item["chunk_content"],
-                            context_scope="child",
-                            page_start=item.get("matched_page_start"),
-                            page_end=item.get("matched_page_end"),
-                        )
                     candidates.append(
                         dict(
                             item,
@@ -108,21 +118,29 @@ class RetrievalService:
                     if item["knowledge_base_id"] != identity
                     or item["document_id"] in allowed
                 ]
+            # One reranker model scored every base: its scores are comparable, so a
+            # weak base no longer receives the same share of top slots as a strong one.
+            # Otherwise per-base scores have different meanings; keep rank fusion.
+            by_reranker = (
+                len(request.knowledge_base_ids) > 1
+                and len(rerankers) == 1
+                and None not in rerankers
+            )
             candidates.sort(
                 key=lambda x: (
-                    -x["cross_kb_rank_score"],
+                    -(x["reranker_score"] if by_reranker else x["cross_kb_rank_score"]),
                     x["knowledge_base_id"],
                     x["parent_id"],
                 )
             )
-            results = []
-            size = 0
+            # Each base already fitted its own budget; the response uses the strictest.
+            budget, results, used = min(budgets), [], 0
             for item in candidates:
                 if len(results) >= request.top_k:
                     break
-                if size + len(item["content"]) <= 24000:
+                if used + item["context_tokens"] <= budget:
                     results.append(item)
-                    size += len(item["content"])
+                    used += item["context_tokens"]
             output = dict(
                 schema_version=1,
                 request_id=uuid4().hex,

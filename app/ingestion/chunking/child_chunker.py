@@ -1,16 +1,9 @@
 """Small retrieval units retain their parents, evidence and table column names."""
 
-import re
 from uuid import NAMESPACE_URL, uuid5
 
 from app.ingestion.chunking.text import count_tokens, split_text
 from app.knowledge.models import ChildChunk, ContentBlock, ParentChunk
-
-ENTITY_PATTERN = re.compile(
-    r"CVE-\d{4}-\d{4,7}|(?:\d{1,3}\.){3}\d{1,3}|\b[0-9a-f]{32,128}\b|"
-    r"\bT\d{4}(?:\.\d{3})?\b|\b[A-Z]+[-_]?\d{3,}\b",
-    re.IGNORECASE,
-)
 
 
 class ChildChunker:
@@ -120,11 +113,6 @@ class ChildChunker:
                                 )
                             ),
                             image_paths=[b.image_path for b in group if b.image_path],
-                            entities=list(
-                                dict.fromkeys(
-                                    m.group() for m in ENTITY_PATTERN.finditer(piece)
-                                )
-                            ),
                             structure_source=(
                                 "inferred"
                                 if any(b.structure_source == "inferred" for b in group)

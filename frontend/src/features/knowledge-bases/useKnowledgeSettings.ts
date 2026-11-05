@@ -28,7 +28,7 @@ export function useKnowledgeSettings() {
         supplement_candidate_k: Number(f.get("supplement_candidate_k")),
         reranker_timeout_seconds: Number(f.get("reranker_timeout_seconds")),
         max_top_k: Number(f.get("max_top_k")),
-        max_context_chars: Number(f.get("max_context_chars")),
+        max_context_tokens: Number(f.get("max_context_tokens")),
         multi_view_enabled: f.get("multi_view") === "on",
         parent_context: f.get("parent_context") === "on",
       },

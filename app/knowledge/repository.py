@@ -45,6 +45,19 @@ def path_key(path):
     return os.path.normcase(str(Path(path).resolve()))
 
 
+def _utc(value):
+    if value is None:
+        return None
+    parsed = (
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if isinstance(value, str)
+        else value
+    )
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise ValueError("Lifecycle timestamps must include a timezone")
+    return parsed.astimezone(timezone.utc).isoformat()
+
+
 class DocumentRegistry:
     def __init__(self, storage_dir, *, access_guard=None):
         self.access_guard = access_guard
@@ -118,7 +131,12 @@ class DocumentRegistry:
                         error TEXT, usage_json TEXT, updated_at TEXT NOT NULL)""")
                     connection.execute("UPDATE registry_meta SET schema_version = 4")
                     schema = 4
-                if schema != 4:
+                if schema == 4:
+                    for column in ("review_after TEXT", "superseded_by TEXT"):
+                        connection.execute(f"ALTER TABLE documents ADD COLUMN {column}")
+                    connection.execute("UPDATE registry_meta SET schema_version = 5")
+                    schema = 5
+                if schema != 5:
                     raise ValueError("Unsupported document registry schema")
                 connection.commit()
                 self._initialized = True
@@ -373,29 +391,43 @@ class DocumentRegistry:
             rows = {
                 row["document_id"]: row
                 for row in connection.execute(
-                    "SELECT document_id, deleted_at, purged_at, effective_at, expires_at FROM documents"
+                    "SELECT document_id, deleted_at, purged_at, effective_at, expires_at, superseded_by FROM documents"
                 )
             }
         if requested - rows.keys():
             raise ValueError(
                 "Managed snapshot references documents absent from the registry"
             )
+
+        def live(row):
+            return row["deleted_at"] is None and row["purged_at"] is None
+
+        def effective(row):
+            return row["effective_at"] is None or (
+                datetime.fromisoformat(row["effective_at"]) <= now
+            )
+
+        def replaced(row):
+            # A replacement hides the old document once it is live and effective.
+            # Its own expiry does not bring the older document back.
+            replacement = rows.get(row["superseded_by"])
+            return replacement is not None and live(replacement) and effective(
+                replacement
+            )
+
         return {
             key
             for key in requested
-            if rows[key]["deleted_at"] is None
-            and rows[key]["purged_at"] is None
-            and (
-                rows[key]["effective_at"] is None
-                or datetime.fromisoformat(rows[key]["effective_at"]) <= now
-            )
+            if live(rows[key])
+            and effective(rows[key])
             and (
                 rows[key]["expires_at"] is None
                 or now < datetime.fromisoformat(rows[key]["expires_at"])
             )
+            and not replaced(rows[key])
         }
 
-    def _update_lifecycle(self, document_id, fields):
+    def _update_lifecycle(self, document_id, fields, *, advance=True):
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
@@ -415,7 +447,8 @@ class DocumentRegistry:
                         document_id,
                     ],
                 )
-                self._advance(connection)
+                if advance:
+                    self._advance(connection)
             row = connection.execute(
                 "SELECT * FROM documents WHERE document_id = ?", (document_id,)
             ).fetchone()
@@ -433,19 +466,7 @@ class DocumentRegistry:
         return self._update_lifecycle(document_id, {"deleted_at": timestamp})
 
     def set_validity(self, document_id, *, effective_at=None, expires_at=None):
-        def utc(value):
-            if value is None:
-                return None
-            parsed = (
-                datetime.fromisoformat(value.replace("Z", "+00:00"))
-                if isinstance(value, str)
-                else value
-            )
-            if parsed.tzinfo is None or parsed.utcoffset() is None:
-                raise ValueError("Validity timestamps must include a timezone")
-            return parsed.astimezone(timezone.utc).isoformat()
-
-        effective_at, expires_at = utc(effective_at), utc(expires_at)
+        effective_at, expires_at = _utc(effective_at), _utc(expires_at)
         if (
             effective_at
             and expires_at
@@ -456,6 +477,30 @@ class DocumentRegistry:
         return self._update_lifecycle(
             document_id, dict(effective_at=effective_at, expires_at=expires_at)
         )
+
+    def set_review_after(self, document_id, review_after):
+        # Display-only date: does not advance the lifecycle revision, so it never
+        # invalidates a running build.
+        return self._update_lifecycle(
+            document_id, {"review_after": _utc(review_after)}, advance=False
+        )
+
+    def set_superseded_by(self, document_id, replacement_id):
+        """Hide document_id from live retrieval behind a different, live document."""
+        if replacement_id is not None:
+            if replacement_id == document_id:
+                raise ValueError("A document cannot replace itself")
+            documents = {d.document_id: d for d in self.list_documents()}
+            replacement = documents.get(replacement_id)
+            if replacement is None or replacement.purged_at:
+                raise ValueError("Replacement document is unavailable")
+            seen, cursor = {document_id}, replacement
+            while cursor is not None and cursor.superseded_by:
+                if cursor.superseded_by in seen:
+                    raise ValueError("Replacement chain would form a cycle")
+                seen.add(cursor.document_id)
+                cursor = documents.get(cursor.superseded_by)
+        return self._update_lifecycle(document_id, {"superseded_by": replacement_id})
 
     @contextmanager
     def publication_guard(self, expected_revision):

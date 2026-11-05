@@ -68,10 +68,10 @@ class RetrievalOrchestrator:
         except Exception as exc:
             return ranked, "reranker_error:" + type(exc).__name__
 
-    def search(self, retriever, query, k, *, supplement=False):
+    def search(self, retriever, query, k, *, supplement=False, extra_queries=()):
         started = perf_counter()
         policy = self.policy
-        if len(query) > policy.max_query_chars:
+        if any(len(q) > policy.max_query_chars for q in [query, *extra_queries]):
             raise ValueError("Knowledge query exceeds the configured character budget")
         k = min(k, policy.max_top_k)
         trace = {
@@ -81,11 +81,14 @@ class RetrievalOrchestrator:
             "multi_view": "not_requested" if policy.multi_view_enabled else "disabled",
             "supplement_requested": supplement,
             "supplement_passes": 0,
+            "query_count": 1 + len(extra_queries),
         }
         if not query.strip() or k <= 0:
             return {
                 "results": [],
-                "trace": dict(trace, elapsed_ms=0, context_chars=0, candidate_count=0),
+                "trace": dict(
+                    trace, elapsed_ms=0, context_tokens=0, candidate_count=0
+                ),
             }
         pipeline = (
             retriever.pipeline
@@ -99,6 +102,7 @@ class RetrievalOrchestrator:
             if policy.default_strategy == "hybrid_rerank"
             else policy.default_strategy,
             candidate_k=policy.candidate_k if use_reranker else None,
+            extra_queries=extra_queries,
         )
         trace["retrieval_elapsed_ms"] = (perf_counter() - retrieval_started) * 1000
         trace["before_rerank"] = [
@@ -162,25 +166,34 @@ class RetrievalOrchestrator:
         if pipeline.eligibility is not None:
             allowed = pipeline.eligibility()
             ranked = [item for item in ranked if item["document_id"] in allowed]
-        parents = pipeline.context_builder.build(ranked, k)
         results, used = [], 0
-        for item in parents:
-            if used + len(item["content"]) > policy.max_context_chars:
-                item = dict(
-                    item,
-                    content=item["chunk_content"],
-                    context_scope="child",
-                    page_start=item["matched_page_start"],
-                    page_end=item["matched_page_end"],
-                )
-            if used + len(item["content"]) <= policy.max_context_chars:
-                results.append(item)
-                used += len(item["content"])
+        for item in pipeline.context_builder.build(ranked, k):
+            item = dict(item, context_scope="parent")
+            if not policy.parent_context:
+                item = as_child(item)
+            tokens = pipeline.count_tokens(item)
+            if used + tokens > policy.max_context_tokens and item["context_scope"] != "child":
+                # Over budget: fall back to the matched Child instead of dropping the hit.
+                item = as_child(item)
+                tokens = pipeline.count_tokens(item)
+            if used + tokens <= policy.max_context_tokens:
+                results.append(dict(item, context_tokens=tokens))
+                used += tokens
         trace.update(
             generation_id=getattr(pipeline, "generation_id", None),
             candidate_count=len(ranked),
-            context_chars=used,
+            context_tokens=used,
             returned_parents=len(results),
             elapsed_ms=(perf_counter() - started) * 1000,
         )
         return {"results": results, "trace": trace}
+
+
+def as_child(item):
+    return dict(
+        item,
+        content=item["chunk_content"],
+        context_scope="child",
+        page_start=item["matched_page_start"],
+        page_end=item["matched_page_end"],
+    )

@@ -7,12 +7,14 @@ export default function PlaygroundPage() {
     asOf,
     busy,
     comparison,
+    extraQueries,
     filter,
     k,
     query,
     result,
     runSearch,
     setAsOf,
+    setExtraQueries,
     setFilter,
     setK,
     setQuery,
@@ -72,6 +74,15 @@ export default function PlaygroundPage() {
               />
             </label>
           </div>
+          <label>
+            附加查询（可选，每行一条，最多 4 条）
+            <textarea
+              rows={2}
+              value={extraQueries}
+              onChange={(e) => setExtraQueries(e.target.value)}
+              placeholder="例如问题的英文翻译，或改用文档中的术语"
+            />
+          </label>
           <label className="check">
             <input
               type="checkbox"

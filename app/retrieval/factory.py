@@ -3,6 +3,23 @@
 from app.retrieval.pipeline import RetrievalPipeline
 
 
+class ContextTokenCounter:
+    """Counts returned context with the snapshot's own tokenizer.
+
+    A snapshot is immutable, so counts are cached per Parent/Child identity.
+    """
+
+    def __init__(self, provider):
+        self.provider, self.cache = provider, {}
+
+    def __call__(self, item):
+        scope = item["context_scope"]
+        key = (scope, item["parent_id"] if scope == "parent" else item["chunk_id"])
+        if key not in self.cache:
+            self.cache[key] = self.provider.count_tokens(item["content"])
+        return self.cache[key]
+
+
 def bind_visibility(pipeline, documents, registry):
     if any(document.version_id for document in documents):
         registry.eligible_ids(
@@ -42,12 +59,14 @@ class PipelineFactory:
             raise ValueError(
                 "View index and original index must use the same embedding model"
             )
+        provider = self.embedding(model_name)
         pipeline = RetrievalPipeline.from_index(
             snapshot.store,
             {p.parent_id: p for p in snapshot.parents},
-            embed=self.embedding(model_name).embed_query,
+            embed=provider.embed_query,
             view_store=snapshot.view_store,
             sparse=snapshot.sparse,
         )
+        pipeline.count_tokens = ContextTokenCounter(provider)
         bind_visibility(pipeline, snapshot.documents, registry)
         return pipeline

@@ -29,21 +29,32 @@ class EmbeddingProvider:
             trust_remote_code=False,
         )
 
+    def _remote_tokenizer(self):
+        from transformers import AutoTokenizer
+
+        source, _ = model_source(self.config.tokenizer, require_weights=False)
+        return self.pool.use(
+            "tokenizer:" + self.config.tokenizer,
+            lambda: AutoTokenizer.from_pretrained(
+                source, trust_remote_code=False, local_files_only=Path(source).is_dir()
+            ),
+        )
+
     def tokenizer_and_limit(self):
         if self.config.provider == "sentence_transformers":
             with self.pool.use(self.key, self._local) as m:
                 return m.tokenizer, m.max_seq_length
-        from transformers import AutoTokenizer
-
-        key = "tokenizer:" + self.config.tokenizer
-        source, _ = model_source(self.config.tokenizer, require_weights=False)
-        with self.pool.use(
-            key,
-            lambda: AutoTokenizer.from_pretrained(
-                source, trust_remote_code=False, local_files_only=Path(source).is_dir()
-            ),
-        ) as t:
+        with self._remote_tokenizer() as t:
             return t, min(getattr(t, "model_max_length", 8192), 8192)
+
+    def count_tokens(self, text):
+        """Same unit as chunk budgets. Runs under the pool lock: a fast tokenizer must
+        not be used concurrently with the model's own encode call."""
+        if self.config.provider == "sentence_transformers":
+            with self.pool.use(self.key, self._local) as m:
+                return len(m.tokenizer.encode(text, add_special_tokens=False))
+        with self._remote_tokenizer() as t:
+            return len(t.encode(text, add_special_tokens=False))
 
     def encode(self, texts, *, query=False):
         if not texts:

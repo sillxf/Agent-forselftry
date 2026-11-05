@@ -1,8 +1,24 @@
 """Read-only inspection of published documents, chunks and outlines."""
 
+from datetime import datetime, timezone
 from pathlib import Path
 import json
 from app.core.serialization import public
+
+
+def _effective_replacement(document, documents, now):
+    replacement = next(
+        (d for d in documents if d.document_id == document.superseded_by), None
+    )
+    return (
+        replacement is not None
+        and not replacement.deleted_at
+        and not replacement.purged_at
+        and (
+            not replacement.effective_at
+            or datetime.fromisoformat(replacement.effective_at) <= now
+        )
+    )
 
 
 class DocumentInspectionService:
@@ -16,7 +32,12 @@ class DocumentInspectionService:
         manifest = r.repository._read_manifest(pointer["generation"]) if pointer else {}
         published = {x["document_id"]: x for x in (manifest or {}).get("documents", [])}
         output = []
-        for d in r.registry.list_documents():
+        documents = r.registry.list_documents()
+        servable = r.registry.eligible_ids(
+            d.document_id for d in documents if not d.purged_at
+        )
+        now = datetime.now(timezone.utc)
+        for d in documents:
             state = (
                 "purged"
                 if d.purged_at
@@ -54,6 +75,18 @@ class DocumentInspectionService:
                             not served
                             or served.get("version_id")
                             != (d.selected_version_id or d.latest_version_id)
+                        ),
+                        # Why a published document is not returned by live search.
+                        hidden_reason=None
+                        if d.deleted_at or d.purged_at or d.document_id in servable
+                        else "superseded"
+                        if d.superseded_by
+                        and _effective_replacement(d, documents, now)
+                        else "outside_validity",
+                        review_due=bool(
+                            d.review_after
+                            and not d.deleted_at
+                            and datetime.fromisoformat(d.review_after) <= now
                         ),
                         versions=[v.model_dump() for v in versions],
                         view_states=r.registry.view_states(d.document_id),

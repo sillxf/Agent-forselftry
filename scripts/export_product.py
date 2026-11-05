@@ -29,7 +29,7 @@ FILES = (
     ".dockerignore",
     "docker-compose.yml",
 )
-EXCLUDE = {"node_modules", "__pycache__", ".pytest_cache", ".ruff_cache"}
+EXCLUDE = {"node_modules", "__pycache__", ".pytest_cache", ".ruff_cache", "results"}
 
 
 def export(destination):
