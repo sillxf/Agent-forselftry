@@ -114,11 +114,15 @@ class FaissVectorStore:
         faiss.normalize_L2(query)
         if len(ids) == len(self.records):
             return self.search(vector, k)
-        matrix = self.index.reconstruct_batch(np.asarray(ids, dtype="int64"))
-        subset = faiss.IndexFlatIP(self.dimension)
-        subset.add(matrix)
-        scores, positions = subset.search(query, min(k, len(ids)))
+        # The selector skips ineligible rows inside the exact scan. Copying eligible
+        # vectors into a temporary index cost ~17x more at 50k rows, on every query
+        # while any document was in the trash or outside its validity window.
+        selector = faiss.IDSelectorBatch(np.asarray(ids, dtype="int64"))
+        scores, positions = self.index.search(
+            query, min(k, len(ids)), params=faiss.SearchParameters(sel=selector)
+        )
         return [
-            {**self.records[ids[int(i)]], "dense_score": float(score)}
-            for i, score in zip(positions[0], scores[0])
+            {**self.records[int(position)], "dense_score": float(score)}
+            for score, position in zip(scores[0], positions[0])
+            if position >= 0
         ]
