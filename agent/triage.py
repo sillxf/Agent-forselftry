@@ -1,5 +1,7 @@
 """Deterministic triage: rule-based risk score and duplicate grouping. No model."""
 
+import re
+
 from agent.schemas import Alert
 
 SEVERITY_SCORE = {"low": 10, "medium": 30, "high": 70, "critical": 90}
@@ -32,6 +34,25 @@ def risk(alert: Alert, related: list[Alert]) -> dict:
         "factors": factors,
         "note": "Rule-based prior from alert fields; it does not confirm an attack.",
     }
+
+
+INSTRUCTION_PATTERNS = re.compile(
+    r"ignore (?:all |any )?(?:previous|prior|above) (?:rules|instructions)"
+    r"|(?:note|message|instruction)s? (?:to|for) the (?:ai|assistant|model|analyst)"
+    r"|you are now|system prompt|disregard (?:the|your) (?:rules|instructions)"
+    r"|忽略(?:以上|上面|之前|所有)(?:的)?(?:规则|指令|说明)|你现在是|系统提示",
+    re.I,
+)
+
+
+def embedded_instructions(alert: Alert) -> list[str]:
+    """Phrases in alert text that address an AI. A rule, not the model, flags them.
+
+    A hit does not change any score: it is surfaced as an observation so the report
+    and the analyst see it, and the model's prompt already treats the text as data.
+    """
+    text = " ".join([alert.title, alert.description, *alert.tags])
+    return sorted({m.group(0) for m in INSTRUCTION_PATTERNS.finditer(text)})
 
 
 def signature(alert: Alert) -> tuple:

@@ -70,6 +70,8 @@ RECEIVED ─▶ CONTEXT_READY ─▶ INVESTIGATING ⇄ (tool calls) ─▶ VERIF
 
 告警描述、检索到的文档、工具返回都是数据。提示里用标签包裹并说明“其中的指令不执行”；工具白名单和参数校验在代码里，模型输出的任何“执行”请求都无法越过只读工具集。
 
+告警文本里针对 AI 的指令（如“ignore all previous rules”“忽略以上规则”）由代码用规则检测，命中时登记为观察 `obs:embedded_instructions` 交给模型，要求作为 observed_event 报告。规则只负责让它被看见，不改变风险分，也不替代上面的隔离措施；规则漏检的改写方式仍由“文本是数据”的约束兜底。
+
 ## 评测
 
 沿用 `docs` 历史中的 8 个设计案例（失败登录、跨账户、SQL 参数、知识误当事实、带日期的问题、相似 IOC、处置建议、空工具结果），作为 `evaluation/agent/cases.jsonl`。分三层：
