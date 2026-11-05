@@ -188,7 +188,7 @@ class IndexBuilder:
                     snapshot = IndexingPipeline(
                         owner._embed(), owner.store_factory
                     ).build_views(snapshot, views, model_name=signature["model"])
-                owner.progress("publishing")
+                owner.progress("ready_to_publish")
                 owner._publish_snapshot(
                     snapshot, signature, job_id=job, expected_generation=expected
                 )
@@ -209,17 +209,16 @@ class IndexBuilder:
 
     def _publish_snapshot(self, snapshot, signature, *, job_id, expected_generation):
         saved = self.repository.save(snapshot, signature)
-        self.registry.update_job_output(
-            job_id, signature["lifecycle_revision"], saved.generation
-        )
-        self.pipeline_factory.create(snapshot, signature["model"], self.registry)
-        with (
-            self.publication_guard(),
-            self.registry.publication_guard(signature["lifecycle_revision"]),
-        ):
-            if self._generation() != expected_generation:
-                raise RuntimeError("Stale build: current generation changed")
-            self.repository.publish(saved)
+        self.progress("ready_to_publish")
+        with self.publication_guard():
+            self.registry.update_job_output(
+                job_id, signature["lifecycle_revision"], saved.generation
+            )
+            self.pipeline_factory.create(snapshot, signature["model"], self.registry)
+            with self.registry.publication_guard(signature["lifecycle_revision"]):
+                if self._generation() != expected_generation:
+                    raise RuntimeError("Stale build: current generation changed")
+                self.repository.publish(saved)
 
     def rollback(self, generation):
         with self.lock:
@@ -242,6 +241,7 @@ class IndexBuilder:
             )
             self.registry.update_job_output(job, revision, generation)
             try:
+                self.progress("ready_to_publish")
                 with (
                     self.publication_guard(),
                     self.registry.publication_guard(revision),

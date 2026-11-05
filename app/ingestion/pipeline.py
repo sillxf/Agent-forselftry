@@ -21,11 +21,12 @@ class IngestionResult:
 
 
 class IngestionPipeline:
-    def __init__(self, parser, parent_chunker, child_chunker, *, cache_dir=None):
+    def __init__(self, parser, parent_chunker, child_chunker, *, cache_dir=None, progress=None):
         self.parser = parser
         self.parent_chunker = parent_chunker
         self.child_chunker = child_chunker
         self.cache_dir = Path(cache_dir) if cache_dir is not None else None
+        self.progress = progress or (lambda stage: None)
         self.cache_hits = self.cache_misses = 0
 
     def run(
@@ -45,6 +46,7 @@ class IngestionPipeline:
         result = IngestionResult()
         if documents is not None:
             for document in documents:
+                self.progress("parsing_and_chunking")
                 if (
                     not document.version_id
                     or not document.artifact_id
@@ -61,6 +63,7 @@ class IngestionPipeline:
                     result.documents.extend(cached.documents)
                     result.parents.extend(cached.parents)
                     result.children.extend(cached.children)
+                    self.progress("parsing_and_chunking")
                     continue
                 self.cache_misses += 1
                 parsed = self.parser.parse(
@@ -81,18 +84,21 @@ class IngestionPipeline:
                 result.documents.extend(processed.documents)
                 result.parents.extend(processed.parents)
                 result.children.extend(processed.children)
+                self.progress("parsing_and_chunking")
             return result
 
         # Standalone/frozen ingestion keeps its legacy content-addressed identity.
         files = discover_documents(knowledge_dir) if files is None else files
         seen = set()
         for path in files:
+            self.progress("parsing_and_chunking")
             checksum = file_checksum(path)
             if checksum in seen:
                 continue
             parsed = self.parser.parse(path)
             seen.add(checksum)
             self._append(result, parsed)
+            self.progress("parsing_and_chunking")
         return result
 
     def _append(self, result, parsed):

@@ -52,6 +52,7 @@ class IndexingService:
         marker = self.root / "desktop-worker-cutoff"
         cutoff = float(marker.read_text(encoding="ascii")) if marker.exists() else None
         for job in rows:
+            job.pop("control_request", None)
             job["awaiting_confirmation"] = bool(
                 cutoff is not None
                 and job["status"] == "queued"
@@ -71,13 +72,32 @@ class IndexingService:
         ):
             self.access.authorize(actor, old["kb_id"], admin=True)
             return self.jobs.confirm_queued(job_id)
-        if old["status"] not in {"failed", "interrupted"}:
-            raise ValueError("Only failed/interrupted jobs may be retried")
+        if old["status"] not in {"failed", "interrupted", "cancelled"}:
+            raise ValueError("Only failed, interrupted, or cancelled jobs may be retried")
         payload = json.loads(old["payload"])
         request = JobRequest.model_validate(
             {key: value for key, value in payload.items() if key != "configuration"}
         )
         return self.submit(actor, old["kb_id"], request)
+
+    def control(self, actor, job_id, action):
+        job = self.jobs.job(job_id)
+        self.access.authorize(actor, job["kb_id"], admin=True)
+        if job["operation"] not in {"build", "rollback"}:
+            raise ValueError("只有构建和回滚任务支持暂停或取消")
+        updated = self.jobs.control(job_id, action)
+        self.audit.audit(
+            actor["id"],
+            "job_" + action + "_requested",
+            job["kb_id"],
+            job_id=job_id,
+        )
+        return {
+            "id": updated["id"],
+            "status": updated["status"],
+            "stage": updated["stage"],
+            "updated": updated["updated"],
+        }
 
     def delete_document(self, actor, kb_id, document_id):
         with self.workspaces.maintenance_lock(kb_id):
@@ -118,8 +138,8 @@ class IndexingService:
                 self.providers.embedding,
                 self.factory,
                 progress=lambda stage: self.jobs.progress(job["id"], stage),
-                publication_guard=lambda: self.jobs.build_guard(
-                    job["kb_id"], payload["configuration"]["build"]
+                publication_guard=lambda: self.jobs.publish_guard(
+                    job["id"], job["kb_id"], payload["configuration"]["build"]
                 ),
             )
             operation = job["operation"]

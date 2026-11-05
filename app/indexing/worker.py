@@ -2,6 +2,7 @@
 
 import json, logging, time
 from filelock import FileLock
+from app.indexing.repository import JobCancelled
 from app.models.pool import usage_context
 
 
@@ -31,6 +32,11 @@ class Worker:
                 job_id=job["id"],
                 operation=operation,
                 usage=usage,
+            )
+        except JobCancelled:
+            self.jobs.finish(job["id"], cancelled=True)
+            self.audit.audit(
+                "worker", "job_cancelled", job["kb_id"], job_id=job["id"], operation=operation
             )
         except Exception as exc:
             logging.exception("Job %s failed", job["id"])

@@ -5,6 +5,10 @@ import json, time
 from uuid import uuid4
 
 
+class JobCancelled(Exception):
+    """Raised at a safe checkpoint after a user cancels a task."""
+
+
 class JobRepository:
     def __init__(self, connect, knowledge_base):
         self.connect, self.kb = connect, knowledge_base
@@ -34,7 +38,7 @@ class JobRepository:
                         )
                     return dict(old)
             c.execute(
-                "INSERT INTO jobs VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO jobs (id,kb_id,operation,payload,status,stage,created,updated,error,result,idempotency) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 (
                     identity,
                     kb_id,
@@ -94,7 +98,12 @@ class JobRepository:
     def recover(self):
         with self.connect() as c:
             c.execute(
-                "UPDATE jobs SET status='interrupted',stage='interrupted',error='Worker stopped; inspect publication/purge state, then explicitly retry',updated=? WHERE status='running'",
+                "UPDATE jobs SET status='interrupted',stage='interrupted',control_request=NULL,error='Worker stopped; inspect publication state, then explicitly retry',updated=? WHERE status IN ('running','publishing')",
+                (time.time(),),
+            )
+            # A live in-memory build cannot be resumed after its worker exits.
+            c.execute(
+                "UPDATE jobs SET status='interrupted',stage='interrupted',control_request=NULL,error='Worker stopped while paused; explicitly retry to start a fresh build',updated=? WHERE status='paused' AND stage='paused'",
                 (time.time(),),
             )
 
@@ -128,22 +137,152 @@ class JobRepository:
             )
         return self.job(identity)
 
-    def progress(self, identity, stage):
+    def control(self, identity, action):
+        if action not in {"pause", "resume", "cancel"}:
+            raise ValueError("Unsupported job control action")
+        now = time.time()
         with self.connect() as c:
-            c.execute(
-                "UPDATE jobs SET stage=?,updated=? WHERE id=?",
-                (stage, time.time(), identity),
-            )
+            c.execute("BEGIN IMMEDIATE")
+            row = c.execute("SELECT * FROM jobs WHERE id=?", (identity,)).fetchone()
+            if row is None:
+                raise KeyError("Job not found")
+            status, stage = row["status"], row["stage"]
+            control_request = row["control_request"]
 
-    def finish(self, identity, *, result=None, error=None):
+            if action == "cancel":
+                if status == "queued" or (status == "paused" and stage == "paused_queued"):
+                    c.execute(
+                        "UPDATE jobs SET status='cancelled',stage='cancelled',updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status in {"running", "paused"}:
+                    if status == "running" and stage == "publishing":
+                        raise ValueError("任务已进入最后发布步骤，不能再取消")
+                    c.execute(
+                        "UPDATE jobs SET control_request='cancel',stage='cancelling',updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status != "cancelled":
+                    raise ValueError("只有排队中或执行中的任务可以取消")
+            elif action == "pause":
+                if status == "queued":
+                    c.execute(
+                        "UPDATE jobs SET status='paused',stage='paused_queued',updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status == "running":
+                    if stage == "publishing":
+                        raise ValueError("任务已进入最后发布步骤，不能再暂停")
+                    if control_request == "cancel":
+                        raise ValueError("任务正在取消")
+                    c.execute(
+                        "UPDATE jobs SET control_request='pause',stage='pause_requested',updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status != "paused":
+                    raise ValueError("只有排队中或执行中的任务可以暂停")
+            else:  # resume
+                if status == "paused" and stage == "paused_queued":
+                    c.execute(
+                        "UPDATE jobs SET status='queued',stage='queued',updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status == "paused" and control_request == "pause":
+                    c.execute(
+                        "UPDATE jobs SET status='running',control_request=NULL,updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                elif status == "running" and control_request == "pause":
+                    # Resume quickly even if the worker has not reached the pause checkpoint.
+                    c.execute(
+                        "UPDATE jobs SET control_request=NULL,updated=? WHERE id=?",
+                        (now, identity),
+                    )
+                else:
+                    raise ValueError("任务当前不在暂停状态")
+        return self.job(identity)
+
+    def checkpoint(self, identity, *, stage=None, poll_seconds=0.5):
+        """Update progress and honor pause/cancel requests between expensive steps."""
+        while True:
+            with self.connect() as c:
+                c.execute("BEGIN IMMEDIATE")
+                row = c.execute(
+                    "SELECT status,control_request FROM jobs WHERE id=?", (identity,)
+                ).fetchone()
+                if row is None:
+                    raise JobCancelled("任务已不存在")
+                if row["status"] == "cancelled" or row["control_request"] == "cancel":
+                    raise JobCancelled("用户已取消任务")
+                if row["status"] == "interrupted":
+                    raise JobCancelled("任务已中断")
+                if row["status"] == "paused" or row["control_request"] == "pause":
+                    if row["status"] == "running":
+                        c.execute(
+                            "UPDATE jobs SET status='paused',stage='paused',updated=? WHERE id=? AND status='running'",
+                            (time.time(), identity),
+                        )
+                    should_wait = True
+                elif row["status"] == "running":
+                    if stage:
+                        c.execute(
+                            "UPDATE jobs SET stage=?,updated=? WHERE id=? AND status='running'",
+                            (stage, time.time(), identity),
+                        )
+                    should_wait = False
+                else:
+                    raise JobCancelled("任务不再处于执行状态")
+            if not should_wait:
+                return
+            time.sleep(poll_seconds)
+
+    def progress(self, identity, stage):
+        self.checkpoint(identity, stage=stage)
+
+    @contextmanager
+    def publish_guard(self, identity, kb_id, expected_build):
+        """Validate the job and make the final pointer switch non-cancellable."""
+        while True:
+            wait = False
+            with self.connect() as c:
+                c.execute("BEGIN IMMEDIATE")
+                row = c.execute(
+                    "SELECT status,control_request FROM jobs WHERE id=?", (identity,)
+                ).fetchone()
+                if row is None:
+                    raise JobCancelled("任务已不存在")
+                if row["control_request"] == "cancel":
+                    raise JobCancelled("用户已取消任务")
+                if row["status"] == "paused" or row["control_request"] == "pause":
+                    wait = True
+                elif row["status"] != "running":
+                    raise ValueError("任务不在执行状态，不能发布")
+                else:
+                    base = c.execute(
+                        "SELECT data FROM knowledge_bases WHERE id=?", (kb_id,)
+                    ).fetchone()
+                    if base is None or json.loads(base["data"])["build"] != expected_build:
+                        raise ValueError(
+                            "Build configuration changed; obsolete generation was not published"
+                        )
+                    c.execute(
+                        "UPDATE jobs SET stage='publishing',updated=? WHERE id=?",
+                        (time.time(), identity),
+                    )
+                    yield
+                    return
+            if wait:
+                time.sleep(0.5)
+
+    def finish(self, identity, *, result=None, error=None, cancelled=False):
         with self.connect() as c:
             c.execute(
-                "UPDATE jobs SET status=?,stage=?,result=?,error=?,updated=? WHERE id=?",
+                "UPDATE jobs SET status=?,stage=?,result=?,error=?,control_request=NULL,updated=? WHERE id=?",
                 (
-                    "failed" if error else "succeeded",
-                    "failed" if error else "completed",
+                    "cancelled" if cancelled else "failed" if error else "succeeded",
+                    "cancelled" if cancelled else "failed" if error else "completed",
                     json.dumps(result),
-                    error,
+                    "任务已取消；未发布新版本，已完成的清理不会回滚" if cancelled else error,
                     time.time(),
                     identity,
                 ),

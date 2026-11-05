@@ -90,6 +90,7 @@ def assemble(owner, signature, files, *, full=False):
             ParentChunker(tokenizer, owner.parent_max_tokens),
             ChildChunker(tokenizer, budget, min(owner.overlap_tokens, budget - 1)),
             cache_dir=owner.storage_dir / "artifacts" if owner.cache_enabled else None,
+            progress=owner.progress,
         )
         result = ingestion.run(owner.knowledge_dir, documents=pending)
     parsed_documents = {d.document_id: d for d in result.documents}

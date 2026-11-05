@@ -1,6 +1,6 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, Request
-from app.core.contracts import JobRequest
+from app.core.contracts import JobControlRequest, JobRequest
 
 
 def create_router(service, actor, admin, application):
@@ -20,5 +20,9 @@ def create_router(service, actor, admin, application):
     @app.post("/api/v1/jobs/{job_id}/retry", status_code=202)
     def retry(job_id: UUID, who=Depends(admin)):
         return service.indexing.retry(who, job_id.hex)
+
+    @app.post("/api/v1/jobs/{job_id}/control")
+    def control(job_id: UUID, body: JobControlRequest, who=Depends(admin)):
+        return service.indexing.control(who, job_id.hex, body.action)
 
     return app

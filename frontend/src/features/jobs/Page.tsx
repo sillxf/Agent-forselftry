@@ -1,6 +1,34 @@
 import { useJobs } from "./useJobs";
 import { Json, short, stamp, type Data } from "../../shared/ui";
 
+const statusNames: Record<string, string> = {
+  queued: "排队中",
+  running: "执行中",
+  paused: "已暂停",
+  succeeded: "已完成",
+  failed: "失败",
+  interrupted: "已中断",
+  cancelled: "已取消",
+};
+const stageNames: Record<string, string> = {
+  queued: "等待执行",
+  paused_queued: "暂停排队",
+  starting: "启动中",
+  freezing_inputs: "读取构建输入",
+  parsing_and_chunking: "解析与切分文档",
+  embedding_and_indexing: "编码并构建索引",
+  optional_view_generation: "整理检索视图",
+  pause_requested: "等待安全暂停点",
+  paused: "暂停中",
+  ready_to_publish: "准备发布",
+  publishing: "切换发布中",
+  cancelling: "等待安全取消点",
+  completed: "已完成",
+  failed: "失败",
+  interrupted: "已中断",
+  cancelled: "已取消",
+};
+
 export default function JobsPage() {
   const { act, admin, api, busy, history, job, jobs, reload } = useJobs();
 
@@ -39,7 +67,10 @@ export default function JobsPage() {
           </button>
         </div>
         <p>
-          双击根目录“启动.cmd”会自动开启后台处理。中断任务请核对发布状态后再重试。
+          增量构建会复用未变化文档的解析与向量，只处理新增或变更内容，并移除已删除内容；兼容条件不满足时会自动全量重建。新索引准备完成后才切换发布，构建期间旧版本继续服务。
+        </p>
+        <p>
+          排队任务可立即暂停或取消。运行中的任务会在安全检查点响应；正在进行的单个解析/模型调用需先结束。进入“发布切换”后不再接受暂停或取消。暂停期间会占用后台执行位，若此时关闭程序，任务会标记为中断。
         </p>
         <table>
           <thead>
@@ -61,9 +92,9 @@ export default function JobsPage() {
                 </td>
                 <td>
                   <span className="badge">
-                    {j.awaiting_confirmation ? "待确认执行" : j.status}
+                    {j.awaiting_confirmation ? "待确认执行" : statusNames[j.status] || j.status}
                   </span>
-                  <small>{j.stage}</small>
+                  <small>{stageNames[j.stage] || j.stage}</small>
                 </td>
                 <td>{stamp(j.created)}</td>
                 <td>
@@ -76,13 +107,68 @@ export default function JobsPage() {
                       }}
                     />
                   </details>
+                  {["build", "rollback"].includes(j.operation) && (
+                    <div className="inline">
+                      {j.status === "queued" && (
+                        <>
+                          <button onClick={() => void act(() => job.control(j.id, "pause"))}>
+                            暂停
+                          </button>
+                          <button onClick={() => {
+                            if (confirm("取消这个排队任务？"))
+                              void act(() => job.control(j.id, "cancel"));
+                          }}>
+                            取消
+                          </button>
+                        </>
+                      )}
+                      {j.status === "running" && !["publishing", "cancelling"].includes(j.stage) && (
+                        <>
+                          {j.stage === "pause_requested" ? (
+                            <button onClick={() => void act(() => job.control(j.id, "resume"))}>
+                              撤销暂停
+                            </button>
+                          ) : (
+                            <button onClick={() => void act(() => job.control(j.id, "pause"))}>
+                              暂停
+                            </button>
+                          )}
+                          <button onClick={() => {
+                            if (confirm("请求取消任务？会等当前解析/模型调用结束后停止，不发布本次构建。"))
+                              void act(() => job.control(j.id, "cancel"));
+                          }}>
+                            取消
+                          </button>
+                        </>
+                      )}
+                      {j.status === "running" && j.stage === "publishing" && (
+                        <small>正在切换发布，不可中断</small>
+                      )}
+                      {j.status === "paused" && (
+                        <>
+                          <button onClick={() => void act(() => job.control(j.id, "resume"))}>
+                            继续
+                          </button>
+                          <button onClick={() => {
+                            if (confirm("取消已暂停的任务？本次构建不会发布。"))
+                              void act(() => job.control(j.id, "cancel"));
+                          }}>
+                            取消
+                          </button>
+                        </>
+                      )}
+                      {j.status === "running" && j.stage === "cancelling" && (
+                        <small>正在等待安全检查点</small>
+                      )}
+                    </div>
+                  )}
                   {j.operation === "purge" &&
                     ["failed", "interrupted"].includes(j.status) && (
                       <small>
                         该历史删除未完成。请到“文档与内容”核对并直接删除。
                       </small>
                     )}
-                  {(["failed", "interrupted"].includes(j.status) ||
+                  {(["failed", "interrupted", "cancelled"].includes(j.status) ||
                     j.awaiting_confirmation) &&
                     j.operation !== "purge" && (
                       <button
@@ -95,7 +181,7 @@ export default function JobsPage() {
                           })
                         }
                       >
-                        {j.awaiting_confirmation ? "确认执行" : "明确重试"}
+                        {j.awaiting_confirmation ? "确认执行" : j.status === "cancelled" ? "重新提交" : "明确重试"}
                       </button>
                     )}
                 </td>

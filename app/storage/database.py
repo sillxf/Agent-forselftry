@@ -14,12 +14,15 @@ class Database:
         self.path = self.root / "catalog.sqlite3"
         with self.connect() as connection:
             version = connection.execute("PRAGMA user_version").fetchone()[0]
-            if version not in {0, 1}:
+            if version not in {0, 1, 2}:
                 raise ValueError(
                     "Unsupported catalog schema; restore matching code/data"
                 )
             connection.executescript(SCHEMA)
-            connection.execute("PRAGMA user_version=1")
+            columns = {row["name"] for row in connection.execute("PRAGMA table_info(jobs)")}
+            if "control_request" not in columns:
+                connection.execute("ALTER TABLE jobs ADD COLUMN control_request TEXT")
+            connection.execute("PRAGMA user_version=2")
 
     @contextmanager
     def connect(self):

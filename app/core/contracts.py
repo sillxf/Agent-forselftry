@@ -116,6 +116,10 @@ class KeyCreate(Contract):
     requests_per_minute: int = Field(60, ge=1, le=10000)
 
 
+class JobControlRequest(Contract):
+    action: Literal["pause", "resume", "cancel"]
+
+
 class JobRequest(Contract):
     operation: Literal["build", "rollback", "purge", "gc"] = "build"
     full: bool = False
