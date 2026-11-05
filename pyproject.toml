@@ -10,7 +10,7 @@ dependencies = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "pydantic>=2,
 [project.scripts]
 rag-service = "app.cli:main"
 [tool.setuptools.packages.find]
-include = ["app*", "mcp_server*", "migrations*"]
+include = ["app*", "mcp_server*", "migrations*", "agent*"]
 [tool.setuptools.package-data]
 app = ["web/*", "web/assets/*"]
 

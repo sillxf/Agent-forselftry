@@ -6,6 +6,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 FOLDERS = (
     "app",
+    "agent",
     "frontend",
     "mcp_server",
     "migrations",

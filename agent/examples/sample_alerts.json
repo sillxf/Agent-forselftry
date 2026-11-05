@@ -1,0 +1,50 @@
+[
+  {
+    "id": "AL-001",
+    "detected_at": "2026-10-08T09:12:00Z",
+    "source": "auth",
+    "severity": "high",
+    "title": "Repeated failed login attempts",
+    "source_ip": "198.51.100.23",
+    "destination_ip": "10.0.1.10",
+    "asset_id": "srv-web-01",
+    "description": "12 failed login attempts against the same account within 3 minutes.",
+    "tags": ["authentication", "suspicious-login"]
+  },
+  {
+    "id": "AL-002",
+    "detected_at": "2026-10-08T09:20:00Z",
+    "source": "endpoint",
+    "severity": "medium",
+    "title": "Suspicious outbound connection",
+    "source_ip": "10.0.1.20",
+    "destination_ip": "203.0.113.17",
+    "asset_id": "srv-app-02",
+    "description": "An application server initiated an unusual outbound connection.",
+    "tags": ["network", "outbound"]
+  },
+  {
+    "id": "AL-003",
+    "detected_at": "2026-10-08T09:13:00Z",
+    "source": "auth",
+    "severity": "high",
+    "title": "Repeated failed login attempts",
+    "source_ip": "198.51.100.23",
+    "destination_ip": "10.0.1.10",
+    "asset_id": "srv-web-01",
+    "description": "Multiple authentication failures from the same source targeting the same asset.",
+    "tags": ["authentication", "suspicious-login"]
+  },
+  {
+    "id": "AL-004",
+    "detected_at": "2026-10-08T09:30:00Z",
+    "source": "web",
+    "severity": "low",
+    "title": "Repeated HTTP 404 responses",
+    "source_ip": "203.0.113.50",
+    "destination_ip": "10.0.1.30",
+    "asset_id": "srv-docs-01",
+    "description": "A client generated repeated requests for nonexistent paths.",
+    "tags": ["http", "web"]
+  }
+]

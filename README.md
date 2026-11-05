@@ -1,6 +1,8 @@
 # 知序 · Independent RAG
 
-独立的知识库管理与证据检索服务。只有 RAG，不含安全 Agent、告警调查、Agent 循环、旧兼容入口或自动问答。
+独立的知识库管理与证据检索服务（`app/`），本身不生成答案。
+
+同一仓库另有一个基于它的安全告警调查 Agent（`agent/`），只通过 REST API 和只读 Key 使用 RAG 服务，见下文“安全调查 Agent”。两者可以分开部署。
 
 ## Windows 双击启动
 
@@ -72,6 +74,18 @@ docker/, docs/         部署与说明
 首版是单主机模块化单体：一个 API、一个 Worker，SQLite + FAISS + BM25 + 托管文件。两个进程的模型内存需要合计预算。
 
 详见 [结构说明](docs/architecture.md) 与 [运维说明](docs/operations.md)。
+
+## 安全调查 Agent
+
+输入一条告警和同批告警，输出结构化调查报告：观察事实、参考知识、推断、未验证假设、缺失数据和建议。确定的步骤（输入校验、规则风险分、去重、首次检索、预算、报告校验）由代码完成；模型只决定调用哪个只读工具（同批告警查询、知识检索、读取证据原文）并撰写报告。每条陈述必须引用本次运行中真实存在的来源，否则由代码降级为未验证假设；建议永远标记为未执行。设计见 [docs/agent_design.md](docs/agent_design.md)。
+
+~~~powershell
+# .env 中配置 LLM_API_KEY / LLM_BASE_URL / LLM_MODEL，
+# 以及 RAG_SERVICE_URL、只读 Key RAG_SERVICE_TOKEN、RAG_SERVICE_KNOWLEDGE_BASES
+.\.venv\Scripts\python.exe -m agent agent\examples\sample_alerts.json --alert-id AL-001
+~~~
+
+每条告警最多 6 次模型请求、12 次工具调用、3 次知识检索。8 个合成案例的真实模型冒烟结果和 AI 开发复核见 [evaluation/agent/README.md](evaluation/agent/README.md)。
 
 ## 开发和必要检查
 

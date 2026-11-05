@@ -18,9 +18,11 @@ class LLMClient:
         max_retries=None,
         max_completion_tokens=None,
     ):
-        self.api_key = api_key
-        self.base_url = base_url
-        self.model = model
+        # .env files saved on Windows can leave "\r" on values, which made the base
+        # URL invalid. Surrounding whitespace is never meaningful in these settings.
+        self.api_key = api_key.strip() if isinstance(api_key, str) else api_key
+        self.base_url = base_url.strip() if isinstance(base_url, str) else base_url
+        self.model = model.strip() if isinstance(model, str) else model
         self._client = None
         self.request_options = {}
         if max_completion_tokens is not None:

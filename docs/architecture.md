@@ -17,3 +17,5 @@ Multi-View 的生成/辅助索引归 indexing，模型调用归 models，检索�
 新解析器放 ingestion；新模型适配器放 models；新检索策略放 retrieval/strategies。使用类型契约和显式构造注入，不引入任意代码插件、工作流框架或微服务。
 
 旧 Agent、兼容树、重复脚本与历史报告已移除，不承诺旧内部 Python 导入路径兼容；REST /api/v1、MCP 工具名及主要 CLI 操作保持不变。
+
+新的调查 Agent 在顶层 `agent/`，是 RAG 服务的普通客户端：只通过 REST API 和限定知识库的只读 Key 检索，不导入 retrieval、indexing 或 storage，因此服务端的权限、配额和审计同样适用。它只复用 `app/models/llm/client.py` 这个无状态的 OpenAI 兼容客户端。`app/` 不依赖 `agent/`。设计见 agent_design.md。
