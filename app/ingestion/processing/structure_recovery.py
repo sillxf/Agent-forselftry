@@ -76,11 +76,21 @@ def body_size(blocks: list[ContentBlock]) -> float | None:
 
 def sentence_like_heading(text):
     # A definition lead-in is body text even if the layout model labels it a header.
+    # So is a clause ending in a comma/semicolon: a sentence split at a page break.
+    text = text.strip()
     return bool(
         re.search(
             r"^(?:a|an|the)\b.+\b(?:is|are|means|defined as|consists of)\s*:?$",
-            text.strip(),
+            text,
             re.I,
+        )
+        or (
+            re.search(r"[,;，；、]$", text)
+            # Long enough to be a clause: 3+ words, or 6+ CJK characters.
+            and (
+                len(text.split()) >= 3
+                or len(re.findall(r"[㐀-鿿]", text)) >= 6
+            )
         )
     )
 
