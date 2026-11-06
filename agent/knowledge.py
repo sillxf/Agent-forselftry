@@ -48,6 +48,18 @@ class RAGKnowledge:
             raise KnowledgeUnavailable("timeout", True) from exc
         except httpx.HTTPError as exc:
             raise KnowledgeUnavailable("unreachable", True) from exc
+        code = None
+        if not response.is_success:
+            try:
+                code = response.json().get("code")
+            except ValueError:
+                pass
+        # The service names the cause (1.3+): an unbuilt or damaged knowledge base
+        # is not a transient overload, so the model is told not to retry it.
+        if code == "not_published":
+            raise KnowledgeUnavailable("not_published", False)
+        if code == "index_integrity":
+            raise KnowledgeUnavailable("index_damaged", False)
         if response.status_code in {429, 503}:
             raise KnowledgeUnavailable("busy", True)
         if response.status_code in {401, 403}:

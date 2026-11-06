@@ -190,6 +190,29 @@ class AgentTests(unittest.TestCase):
         self.assertIn('"status": "error"', llm.requests[0]["messages"][1]["content"])
         self.assertTrue(result["report"]["verification"]["downgraded"])  # ev:c1 absent.
 
+    def test_service_error_codes_map_to_categories(self):
+        import httpx
+        from agent.knowledge import RAGKnowledge
+
+        cases = [
+            (409, {"detail": "x", "code": "not_published"}, "not_published", False),
+            (503, {"detail": "x", "code": "index_integrity"}, "index_damaged", False),
+            (503, {"detail": "busy"}, "busy", True),
+            (429, {"detail": "Rate limit exceeded"}, "busy", True),
+            (422, {"detail": "x", "code": "invalid_request"}, "invalid_query", False),
+        ]
+        for status, body, category, retryable in cases:
+            knowledge = RAGKnowledge(
+                "http://rag.test", "token", ["kb"],
+                transport=httpx.MockTransport(lambda r, s=status, b=body: httpx.Response(s, json=b)),
+            )
+            with self.assertRaises(KnowledgeUnavailable) as raised:
+                knowledge.search("q")
+            self.assertEqual(
+                (raised.exception.category, raised.exception.retryable), (category, retryable)
+            )
+            knowledge.close()
+
     def test_model_failure_is_failed_stage_with_reason(self):
         result, _ = self.run_agent(RuntimeError("provider down"))
         self.assertEqual(result["stage"], "FAILED")
