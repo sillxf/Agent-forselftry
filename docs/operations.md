@@ -14,7 +14,9 @@ API 与 Worker 使用同一数据根和模型/凭据环境。管理员受信任�
 
 备份前停止 API 和 Worker。使用 rag-service --data ./storage backup <新备份目录>；恢复使用 rag-service restore <备份目录> <新数据目录>。命令检查锁、校验备份，恢复到新目录，不覆盖活动数据。不是加密备份或介质安全擦除。旧单库迁移见 migrate-legacy --help，必须停写并指定外部备份。
 
-检索接口 POST /api/v1/search，输入 query、knowledge_base_ids、top_k；按需提供 queries、filters、as_of、include_trace、supplement。调用方自行判断业务证据是否充分。
+检索接口 POST /api/v1/search，输入 query、knowledge_base_ids、top_k；按需提供 queries、filters、min_score、as_of、include_trace、supplement。调用方自行判断业务证据是否充分。过滤运算符、前后文读取、Dify 与 MCP 接入见 integrations.md。
+
+相关度：每条结果带 relevance（0–1）和 relevance_source。经过重排的结果用重排分数，其余结果用与各条查询中最高的余弦相似度，只走 BM25 的命中也会算一个相似度。两种来源的尺度不同，也没有跨模型校准，只在同一来源内比较；min_score 作用于 relevance。
 
 queries 是同一问题的最多 4 条改写，由调用方提供（服务端不调用 LLM）。每条查询都走 Dense 和 BM25，所有路由一起做等权 RRF。中文问题查英文文档时，补一条英文翻译效果最明显：冻结基准上 MRR@5 从 74 升到 89（见 evaluation/README.md）。改写只换说法，不要加入用户没有问的内容。
 
