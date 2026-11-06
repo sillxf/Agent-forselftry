@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from app import __version__
 
 
 def create_router(service, actor, admin, application):
@@ -6,7 +7,7 @@ def create_router(service, actor, admin, application):
 
     @app.get("/health/live")
     def live():
-        return {"status": "ok", "service": "rag-knowledge-service", "version": "1.1.0"}
+        return {"status": "ok", "service": "rag-knowledge-service", "version": __version__}
 
     @app.get("/api/v1/health/ready")
     def ready(who=Depends(actor)):

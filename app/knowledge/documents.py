@@ -1,11 +1,11 @@
-from app.knowledge.versioning import restore_version
-
 """Document commands; HTTP owns streaming, this service owns durable mutations."""
 
 from pathlib import Path
 from uuid import uuid4
 from app.ingestion.docling_parser import SUPPORTED_EXTENSIONS
 from app.core.serialization import public
+from app.core.exceptions import InvalidRequest, NotPublished
+from app.knowledge.versioning import restore_version
 
 
 class DocumentService:
@@ -29,9 +29,9 @@ class DocumentService:
                 or any(c in filename for c in "/\\:\x00")
                 or any(ord(c) < 32 for c in filename)
             ):
-                raise ValueError("Use a plain filename")
+                raise InvalidRequest("Use a plain filename")
             if Path(filename).suffix.lower() not in SUPPORTED_EXTENSIONS:
-                raise ValueError("Unsupported document type")
+                raise InvalidRequest("Unsupported document type")
             if document_id:
                 document = runtime.registry.get_document(str(document_id))
                 if document.purged_at or document.deleted_at:
@@ -42,13 +42,13 @@ class DocumentService:
                         "External source is not an upload target; migrate it first"
                     )
                 if target.suffix.lower() != Path(filename).suffix.lower():
-                    raise ValueError("Document update must retain file type")
+                    raise InvalidRequest("Document update must retain file type")
             else:
                 target = runtime.knowledge_dir / uuid4().hex / filename
             temporary = Path(temporary)
             size = temporary.stat().st_size
             if size == 0:
-                raise ValueError("Empty upload")
+                raise InvalidRequest("Empty upload")
             with runtime.lifecycle.source_lock:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 temporary.replace(target)
@@ -75,7 +75,7 @@ class DocumentService:
                 len(metadata) > 50
                 or any(len(k) > 100 or len(v) > 2000 for k, v in metadata.items())
             ):
-                raise ValueError("Metadata exceeds limits")
+                raise InvalidRequest("Metadata exceeds limits")
             result = runtime.registry.configure(
                 str(document_id), metadata=metadata, view_config=view_config
             )
@@ -118,7 +118,7 @@ class DocumentService:
                 )
                 published = {d["document_id"] for d in (manifest or {}).get("documents", [])}
                 if replacement_id not in published:
-                    raise ValueError(
+                    raise NotPublished(
                         "Build and publish the replacement document before superseding"
                     )
             result = workspace.registry.set_superseded_by(

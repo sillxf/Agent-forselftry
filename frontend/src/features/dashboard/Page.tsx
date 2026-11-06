@@ -134,6 +134,16 @@ export default function OverviewPage() {
                 <dd>
                   {status.configuration_pending ? "待构建 / 发布" : "已生效"}
                 </dd>
+                <dt>索引版本占用</dt>
+                <dd>
+                  {status.storage
+                    ? `${status.storage.generations} 个版本 · ${(
+                        status.storage.index_bytes /
+                        1024 /
+                        1024
+                      ).toFixed(1)} MB`
+                    : "—"}
+                </dd>
                 <dt>Multi-View 查询</dt>
                 <dd>
                   {current?.profile.multi_view_enabled

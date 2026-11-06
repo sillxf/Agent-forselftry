@@ -20,11 +20,23 @@ queries 是同一问题的最多 4 条改写，由调用方提供（服务端不
 
 返回上下文按 token 计预算（知识库检索策略里的 max_context_tokens，默认 8000，即 5 个默认 Parent），用的是快照自己的向量模型分词器，与分块的单位一致；每条结果带 context_tokens。超预算的 Parent 先降级为匹配的 Child，仍放不下才跳过。1.2 之前保存的 max_context_chars 会被忽略并使用默认值，因为字符与 token 的比例随语言变化，无法换算。多个知识库同时检索时，若都由同一个重排模型打分，按重排分数合并；否则按各库内排名做 RRF。
 
-并发：同时执行的检索数由 RAG_SEARCH_CONCURRENCY（默认 4）限制，超出的请求最多排队 RAG_SEARCH_QUEUE_SECONDS（默认 10 秒），仍无空位才返回 503 和 Retry-After。本地模型推理在进程内串行，模型忙超过 RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS 也返回 503（此前被误报为存储错误）。被拒绝的请求不消耗 Key 的每分钟配额。用 scripts/load_test.py 在自己的机器上测出吞吐后再决定是否扩容。
+并发：同时执行的检索数由 RAG_SEARCH_CONCURRENCY（默认 4）限制，超出的请求最多排队 RAG_SEARCH_QUEUE_SECONDS（默认 10 秒），仍无空位才返回 503 和 Retry-After。本地模型按模型分别串行：同一个模型同一时间只做一次推理，不同模型互不阻塞，所以 CPU 上一次几秒的本地重排不再让其他请求的查询向量化等待（1.3 之前所有模型共用一把锁）。同一模型忙超过 RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS 返回 503。被拒绝的请求不消耗 Key 的每分钟配额。用 scripts/load_test.py 在自己的机器上测出吞吐后再决定是否扩容。
+
+扩容路径：单进程吞吐的上限来自本地模型推理（2 核 CPU 实测约每秒 2.4 次查询，见 evaluation/README.md），不在 Web 框架。同一数据目录只允许一个 API 进程（server.lock），因为备份检查、本地管理台会话和快照缓存都按单进程设计；CPU 机器上多开进程还要每个进程各加载一份模型，收益有限。需要更高吞吐时，把模型移到独立推理服务（例如 Hugging Face TEI、Infinity 或 vLLM，最好带 GPU）：向量模型用 openai_compatible（/embeddings），重排用 cohere_compatible（/rerank）。远程重排不占进程内模型锁，每个知识库最多同时 RAG_REMOTE_RERANK_CONCURRENCY（默认 4）个请求，HTTP 连接在进程内复用。远程模型和本地模型一样受 RAG_REMOTE_MAX_REQUESTS_PER_OPERATION 与 RAG_REMOTE_MAX_INPUT_CHARS_PER_OPERATION 限制，用量记在 model_usage。
+
+错误码：422 表示请求本身有误（过滤字段、时间格式、文件名等，带 code=invalid_request）；409 表示状态冲突，其中 code=not_published 是知识库还没有可用的发布版本，需先构建；503 表示服务端暂时不可用，code=index_integrity 是索引或注册表校验失败，需要重建或从备份恢复。一次检索多个知识库时，未构建的库会被跳过，metadata.warnings 里出现 not_published:<kb_id>，其余库照常返回；所有库都未构建才返回 409。429 只表示 Key 的每分钟配额用完（此前文件被占用等系统权限错误也会被误报为 429）。
+
+读取缓存：已校验过的索引版本按文件大小和修改时间缓存，文档、片段、大纲读取和 as_of 历史检索复用检索会话已加载的快照，不再每次重新读取和计算全部文件的 SHA-256。每个知识库最多缓存 RAG_SNAPSHOT_CACHE_SIZE（默认 1，即当前版本，与检索会话共用同一份内存）份快照；调大可让 as_of 历史检索也命中缓存，但每份都占一份完整索引的内存；文件被改动、版本被撤销或删除后不会从缓存返回。修改检索配置后，旧配置的查询会话立即释放。
+
+旧版本清理：每次构建都会写一份新的完整索引版本。管理台总览显示当前版本数和占用空间。“任务与发布”页的“清理旧产物”保留当前、上一个及最近共 3 个版本，删除其余超过 1 天的版本和无引用缓存。设置 RAG_AUTO_GC=true 后每次构建成功都会自动清理（RAG_GC_KEEP、RAG_GC_MIN_AGE_SECONDS 可调），默认关闭：被删除的版本不能再回滚，也不能做 as_of 历史查询。清理失败不影响已发布的构建。
+
+审计：每次检索写一条审计记录；30 天前的记录每进程每分钟最多清理一次，按时间建了索引。1.3 之前每次检索都全表扫描一次。
 
 文档生命周期还有两项。复核日期（PUT .../documents/{id}/review，review_after）只做提醒：到期后管理台显示“到期待复核”，不影响检索，也不会让正在运行的构建失效。取代关系（PUT .../documents/{id}/superseded-by）表示新文档替代旧文档：新文档必须已构建发布，否则请求被拒绝，以免旧内容在下次构建前从检索中消失；设置后，只要新文档未删除且已生效，旧文档立即不参与检索，不需要重建索引；新文档进回收站或取消关系后旧文档恢复可见。拒绝自我取代和循环。as_of 历史查询使用发布时记录的取代关系。管理台的文档状态会写明不参与检索的原因（已被取代或不在有效期）。
 
 升级到 1.2：每个知识库的 registry.db 首次打开时自动从 schema 4 升到 5（新增 review_after、superseded_by 两列）。升级不可回退，旧版本代码无法打开升级后的库，升级前先用 backup 命令备份。已发布的索引不需要重建；旧快照里不再使用的 entities 字段在加载时丢弃。
+
+升级到 1.3：不改知识库数据格式，已发布的索引不需要重建。catalog.sqlite3 首次打开时为审计表加一个时间索引（可回退，旧代码忽略它）。客户端需要注意错误码变化：请求参数错误由 409 改为 422，索引损坏由 409 改为 503，多库检索时未构建的库改为跳过并给出警告。
 
 HTTP MCP 位于 /mcp；stdio 使用 rag-service mcp-stdio 或 python -m mcp_server.server，通过 RAG_SERVICE_URL/TOKEN 连接同一 REST 服务，不能绕过权限。
 

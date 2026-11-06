@@ -1,6 +1,7 @@
 """Explicit build/publication operations and durable job submission."""
 
 import json
+import os
 from app.core.contracts import IndexBuildConfig, JobRequest
 from app.core.serialization import public
 from app.ingestion.docling_parser import DoclingParser
@@ -144,11 +145,27 @@ class IndexingService:
             )
             operation = job["operation"]
             if operation == "build":
-                return {
+                output = {
                     "core_job_id": builder.run(full=payload["full"]),
                     "metrics": builder.last_build_metrics,
                     "current": workspace.repository.current_pointer(),
                 }
+                if os.getenv("RAG_AUTO_GC", "").strip().lower() in {"1", "true", "yes"}:
+                    # Opt-in: removes generations beyond the newest few, so as_of
+                    # queries and rollbacks can only reach what is retained.
+                    from app.indexing.garbage_collector import collect_generations
+
+                    try:
+                        output["gc"] = collect_generations(
+                            builder,
+                            keep=int(os.getenv("RAG_GC_KEEP", "3")),
+                            min_age_seconds=int(
+                                os.getenv("RAG_GC_MIN_AGE_SECONDS", "86400")
+                            ),
+                        )
+                    except Exception as exc:  # A published build never fails on cleanup.
+                        output["gc_error"] = type(exc).__name__
+                return output
             if operation == "rollback":
                 return {
                     "core_job_id": builder.rollback(payload["generation_id"]),

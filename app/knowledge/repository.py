@@ -9,6 +9,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from app.knowledge.models import DocumentVersion, KnowledgeDocument
+from app.core.exceptions import IndexIntegrityError, InvalidRequest
 
 
 _SCHEMA = """
@@ -48,13 +49,16 @@ def path_key(path):
 def _utc(value):
     if value is None:
         return None
-    parsed = (
-        datetime.fromisoformat(value.replace("Z", "+00:00"))
-        if isinstance(value, str)
-        else value
-    )
+    try:
+        parsed = (
+            datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if isinstance(value, str)
+            else value
+        )
+    except ValueError as exc:
+        raise InvalidRequest("Timestamps must be ISO 8601 with a timezone") from exc
     if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise ValueError("Lifecycle timestamps must include a timezone")
+        raise InvalidRequest("Lifecycle timestamps must include a timezone")
     return parsed.astimezone(timezone.utc).isoformat()
 
 
@@ -305,6 +309,19 @@ class DocumentRegistry:
                 )
             ]
 
+    def versions_by_document(self):
+        if not self.path.exists():
+            return {}
+        result = {}
+        with self._connection() as connection:
+            for row in connection.execute(
+                "SELECT * FROM document_versions ORDER BY document_id, version_number"
+            ):
+                result.setdefault(row["document_id"], []).append(
+                    DocumentVersion.model_validate(dict(row))
+                )
+        return result
+
     def rename(self, document_id, new_path):
         """Update a mapping after an explicit source rename, never infer identity from hashes."""
         new_path = str(Path(new_path).resolve())
@@ -383,7 +400,7 @@ class DocumentRegistry:
         if not requested:
             return set()
         if not self.path.exists():
-            raise ValueError(
+            raise IndexIntegrityError(
                 "Managed document registry is missing; restore the complete storage backup"
             )
         now = at or datetime.now(timezone.utc)
@@ -395,7 +412,7 @@ class DocumentRegistry:
                 )
             }
         if requested - rows.keys():
-            raise ValueError(
+            raise IndexIntegrityError(
                 "Managed snapshot references documents absent from the registry"
             )
 
@@ -473,7 +490,7 @@ class DocumentRegistry:
             and datetime.fromisoformat(expires_at)
             <= datetime.fromisoformat(effective_at)
         ):
-            raise ValueError("expires_at must be later than effective_at")
+            raise InvalidRequest("expires_at must be later than effective_at")
         return self._update_lifecycle(
             document_id, dict(effective_at=effective_at, expires_at=expires_at)
         )
@@ -489,7 +506,7 @@ class DocumentRegistry:
         """Hide document_id from live retrieval behind a different, live document."""
         if replacement_id is not None:
             if replacement_id == document_id:
-                raise ValueError("A document cannot replace itself")
+                raise InvalidRequest("A document cannot replace itself")
             documents = {d.document_id: d for d in self.list_documents()}
             replacement = documents.get(replacement_id)
             if replacement is None or replacement.purged_at:

@@ -9,7 +9,7 @@ from types import SimpleNamespace
 from uuid import uuid4
 import hashlib
 from app.core.contracts import SearchRequest, SearchResponse
-from app.core.exceptions import BusyError
+from app.core.exceptions import BusyError, NotPublished
 from app.core.serialization import public
 from app.models.pool import usage_context
 
@@ -48,10 +48,18 @@ class RetrievalService:
             traces = []
             versions = []
             budgets, rerankers = [], set()
+            skipped = []
             for identity in request.knowledge_base_ids:
                 kb = self.bases.kb(identity)
                 runtime = self.sessions.get(identity)
-                pipeline = filtered_pipeline(runtime, request)
+                try:
+                    pipeline = filtered_pipeline(runtime, request)
+                except NotPublished:
+                    # One unbuilt base must not fail a multi-base search; say so instead.
+                    if len(request.knowledge_base_ids) == 1:
+                        raise
+                    skipped.append(identity)
+                    continue
                 supplement = request.supplement or request.mode == "high_recall"
                 output = runtime.orchestrator.search(
                     SimpleNamespace(pipeline=pipeline),
@@ -97,6 +105,8 @@ class RetrievalService:
                         generation_id=output["trace"]["generation_id"],
                     )
                 )
+            if len(skipped) == len(request.knowledge_base_ids):
+                raise NotPublished("None of the requested knowledge bases is published")
             # Model/reranker work may outlive a deletion. Recheck the live base
             # and document visibility before assembling a successful response.
             for identity in request.knowledge_base_ids:
@@ -152,7 +162,8 @@ class RetrievalService:
                     model_usage=usage,
                     warnings=[
                         t["fallback_reason"] for t in traces if t.get("fallback_reason")
-                    ],
+                    ]
+                    + [f"not_published:{identity}" for identity in skipped],
                 ),
             )
             if request.include_trace:

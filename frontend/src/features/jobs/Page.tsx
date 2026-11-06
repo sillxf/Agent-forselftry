@@ -59,7 +59,11 @@ export default function JobsPage() {
           <button
             disabled={busy}
             onClick={() => {
-              if (confirm("清理超过保留期的旧索引和无引用缓存，确认？"))
+              if (
+                confirm(
+                  "保留当前、上一个及最近共 3 个索引版本，删除其余超过 1 天的旧版本和无引用缓存。被删除的版本不能再回滚或做历史查询，确认？",
+                )
+              )
                 void act(() => job("gc"));
             }}
           >

@@ -7,6 +7,7 @@ from threading import Lock
 from time import perf_counter
 
 from app.retrieval.fusion import RRFFusion
+from app.core.exceptions import InvalidRequest
 from app.retrieval.policy import RetrievalPolicy
 
 
@@ -16,30 +17,44 @@ class RetrievalOrchestrator:
         self._factory = reranker_factory
         self._reranker = None
         self._reranker_model = None
-        self._executor = self._future = None
+        self._executor = None
+        self._running = 0
         self._lock = Lock()
 
-    def _rerank(self, query, candidates, model):
+    def _adapter(self, model):
+        """Caller holds the lock. Creating an adapter is cheap; models load on use."""
         if self._reranker is None or self._reranker_model != model:
-            if self._factory is not None:
-                self._reranker = self._factory()
-            else:
+            if self._factory is None:
                 raise ValueError("No reranker adapter is configured")
-            self._reranker_model = model
-        return self._reranker.rerank(query, candidates)
+            self._reranker, self._reranker_model = self._factory(), model
+            if self._executor is not None:
+                self._executor.shutdown(wait=False)
+                self._executor = None
+        return self._reranker
+
+    def _run(self, reranker, query, candidates):
+        try:
+            return reranker.rerank(query, candidates)
+        finally:
+            with self._lock:
+                self._running -= 1
 
     def _bounded_rerank(self, query, ranked, policy):
         with self._lock:
-            if self._future is not None and not self._future.done():
+            try:
+                reranker = self._adapter(policy.reranker_model)
+            except Exception as exc:  # Ranking falls back; never fail the search.
+                return ranked, "reranker_error:" + type(exc).__name__
+            # A local cross-encoder runs one at a time; a remote service may take more.
+            limit = max(1, int(getattr(reranker, "concurrency", 1)))
+            if self._running >= limit:
                 return ranked, "reranker_busy"
             if self._executor is None:
                 self._executor = ThreadPoolExecutor(
-                    max_workers=1, thread_name_prefix="rag-rerank"
+                    max_workers=limit, thread_name_prefix="rag-rerank"
                 )
-            self._future = self._executor.submit(
-                self._rerank, query, deepcopy(ranked), policy.reranker_model
-            )
-            future = self._future
+            self._running += 1
+            future = self._executor.submit(self._run, reranker, query, deepcopy(ranked))
         try:
             output = future.result(timeout=policy.reranker_timeout_seconds)
             originals = {item["chunk_id"]: item for item in ranked}
@@ -72,7 +87,7 @@ class RetrievalOrchestrator:
         started = perf_counter()
         policy = self.policy
         if any(len(q) > policy.max_query_chars for q in [query, *extra_queries]):
-            raise ValueError("Knowledge query exceeds the configured character budget")
+            raise InvalidRequest("Knowledge query exceeds the configured character budget")
         k = min(k, policy.max_top_k)
         trace = {
             "strategy": policy.default_strategy,

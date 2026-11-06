@@ -1,6 +1,6 @@
 """Local and compatible-HTTP embedding adapters."""
 
-from threading import BoundedSemaphore
+from threading import BoundedSemaphore, Lock
 from pathlib import Path
 from app.models.source import model_source
 import os, math
@@ -17,6 +17,18 @@ class EmbeddingProvider:
         self.transport = transport
         self.key = self.config.model_dump_json()
         self.remote_gate = BoundedSemaphore(2)
+        self._client, self._client_lock = None, Lock()
+
+    def _http(self):
+        # One pooled client per provider: a new client per call reopened TLS each query.
+        with self._client_lock:
+            if self._client is None:
+                self._client = httpx.Client(
+                    timeout=self.config.timeout_seconds,
+                    transport=self.transport,
+                    follow_redirects=False,
+                )
+            return self._client
 
     def _local(self):
         from sentence_transformers import SentenceTransformer
@@ -102,14 +114,8 @@ class EmbeddingProvider:
                 raise ValueError(
                     "Remote embedding input budget exceeded before this batch"
                 )
-            with (
-                self.remote_gate,
-                httpx.Client(
-                    timeout=self.config.timeout_seconds,
-                    transport=self.transport,
-                    follow_redirects=False,
-                ) as client,
-            ):
+            client = self._http()
+            with self.remote_gate:
                 for start in range(0, len(texts), self.config.batch_size):
                     batch = texts[start : start + self.config.batch_size]
                     entry = {
