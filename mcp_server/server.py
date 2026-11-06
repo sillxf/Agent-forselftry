@@ -22,6 +22,9 @@ class BoundService:
     def get_chunk(self, kb_id, chunk_id, **params):
         return self.service.inspection.chunk(self.actor, kb_id, chunk_id, **params)
 
+    def get_context(self, kb_id, chunk_id, **params):
+        return self.service.inspection.context(self.actor, kb_id, chunk_id, **params)
+
     def search_request(self, **kwargs):
         return self.service.retrieval.search(self.actor, kwargs)
 

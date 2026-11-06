@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 import json
+from app.core.exceptions import InvalidRequest
 from app.core.serialization import public
 
 
@@ -177,6 +178,61 @@ class DocumentInspectionService:
                         "parent_id": p["parent_id"],
                     }
                     for p in parents[:1000]
+                ],
+            )
+        )
+
+    def _snapshot(self, r, generation_id):
+        pointer = r.repository.current_pointer()
+        if not pointer and not generation_id:
+            raise KeyError("No published index")
+        if generation_id and generation_id not in {
+            p["generation"] for p in r.repository.publications() if p["available"]
+        }:
+            raise KeyError("Generation was never published or is unavailable")
+        return r.repository.load_generation(
+            generation_id or pointer["generation"], cached=True
+        ), generation_id or pointer["generation"]
+
+    def context(
+        self, actor, kb_id, chunk_id, *, before=1, after=1, unit="child", generation_id=None
+    ):
+        """Neighbours of a hit in reading order, within the same document.
+
+        unit=child returns adjacent chunks; unit=parent returns adjacent sections
+        (parents), the next step up when a matched chunk is not enough.
+        """
+        if unit not in {"child", "parent"} or not (0 <= before <= 5 and 0 <= after <= 5):
+            raise InvalidRequest("Use unit=child|parent and 0-5 neighbours on each side")
+        self.access.authorize(actor, kb_id)
+        r = self.workspaces.get(kb_id)
+        snapshot, generation = self._snapshot(r, generation_id)
+        hit = next((x for x in snapshot.store.records if x["chunk_id"] == chunk_id), None)
+        if hit is None or hit["document_id"] not in r.registry.eligible_ids(
+            [hit["document_id"]]
+        ):
+            raise KeyError("Chunk unavailable")
+        document = hit["document_id"]
+        if unit == "child":
+            # Records of one document stay in chunking order through incremental builds.
+            rows = [x for x in snapshot.store.records if x["document_id"] == document]
+            index = next(i for i, x in enumerate(rows) if x["chunk_id"] == chunk_id)
+        else:
+            rows = [p.model_dump(mode="json") for p in snapshot.parents if p.document_id == document]
+            index = next(i for i, x in enumerate(rows) if x["parent_id"] == hit["parent_id"])
+            for row in rows:
+                row.pop("blocks", None)
+        start, end = max(0, index - before), min(len(rows), index + after + 1)
+        return public(
+            dict(
+                knowledge_base_id=kb_id,
+                document_id=document,
+                generation_id=generation,
+                unit=unit,
+                position=index,
+                total=len(rows),
+                items=[
+                    dict(row, offset=i - index) for i, row in enumerate(rows[start:end], start)
                 ],
             )
         )

@@ -105,6 +105,22 @@ class FaissVectorStore:
             raise IndexIntegrityError("Vector count differs from chunk metadata")
         return store
 
+    def similarity(self, vector, chunk_ids):
+        """Cosine similarity of one query to stored rows, by chunk identity."""
+        positions = getattr(self, "_positions", None)
+        if positions is None or len(positions) != len(self.records):
+            positions = self._positions = {
+                r["chunk_id"]: i for i, r in enumerate(self.records)
+            }
+        wanted = [(key, positions[key]) for key in chunk_ids if key in positions]
+        if not wanted:
+            return {}
+        query = np.array(vector, dtype="float32", copy=True).reshape(1, -1)
+        faiss.normalize_L2(query)
+        rows = self.index.reconstruct_batch(np.asarray([p for _, p in wanted], dtype="int64"))
+        scores = rows @ query[0]
+        return {key: float(score) for (key, _), score in zip(wanted, scores)}
+
     def search_filtered(self, vector, k, predicate):
         """Exact local filtered search: exclude ineligible rows BEFORE top-k selection."""
         ids = [i for i, r in enumerate(self.records) if predicate(r)]
