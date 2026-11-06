@@ -1,9 +1,9 @@
 """Select published/current candidates and filter metadata before Top-K."""
 
-"""Query authorization, filtering, bounded execution and typed evidence output."""
 from copy import copy
 import re
 from app.retrieval.history import HistoricalQuery
+from app.core.exceptions import InvalidRequest
 
 
 def filtered_pipeline(runtime, request):
@@ -23,13 +23,13 @@ def filtered_pipeline(runtime, request):
         )
         for k in filters
     ):
-        raise ValueError("Unsupported metadata filter")
+        raise InvalidRequest("Unsupported metadata filter")
     if any(
         len(v if isinstance(v, list) else [v]) > 50
         or any(len(x) > 1000 for x in (v if isinstance(v, list) else [v]))
         for v in filters.values()
     ):
-        raise ValueError("Metadata filter is too large")
+        raise InvalidRequest("Metadata filter is too large")
 
     def eligible():
         ids = (

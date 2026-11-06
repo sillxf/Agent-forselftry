@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: rag-knowledge-service:1.1
+    image: rag-knowledge-service:1.3
     command: ["rag-service", "init"]
     volumes: ["rag-data:/data", "rag-models:/models"]
     environment: &settings
@@ -14,7 +14,7 @@ services:
       RAG_VIEW_MAX_REQUESTS_PER_BUILD: ${RAG_VIEW_MAX_REQUESTS_PER_BUILD:-8}
     restart: "no"
   api:
-    image: rag-knowledge-service:1.1
+    image: rag-knowledge-service:1.3
     depends_on:
       init: {condition: service_completed_successfully}
     environment: *settings
@@ -27,7 +27,7 @@ services:
       timeout: 5s
       retries: 3
   worker:
-    image: rag-knowledge-service:1.1
+    image: rag-knowledge-service:1.3
     command: ["rag-service", "worker"]
     depends_on:
       init: {condition: service_completed_successfully}

@@ -1,4 +1,5 @@
 from app.knowledge.versioning import parse_time
+from app.core.exceptions import NotPublished
 
 
 class HistoricalQuery:
@@ -11,7 +12,7 @@ class HistoricalQuery:
         moment = parse_time(at)
         documents = snapshot.documents
         if any(d.lifecycle_state is None for d in documents):
-            raise ValueError("This generation predates historical lifecycle recording")
+            raise NotPublished("This generation predates historical lifecycle recording")
 
         def live(state):
             return not state.get("deleted_at") and (

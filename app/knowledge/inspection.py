@@ -37,6 +37,11 @@ class DocumentInspectionService:
             d.document_id for d in documents if not d.purged_at
         )
         now = datetime.now(timezone.utc)
+        # Two queries for the whole list instead of two per document.
+        all_versions = r.registry.versions_by_document()
+        all_views = {}
+        for state in r.registry.view_states():
+            all_views.setdefault(state["document_id"], []).append(state)
         for d in documents:
             state = (
                 "purged"
@@ -58,7 +63,7 @@ class DocumentInspectionService:
                 if purge_state == "completed":
                     continue  # Keep the internal tombstone, not a deleted row in the UI.
                 state = "purge_incomplete"
-            versions = r.registry.list_versions(d.document_id)
+            versions = all_versions.get(d.document_id, [])
             served = published.get(d.document_id)
             output.append(
                 public(
@@ -89,7 +94,7 @@ class DocumentInspectionService:
                             and datetime.fromisoformat(d.review_after) <= now
                         ),
                         versions=[v.model_dump() for v in versions],
-                        view_states=r.registry.view_states(d.document_id),
+                        view_states=all_views.get(d.document_id, []),
                         view_count=sum(
                             v["count"]
                             for v in (manifest or {}).get("view_assets", [])
@@ -114,10 +119,8 @@ class DocumentInspectionService:
         }:
             raise KeyError("Generation was never published or is unavailable")
         snapshot = (
-            r.repository.load_generation(generation_id)
-            if generation_id
-            else r.repository.load_generation(pointer["generation"])
-            if pointer
+            r.repository.load_generation(generation_id or pointer["generation"], cached=True)
+            if generation_id or pointer
             else None
         )
         record = (
@@ -188,7 +191,9 @@ class DocumentInspectionService:
             p["generation"] for p in r.repository.publications() if p["available"]
         }:
             raise KeyError("Generation was never published or is unavailable")
-        snapshot = r.repository.load_generation(generation_id or pointer["generation"])
+        snapshot = r.repository.load_generation(
+            generation_id or pointer["generation"], cached=True
+        )
         item = next(
             (x for x in snapshot.store.records if x["chunk_id"] == chunk_id), None
         )

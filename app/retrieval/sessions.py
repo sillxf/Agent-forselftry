@@ -4,6 +4,7 @@ from collections import OrderedDict
 from threading import RLock
 import json
 from app.core.contracts import RetrievalProfile
+from app.core.exceptions import NotPublished
 from app.retrieval.orchestrator import RetrievalOrchestrator
 
 
@@ -18,10 +19,11 @@ class QuerySession:
         with self._lock:
             pointer = self.workspace.repository.current_pointer()
             if not pointer:
-                raise ValueError("No published index; submit an explicit build first")
+                raise NotPublished("No published index; submit an explicit build first")
             if pointer["generation"] != self._generation:
+                # Shared read-only copy: document and chunk reads reuse it.
                 snapshot = self.workspace.repository.load_generation(
-                    pointer["generation"]
+                    pointer["generation"], cached=True
                 )
                 pipeline = self.factory.create(
                     snapshot, pointer["signature"]["model"], self.workspace.registry

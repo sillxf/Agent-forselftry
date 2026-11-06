@@ -67,7 +67,9 @@ export default function ModelsPage() {
             void act(async () => {
               const provider = String(f.get("provider"));
               const body = {
-                kind: provider === "cross_encoder" ? "reranker" : "embedding",
+                kind: ["cross_encoder", "cohere_compatible"].includes(provider)
+                  ? "reranker"
+                  : "embedding",
                 provider,
                 model: f.get("model"),
                 revision: f.get("revision") || "default",
@@ -100,6 +102,9 @@ export default function ModelsPage() {
                 <option value="openai_compatible">兼容 HTTP Embedding</option>
                 <option value="cross_encoder">
                   本地 Cross Encoder Reranker
+                </option>
+                <option value="cohere_compatible">
+                  远程 Reranker（/rerank 接口）
                 </option>
               </select>
             </label>
@@ -142,7 +147,7 @@ export default function ModelsPage() {
               远程 Base URL
               <input
                 name="base_url"
-                placeholder="https://provider.example/v1"
+                placeholder="https://provider.example/v1（远程模型必填）"
               />
             </label>
             <label>

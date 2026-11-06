@@ -5,16 +5,20 @@ from pathlib import Path
 from filelock import FileLock
 
 from app.ingestion.docling_parser import file_checksum
+from app.core.exceptions import IndexIntegrityError, InvalidRequest
 
 
 def parse_time(value):
-    parsed = (
-        datetime.fromisoformat(value.replace("Z", "+00:00"))
-        if isinstance(value, str)
-        else value
-    )
+    try:
+        parsed = (
+            datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if isinstance(value, str)
+            else value
+        )
+    except ValueError as exc:
+        raise InvalidRequest("Timestamps must be ISO 8601 with a timezone") from exc
     if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise ValueError("Historical timestamps must include a timezone")
+        raise InvalidRequest("Historical timestamps must include a timezone")
     return parsed.astimezone(timezone.utc)
 
 
@@ -36,6 +40,6 @@ def restore_version(retriever, document_id, version_id):
         if version is None:
             raise KeyError(version_id)
         if file_checksum(Path(version.source_blob_path)) != version.content_hash:
-            raise ValueError("Historical source blob is missing or corrupt")
+            raise IndexIntegrityError("Historical source blob is missing or corrupt")
         document = retriever.registry.select_version(document_id, version_id)
     return document

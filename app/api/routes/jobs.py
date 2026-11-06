@@ -1,6 +1,7 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, Request
 from app.core.contracts import JobControlRequest, JobRequest
+from app.core.exceptions import InvalidRequest
 
 
 def create_router(service, actor, admin, application):
@@ -10,7 +11,7 @@ def create_router(service, actor, admin, application):
     def submit(kb_id: UUID, body: JobRequest, request: Request, who=Depends(admin)):
         idem = request.headers.get("idempotency-key")
         if idem and (len(idem) > 160 or len(idem) < 8):
-            raise ValueError("Idempotency-Key must contain 8-160 characters")
+            raise InvalidRequest("Idempotency-Key must contain 8-160 characters")
         return service.indexing.submit(who, kb_id.hex, body, idempotency=idem)
 
     @app.get("/api/v1/jobs")

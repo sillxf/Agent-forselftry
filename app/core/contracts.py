@@ -69,7 +69,10 @@ class SearchRequest(Contract):
 
 class ModelConfig(Contract):
     kind: Literal["embedding", "reranker"]
-    provider: Literal["sentence_transformers", "openai_compatible", "cross_encoder"]
+    # cohere_compatible: a POST {base_url}/rerank service (Cohere, Jina, vLLM, Infinity).
+    provider: Literal[
+        "sentence_transformers", "openai_compatible", "cross_encoder", "cohere_compatible"
+    ]
     model: str = Field(min_length=1, max_length=300)
     revision: str = Field("default", min_length=1, max_length=200)
     dimension: int | None = Field(None, ge=1, le=65536)
@@ -86,17 +89,25 @@ class ModelConfig(Contract):
 
     @model_validator(mode="after")
     def compatible(self):
-        if self.kind == "reranker" and self.provider != "cross_encoder":
-            raise ValueError("Reranker requires cross_encoder")
-        if self.kind == "embedding" and self.provider == "cross_encoder":
+        if self.kind == "reranker" and self.provider not in {
+            "cross_encoder",
+            "cohere_compatible",
+        }:
+            raise ValueError("Reranker requires cross_encoder or cohere_compatible")
+        if self.kind == "embedding" and self.provider in {
+            "cross_encoder",
+            "cohere_compatible",
+        }:
             raise ValueError("Embedding provider required")
+        if self.provider == "cohere_compatible" and not self.base_url:
+            raise ValueError("Remote reranker requires base_url")
         if self.provider == "openai_compatible" and not (
             self.base_url and self.dimension and self.tokenizer
         ):
             raise ValueError(
                 "Remote embedding requires base_url, dimension and an explicit tokenizer"
             )
-        if self.provider == "openai_compatible":
+        if self.provider in {"openai_compatible", "cohere_compatible"}:
             from urllib.parse import urlsplit
 
             u = urlsplit(self.base_url)

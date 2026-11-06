@@ -12,7 +12,15 @@ from filelock import Timeout, FileLock
 from app.bootstrap import create_services
 from app.api.dependencies import actor, admin
 from app.api.console_session import ConsoleSession
-from app.core.exceptions import AccessDenied, BusyError
+from app import __version__
+from app.core.exceptions import (
+    AccessDenied,
+    BusyError,
+    IndexIntegrityError,
+    InvalidRequest,
+    NotPublished,
+    RateLimited,
+)
 
 
 def create_app(service=None, *, with_mcp=True, local_console=False):
@@ -37,7 +45,7 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
 
     app = FastAPI(
         title="RAG Knowledge Service",
-        version="1.2.0",
+        version=__version__,
         lifespan=lifespan,
         docs_url=None,
         redoc_url=None,
@@ -115,7 +123,7 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
     async def denied(request, exc):
         return JSONResponse({"detail": str(exc)}, 403)
 
-    @app.exception_handler(PermissionError)
+    @app.exception_handler(RateLimited)
     async def limited(request, exc):
         return JSONResponse(
             {"detail": "Rate limit exceeded"}, 429, headers={"Retry-After": "60"}
@@ -125,9 +133,24 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
     async def missing(request, exc):
         return JSONResponse({"detail": "Requested resource is unavailable"}, 404)
 
+    # Handlers are chosen by the exception's class hierarchy, so these specific
+    # ValueError subclasses win over the generic 409 below.
+    @app.exception_handler(InvalidRequest)
+    async def bad_input(request, exc):
+        return JSONResponse({"detail": str(exc), "code": "invalid_request"}, 422)
+
+    @app.exception_handler(NotPublished)
+    async def not_published(request, exc):
+        return JSONResponse({"detail": str(exc), "code": "not_published"}, 409)
+
+    @app.exception_handler(IndexIntegrityError)
+    async def damaged(request, exc):
+        return JSONResponse({"detail": str(exc), "code": "index_integrity"}, 503)
+
     @app.exception_handler(ValueError)
     async def invalid(request, exc):
-        return JSONResponse({"detail": str(exc)}, 409)
+        # Remaining ValueErrors are state conflicts: deleted, purged, busy or stale.
+        return JSONResponse({"detail": str(exc), "code": "conflict"}, 409)
 
     @app.exception_handler(Timeout)
     async def locked(request, exc):

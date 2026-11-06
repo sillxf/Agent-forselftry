@@ -125,6 +125,7 @@ class KnowledgeService:
                 knowledge_base=kb,
                 current=pointer,
                 counts=manifest["counts"] if manifest else {},
+                storage=r.repository.usage(),
                 active_embedding=active,
                 desired_embedding=desired,
                 configuration_pending=needs_build,

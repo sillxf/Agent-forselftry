@@ -2,6 +2,7 @@
 
 import hashlib, hmac, json, secrets, time
 from uuid import uuid4
+from app.core.exceptions import RateLimited
 
 
 class KeyRepository:
@@ -56,12 +57,13 @@ class KeyRepository:
                 (actor["id"], minute),
             ).fetchone()[0]
             if used >= actor["rpm"]:
-                raise PermissionError("Rate limit exceeded")
+                raise RateLimited("Rate limit exceeded")
             c.execute(
                 "UPDATE quota SET used=used+1 WHERE key_id=? AND minute=?",
                 (actor["id"], minute),
             )
-            c.execute("DELETE FROM quota WHERE minute<?", (minute - 2,))
+            if used == 0:  # First request of this minute: drop older counters once.
+                c.execute("DELETE FROM quota WHERE key_id=? AND minute<?", (actor["id"], minute))
 
     def keys(self):
         with self.connect() as c:

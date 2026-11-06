@@ -161,6 +161,39 @@ class RetrievalContractTests(unittest.TestCase):
                 pass
         self.assertFalse(issubclass(BusyError, OSError))
 
+    def test_a_busy_model_does_not_block_other_models(self):
+        import os
+        import threading
+
+        pool = ModelPool(2)
+        held, release = threading.Event(), threading.Event()
+
+        def rerank():
+            with pool.use("reranker", object):
+                held.set()
+                release.wait(5)
+
+        owner = threading.Thread(target=rerank)
+        owner.start()
+        self.addCleanup(owner.join)
+        self.addCleanup(release.set)
+        held.wait(5)
+        os.environ["RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS"] = "0.05"
+        self.addCleanup(os.environ.pop, "RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS")
+        with pool.use("embedding", object):  # Not blocked by the running rerank.
+            with pool.use("embedding", object):  # Same thread may re-enter.
+                pass
+        with self.assertRaises(BusyError):
+            with pool.use("reranker", object):
+                pass
+        # The pool is full and the reranker is in use: evict the idle model only.
+        with pool.use("third", object):
+            pass
+        self.assertEqual(set(pool.models), {"reranker", "third"})
+        release.set()
+        owner.join()
+        self.assertEqual(pool.models["reranker"].users, 0)
+
     def test_supersede_hides_old_document_and_review_date_is_informational(self):
         kb = self.base("Lifecycle", {"old.md": "policy v1", "new.md": "policy v2"})
         documents = {
@@ -247,6 +280,188 @@ class RetrievalContractTests(unittest.TestCase):
         self.assertEqual(
             [r["source"] for r in results], ["strong.md", "strong2.md", "weak.md"]
         )
+
+
+    def test_error_codes_separate_input_state_and_damage(self):
+        from app import __version__
+
+        kb = self.base("Codes", {"a.md": "evidence"})
+        unbuilt = self.request("POST", "/knowledge-bases", json={"name": "Empty"})["id"]
+
+        def post(body):
+            return self.client.post(
+                "/api/v1/search",
+                headers={"Authorization": "Bearer " + TOKEN},
+                json={"query": "evidence", "knowledge_base_ids": [kb], **body},
+            )
+
+        bad_filter = post({"filters": {"nope": "x"}})
+        self.assertEqual(bad_filter.status_code, 422)
+        self.assertEqual(bad_filter.json()["code"], "invalid_request")
+        self.assertEqual(post({"as_of": "yesterday"}).status_code, 422)
+        self.assertEqual(post({"as_of": "2000-01-01T00:00:00"}).status_code, 422)
+        only_unbuilt = post({"knowledge_base_ids": [unbuilt]})
+        self.assertEqual(only_unbuilt.status_code, 409)
+        self.assertEqual(only_unbuilt.json()["code"], "not_published")
+        # An unbuilt base in a multi-base search is skipped with a warning.
+        mixed = post({"knowledge_base_ids": [kb, unbuilt]})
+        self.assertEqual(mixed.status_code, 200, mixed.text)
+        self.assertTrue(mixed.json()["results"])
+        self.assertIn(f"not_published:{unbuilt}", mixed.json()["metadata"]["warnings"])
+
+        manifest = next(
+            (self.service.workspaces.get(kb).repository.root).glob("*/faiss.index")
+        )
+        manifest.write_bytes(manifest.read_bytes() + b"x")
+        self.service.retrieval.sessions.discard(kb)
+        damaged = post({})
+        self.assertEqual(damaged.status_code, 503, damaged.text)
+        self.assertEqual(damaged.json()["code"], "index_integrity")
+        live = self.client.get("/health/live").json()
+        self.assertEqual(live["version"], __version__)
+
+    def test_file_permission_error_is_not_reported_as_rate_limit(self):
+        from unittest.mock import patch
+
+        kb = self.base("Locked", {"a.md": "evidence"})
+        document = self.request("GET", f"/knowledge-bases/{kb}/documents")[0]
+        with patch(
+            "app.knowledge.purge.remove_managed",
+            side_effect=PermissionError(13, "file is in use"),
+        ):
+            response = self.client.delete(
+                f"/api/v1/knowledge-bases/{kb}/documents/"
+                f"{document['document_id']}?confirm=true",
+                headers={"Authorization": "Bearer " + TOKEN},
+            )
+        self.assertEqual(response.status_code, 503, response.text)
+        self.assertNotIn("Rate limit", response.text)
+        key = self.request(
+            "POST",
+            "/keys",
+            json={"name": "one", "knowledge_base_ids": [kb], "requests_per_minute": 1},
+        )
+        reader = {"Authorization": "Bearer " + key["token"]}
+        body = {"query": "evidence", "knowledge_base_ids": [kb]}
+        self.assertEqual(self.client.post("/api/v1/search", json=body, headers=reader).status_code, 200)
+        limited = self.client.post("/api/v1/search", json=body, headers=reader)
+        self.assertEqual(limited.status_code, 429)
+        self.assertEqual(limited.headers["Retry-After"], "60")
+
+
+    def test_inspection_reuses_verified_snapshot_until_files_change(self):
+        from unittest.mock import patch
+
+        kb = self.base("Reads", {"a.md": "evidence one", "b.md": "evidence two"})
+        hit = self.search([kb], "evidence")["results"][0]
+        repository = self.service.workspaces.get(kb).repository
+        path = f"/knowledge-bases/{kb}/chunks/{hit['chunk_id']}"
+        loads, hashes = [], []
+        original_load, original_hash = repository._load_generation, None
+        import app.storage.snapshot_repository as module
+
+        original_hash = module.file_checksum
+
+        def counted_load(*args, **kwargs):
+            loads.append(args)
+            return original_load(*args, **kwargs)
+
+        def counted_hash(path):
+            hashes.append(path)
+            return original_hash(path)
+
+        with patch.object(repository, "_load_generation", side_effect=counted_load), \
+                patch.object(module, "file_checksum", side_effect=counted_hash):
+            for _ in range(3):
+                self.request("GET", path)
+                self.request("GET", f"/knowledge-bases/{kb}/documents/{hit['document_id']}")
+                self.request("GET", f"/knowledge-bases/{kb}/documents")
+        self.assertEqual(loads, [])  # The search already loaded the generation.
+        self.assertEqual(hashes, [])  # Verified once, not on every read.
+        # A private load (builds, deletion) does not evict the shared copy.
+        generation = repository.current_pointer()["generation"]
+        shared = repository.load_generation(generation, cached=True)
+        self.assertIsNot(repository.load_generation(generation), shared)
+        self.assertIs(repository.load_generation(generation, cached=True), shared)
+
+        generation = repository.current_pointer()["generation"]
+        chunks = repository.root / generation / "chunks.jsonl"
+        chunks.write_bytes(chunks.read_bytes() + b"\n")
+        damaged = self.client.get(
+            "/api/v1" + path, headers={"Authorization": "Bearer " + TOKEN}
+        )
+        self.assertEqual(damaged.status_code, 503, damaged.text)
+
+
+    def test_remote_reranker_and_pooled_embedding_client(self):
+        import httpx
+        from app.core.contracts import ModelConfig
+        from app.models.embedding.provider import EmbeddingProvider
+        from app.models.pool import usage_context
+        from app.models.reranking.remote import RemoteRerankerProvider
+
+        seen = []
+
+        def handler(request):
+            seen.append(request)
+            body = json.loads(request.content)
+            if request.url.path.endswith("/rerank"):
+                scores = [0.1, 0.9, 0.5][: len(body["documents"])]
+                return httpx.Response(200, json={"results": [
+                    {"index": i, "relevance_score": s} for i, s in enumerate(scores)]})
+            return httpx.Response(200, json={"data": [
+                {"index": i, "embedding": [1.0, 0.0]} for i in range(len(body["input"]))]})
+
+        transport = httpx.MockTransport(handler)
+        config = ModelConfig(kind="reranker", provider="cohere_compatible",
+                             model="rerank-x", base_url="https://rerank.example/v1")
+        reranker = RemoteRerankerProvider(config, transport=transport)
+        usage = []
+        token = usage_context.set(usage)
+        self.addCleanup(usage_context.reset, token)
+        ranked = reranker.rerank("q", [{"content": "a"}, {"content": "b"}, {"content": "c"}])
+        self.assertEqual([x["content"] for x in ranked], ["b", "c", "a"])
+        self.assertEqual(seen[0].url, "https://rerank.example/v1/rerank")
+        self.assertEqual(usage[0]["provider"], "cohere_compatible")
+        with self.assertRaises(ValueError):  # Embedding role cannot use it.
+            ModelConfig(kind="embedding", provider="cohere_compatible",
+                        model="x", base_url="https://e.example")
+
+        embedding = EmbeddingProvider(
+            dict(kind="embedding", provider="openai_compatible", model="e",
+                 base_url="https://e.example/v1", dimension=2, tokenizer="t"),
+            None, transport=transport)
+        embedding.embed_query(["one"])
+        first = embedding._client
+        embedding.embed_query(["two"])
+        self.assertIs(embedding._client, first)
+
+
+    def test_auto_gc_is_opt_in_and_status_reports_disk_use(self):
+        import os
+
+        kb = self.base("Retention", {"a.md": "evidence"})
+        repository = self.service.workspaces.get(kb).repository
+
+        def rebuild():
+            job = self.request("POST", f"/knowledge-bases/{kb}/jobs", json={"full": True})
+            self.assertTrue(Worker(self.service.indexing).run_once())
+            return json.loads(self.service.indexing.jobs.job(job["id"])["result"])["output"]
+
+        for _ in range(3):
+            self.assertNotIn("gc", rebuild())
+        self.assertEqual(repository.usage()["generations"], 4)
+        status = self.request("GET", f"/knowledge-bases/{kb}/status")
+        self.assertEqual(status["storage"]["generations"], 4)
+        self.assertGreater(status["storage"]["index_bytes"], 0)
+
+        os.environ.update(RAG_AUTO_GC="true", RAG_GC_KEEP="2", RAG_GC_MIN_AGE_SECONDS="0")
+        for name in ("RAG_AUTO_GC", "RAG_GC_KEEP", "RAG_GC_MIN_AGE_SECONDS"):
+            self.addCleanup(os.environ.pop, name)
+        output = rebuild()
+        self.assertEqual(len(output["gc"]["generations"]), 3)
+        self.assertEqual(repository.usage()["generations"], 2)
+        self.assertTrue(self.search([kb], "evidence")["results"])
 
 
 if __name__ == "__main__":

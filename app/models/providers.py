@@ -6,6 +6,7 @@ from app.core.contracts import ModelConfig
 from app.models.pool import ModelPool
 from app.models.embedding.provider import EmbeddingProvider
 from app.models.reranking.provider import RerankerProvider
+from app.models.reranking.remote import RemoteRerankerProvider
 
 
 class Providers:
@@ -47,8 +48,8 @@ class Providers:
 
     def reranker(self, name):
         config = self.config(name, "reranker")
-        return (
-            self.reranker_factory(config)
-            if self.reranker_factory
-            else RerankerProvider(config, self.pool)
-        )
+        if self.reranker_factory:
+            return self.reranker_factory(config)
+        if config["provider"] == "cohere_compatible":
+            return RemoteRerankerProvider(config)
+        return RerankerProvider(config, self.pool)

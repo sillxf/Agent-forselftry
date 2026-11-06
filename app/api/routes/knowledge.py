@@ -29,7 +29,10 @@ def create_router(service, actor, admin, application):
         revision: int = Query(..., ge=1),
         who=Depends(admin),
     ):
-        return service.knowledge.configure(who, kb_id.hex, body, revision)
+        result = service.knowledge.configure(who, kb_id.hex, body, revision)
+        # Drop sessions built for the previous profile; the next search loads anew.
+        service.retrieval.sessions.discard(kb_id.hex)
+        return result
 
     @app.get("/api/v1/knowledge-bases/{kb_id}/status")
     def status(kb_id: UUID, who=Depends(admin)):

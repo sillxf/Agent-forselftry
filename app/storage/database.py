@@ -22,6 +22,8 @@ class Database:
             columns = {row["name"] for row in connection.execute("PRAGMA table_info(jobs)")}
             if "control_request" not in columns:
                 connection.execute("ALTER TABLE jobs ADD COLUMN control_request TEXT")
+            # Retention deletes by time; without an index each delete scanned the table.
+            connection.execute("CREATE INDEX IF NOT EXISTS audit_at ON audit(at)")
             connection.execute("PRAGMA user_version=2")
 
     @contextmanager

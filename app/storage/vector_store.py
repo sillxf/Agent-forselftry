@@ -7,6 +7,8 @@ from typing import Protocol
 import faiss
 import numpy as np
 
+from app.core.exceptions import IndexIntegrityError
+
 
 class VectorStoreInterface(Protocol):
     records: list[dict]
@@ -100,7 +102,7 @@ class FaissVectorStore:
             for line in (path / "chunks.jsonl").read_text(encoding="utf-8").splitlines()
         ]
         if store.index.ntotal != len(store.records):
-            raise ValueError("Vector count differs from chunk metadata")
+            raise IndexIntegrityError("Vector count differs from chunk metadata")
         return store
 
     def search_filtered(self, vector, k, predicate):
