@@ -130,9 +130,19 @@ class RetrievalPipeline:
                     retrieve(self.sparse, "sparse", sparse_limit, text, index)
                 )
         if len(routes) == 1:
-            return routes[0]  # Single route keeps its native scores and order.
-        ranked = self.fusion.fuse(routes)
-        return ranked[:candidate_k] if candidate_k is not None else ranked
+            ranked = routes[0]  # Single route keeps its native scores and order.
+        else:
+            ranked = self.fusion.fuse(routes)
+            ranked = ranked[:candidate_k] if candidate_k is not None else ranked
+        if strategy in {"dense", "hybrid", "multi_view"} and ranked:
+            # One comparable 0-1 signal for every candidate, including BM25-only hits:
+            # the best cosine similarity to any of the caller's queries.
+            best = self.dense.similarity(queries, [r["chunk_id"] for r in ranked])
+            ranked = [
+                dict(r, similarity=best[r["chunk_id"]]) if r["chunk_id"] in best else r
+                for r in ranked
+            ]
+        return ranked
 
     @staticmethod
     def _retrieve(route, query, limit, allowed):

@@ -52,6 +52,13 @@ class RAGClient:
             params={k: v for k, v in params.items() if v is not None},
         )
 
+    def get_context(self, kb_id, chunk_id, **params):
+        return self.request(
+            "GET",
+            f"/knowledge-bases/{kb_id}/chunks/{chunk_id}/context",
+            params={k: v for k, v in params.items() if v is not None},
+        )
+
     def search_request(self, **kwargs):
         return self.request("POST", "/search", json=kwargs)
 

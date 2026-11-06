@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 from uuid import UUID
 import os, tempfile
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -46,6 +47,26 @@ def create_router(service, actor, admin, application):
     ):
         return service.inspection.chunk(
             who, kb_id.hex, str(chunk_id), generation_id=generation_id
+        )
+
+    @app.get("/api/v1/knowledge-bases/{kb_id}/chunks/{chunk_id}/context")
+    def chunk_context(
+        kb_id: UUID,
+        chunk_id: UUID,
+        before: int = Query(1, ge=0, le=5),
+        after: int = Query(1, ge=0, le=5),
+        unit: Literal["child", "parent"] = "child",
+        generation_id: str | None = None,
+        who=Depends(actor),
+    ):
+        return service.inspection.context(
+            who,
+            kb_id.hex,
+            str(chunk_id),
+            before=before,
+            after=after,
+            unit=unit,
+            generation_id=generation_id,
         )
 
     @app.post("/api/v1/knowledge-bases/{kb_id}/documents", status_code=201)

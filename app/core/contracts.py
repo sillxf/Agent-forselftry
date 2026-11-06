@@ -50,7 +50,11 @@ class SearchRequest(Contract):
     top_k: int = Field(5, ge=1, le=20)
     mode: Literal["default", "high_recall"] = "default"
     supplement: bool = False
-    filters: dict[str, str | list[str]] = Field(default_factory=dict)
+    # Exact values, lists (any of), operator objects such as {"$gte": "2024"},
+    # and top-level "$and"/"$or" lists. Validated in app/retrieval/filters.py.
+    filters: dict[str, Any] = Field(default_factory=dict)
+    # Drop results whose relevance (reranker score, else cosine similarity) is lower.
+    min_score: float | None = Field(None, ge=0, le=1)
     as_of: str | None = None
     include_trace: bool = False
 
@@ -62,8 +66,6 @@ class SearchRequest(Contract):
             raise ValueError("Each additional query must be 1-4000 non-blank characters")
         if len(set(self.knowledge_base_ids)) != len(self.knowledge_base_ids):
             raise ValueError("Duplicate knowledge base")
-        if len(self.filters) > 10:
-            raise ValueError("At most ten metadata filters")
         return self
 
 

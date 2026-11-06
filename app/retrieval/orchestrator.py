@@ -83,7 +83,9 @@ class RetrievalOrchestrator:
         except Exception as exc:
             return ranked, "reranker_error:" + type(exc).__name__
 
-    def search(self, retriever, query, k, *, supplement=False, extra_queries=()):
+    def search(
+        self, retriever, query, k, *, supplement=False, extra_queries=(), min_score=None
+    ):
         started = perf_counter()
         policy = self.policy
         if any(len(q) > policy.max_query_chars for q in [query, *extra_queries]):
@@ -181,6 +183,14 @@ class RetrievalOrchestrator:
         if pipeline.eligibility is not None:
             allowed = pipeline.eligibility()
             ranked = [item for item in ranked if item["document_id"] in allowed]
+        ranked = [with_relevance(item, trace["reranker_used"]) for item in ranked]
+        if min_score is not None:
+            # Unscored results (BM25-only strategy) are kept: no number to compare.
+            dropped = [
+                r for r in ranked if r["relevance"] is not None and r["relevance"] < min_score
+            ]
+            ranked = [r for r in ranked if r not in dropped]
+            trace["below_min_score"] = len(dropped)
         results, used = [], 0
         for item in pipeline.context_builder.build(ranked, k):
             item = dict(item, context_scope="parent")
@@ -202,6 +212,19 @@ class RetrievalOrchestrator:
             elapsed_ms=(perf_counter() - started) * 1000,
         )
         return {"results": results, "trace": trace}
+
+
+def with_relevance(item, reranked):
+    """relevance: reranker score when this result was reranked, else cosine similarity.
+
+    Both are roughly 0-1, but they are different scales and neither is calibrated
+    across models; compare relevance only within one relevance_source.
+    """
+    if reranked and item.get("reranker_score") is not None:
+        return dict(item, relevance=float(item["reranker_score"]), relevance_source="reranker")
+    if item.get("similarity") is not None:
+        return dict(item, relevance=float(item["similarity"]), relevance_source="similarity")
+    return dict(item, relevance=None, relevance_source=None)
 
 
 def as_child(item):

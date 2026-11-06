@@ -13,7 +13,11 @@ def register(mcp, target):
             "queries: up to 4 optional rewrites of the same question, retrieved and "
             "fused with the original. Most useful: a translation into the documents' "
             "language (e.g. English for English sources), or a version using the "
-            "documents' own terminology. Do not add facts the user did not ask about."
+            "documents' own terminology. Do not add facts the user did not ask about. "
+            "filters: {'file_type': 'pdf'}, {'metadata.team': ['red','blue']}, "
+            "{'metadata.year': {'$gte': '2024'}}, {'$or': [...]}; fields document_id, "
+            "file_type, source, metadata.<key>. Each result has relevance (0-1; see "
+            "relevance_source). min_score drops results below it."
         ),
     )
     def rag_search(
@@ -26,6 +30,7 @@ def register(mcp, target):
         mode: str = "default",
         filters: dict | None = None,
         as_of: str | None = None,
+        min_score: float | None = None,
     ) -> dict[str, Any]:
         return target(ctx).search_request(
             query=query,
@@ -36,4 +41,5 @@ def register(mcp, target):
             mode=mode,
             filters=filters or {},
             as_of=as_of,
+            min_score=min_score,
         )

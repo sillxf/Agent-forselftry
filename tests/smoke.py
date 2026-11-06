@@ -119,7 +119,7 @@ def run():
             json={"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}},
         )
         assert mcp.status_code == 200, mcp.text
-        assert len(mcp.json()["result"]["tools"]) == 6
+        assert len(mcp.json()["result"]["tools"]) == 7
         checks.append("mcp-tools")
         deleted = request(
             "DELETE", f"/knowledge-bases/{kb}/documents/{document}?confirm=true"

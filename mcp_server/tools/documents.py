@@ -82,6 +82,33 @@ def register(mcp, target):
 
     @mcp.tool(
         structured_output=True,
+        description=(
+            "Read what surrounds a search hit, in reading order within the same "
+            "document: unit='child' returns neighbouring chunks, unit='parent' "
+            "neighbouring sections. Use it when a hit is cut off or refers to text "
+            "just before or after it. before/after: 0-5."
+        ),
+    )
+    def rag_get_context(
+        knowledge_base_id: str,
+        chunk_id: str,
+        ctx: Context,
+        before: int = 1,
+        after: int = 1,
+        unit: str = "child",
+        generation_id: str | None = None,
+    ) -> dict[str, Any]:
+        return target(ctx).get_context(
+            knowledge_base_id,
+            chunk_id,
+            before=before,
+            after=after,
+            unit=unit,
+            generation_id=generation_id,
+        )
+
+    @mcp.tool(
+        structured_output=True,
         description="Read the published document outline for long-document navigation.",
     )
     def rag_get_document_outline(

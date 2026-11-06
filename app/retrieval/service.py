@@ -67,6 +67,7 @@ class RetrievalService:
                     request.top_k,
                     supplement=supplement,
                     extra_queries=request.queries,
+                    min_score=request.min_score,
                 )
                 budgets.append(runtime.orchestrator.policy.max_context_tokens)
                 rerankers.add(

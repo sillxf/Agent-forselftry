@@ -89,11 +89,13 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
                         else ""
                     )
             except AccessDenied:
-                return JSONResponse(
-                    {"detail": "Valid Bearer credentials required"},
-                    401,
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
+                body = {"detail": "Valid Bearer credentials required"}
+                if request.url.path.startswith("/api/v1/dify/"):
+                    body.update(
+                        error_code=1002 if auth.startswith("Bearer ") else 1001,
+                        error_msg="Authorization failed. Check the API key.",
+                    )
+                return JSONResponse(body, 401, headers={"WWW-Authenticate": "Bearer"})
         upload_path = request.method == "POST" and request.url.path.endswith(
             "/documents"
         )
@@ -188,9 +190,10 @@ def create_app(service=None, *, with_mcp=True, local_console=False):
         models,
         jobs,
         access,
+        dify,
     )
 
-    for routes in (health, knowledge, retrieval, documents, models, jobs, access):
+    for routes in (health, knowledge, retrieval, documents, models, jobs, access, dify):
         app.include_router(routes.create_router(service, actor, admin, app))
 
     # KB identity is canonical lowercase uuid.hex, so URL aliases never create different roots.
