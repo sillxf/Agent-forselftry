@@ -1,9 +1,58 @@
 import { usePlayground } from "./usePlayground";
-import { Json, short, stamp, type Data } from "../../shared/ui";
+import { useState } from "react";
+import { Json, short, type Data } from "../../shared/ui";
+
+// Show the parent with the matched chunk marked, so the reader sees why it was hit.
+function Highlighted({ text, match }: { text: string; match?: string }) {
+  const at = match ? text.indexOf(match) : -1;
+  if (!match || at < 0 || match === text) return <pre>{text}</pre>;
+  return (
+    <pre>
+      {text.slice(0, at)}
+      <mark>{match}</mark>
+      {text.slice(at + match.length)}
+    </pre>
+  );
+}
+
+function Neighbours({ kb, r, api }: { kb: string; r: Data; api: (p: string) => Promise<Data> }) {
+  const [context, setContext] = useState<Data | null>(null);
+  return (
+    <details
+      onToggle={(e) => {
+        if ((e.target as HTMLDetailsElement).open && !context)
+          void api(
+            "/knowledge-bases/" + kb + "/chunks/" + r.chunk_id + "/context?before=2&after=2",
+          ).then(setContext, (err) => setContext({ error: String(err) }));
+      }}
+    >
+      <summary>前后文（同一文档中相邻的片段）</summary>
+      {!context ? (
+        <small>读取中…</small>
+      ) : context.error ? (
+        <small>{context.error}</small>
+      ) : (
+        context.items.map((item: Data) => (
+          <div key={item.chunk_id} className={item.offset === 0 ? "neighbour hit" : "neighbour"}>
+            <small>
+              {item.offset === 0 ? "命中" : item.offset > 0 ? "后 " + item.offset : "前 " + -item.offset}
+              {" · "}第 {item.page_start ?? "—"} 页
+            </small>
+            <pre>{item.content}</pre>
+          </div>
+        ))
+      )}
+    </details>
+  );
+}
 
 export default function PlaygroundPage() {
   const {
     act,
+    api,
+    kb,
+    minScore,
+    setMinScore,
     asOf,
     busy,
     comparison,
@@ -62,7 +111,19 @@ export default function PlaygroundPage() {
               <input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                placeholder="file_type=pdf,metadata.domain=研发"
+                placeholder='file_type=pdf 或 {"metadata.year": {"$gte": "2024"}}'
+              />
+            </label>
+            <label>
+              最低相关度（可选，0–1）
+              <input
+                type="number"
+                min={0}
+                max={1}
+                step={0.05}
+                value={minScore}
+                onChange={(e) => setMinScore(e.target.value)}
+                placeholder="不设"
               />
             </label>
             <label>
@@ -121,9 +182,14 @@ export default function PlaygroundPage() {
                   <span className="rank">{i + 1}</span>
                   {r.source || r.source_name}
                 </h2>
-                <span className="badge">{r.context_scope || "parent"}</span>
+                <span className="badge">
+                  相关度 {r.relevance != null ? r.relevance.toFixed(3) : "—"}
+                  {r.relevance_source === "reranker" ? "（重排）" : ""}
+                </span>
               </div>
               <div className="chips">
+                <span>{r.context_scope === "child" ? "片段" : "所在段落"}</span>
+                {r.section_path?.length > 0 && <span>{r.section_path.join(" › ")}</span>}
                 <span>版本 {short(r.version_id)}</span>
                 <span>
                   页码 {r.page_start || "—"}–{r.page_end || "—"}
@@ -133,7 +199,8 @@ export default function PlaygroundPage() {
                 <span>融合 {r.score?.toFixed(5) ?? "—"}</span>
                 <span>重排 {r.reranker_score?.toFixed(4) ?? "—"}</span>
               </div>
-              <pre>{r.content}</pre>
+              <Highlighted text={r.content} match={r.chunk_content} />
+              {kb && <Neighbours kb={kb} r={r} api={api} />}
               <details>
                 <summary>引用和完整元数据</summary>
                 <Json value={r} />

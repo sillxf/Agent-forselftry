@@ -51,7 +51,9 @@ function useWorkspaceState() {
     try {
       await fn();
     } catch (error) {
-      setMessage("操作未完成：" + String(error));
+      setMessage(
+        "操作未完成：" + (error instanceof Error ? error.message : String(error)),
+      );
     } finally {
       setBusy(false);
     }

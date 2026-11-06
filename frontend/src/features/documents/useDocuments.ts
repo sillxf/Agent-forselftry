@@ -12,7 +12,8 @@ export function useDocuments() {
   );
   const [detail, setDetail] = useState<Data | null>(null),
     [docId, setDocId] = useState(""),
-    [docFilter, setDocFilter] = useState("");
+    [docFilter, setDocFilter] = useState(""),
+    [progress, setProgress] = useState<{ done: number; total: number; failed: string[] } | null>(null);
   const selection = useRef(kb);
   selection.current = kb;
   const job = useJobActions();
@@ -35,18 +36,39 @@ export function useDocuments() {
     setDetail(d);
   }
   async function upload(files: FileList | null, id?: string) {
-    if (!files) return;
-    for (const f of Array.from(files))
-      await api(
-        "/knowledge-bases/" +
-          kb +
-          "/documents?filename=" +
-          encodeURIComponent(f.name) +
-          (id ? "&document_id=" + id : ""),
-        { method: "POST", body: f },
-      );
+    if (!files || !files.length) return;
+    const list = Array.from(files);
+    const failed: string[] = [];
+    let done = 0;
+    setProgress({ done, total: list.length, failed });
+    // A few at a time: the server serializes registry writes per knowledge base.
+    const queue = [...list];
+    async function next(): Promise<void> {
+      const f = queue.shift();
+      if (!f) return;
+      try {
+        await api(
+          "/knowledge-bases/" +
+            kb +
+            "/documents?filename=" +
+            encodeURIComponent(f.name) +
+            (id ? "&document_id=" + id : ""),
+          { method: "POST", body: f },
+        );
+      } catch (error) {
+        failed.push(f.name + "：" + (error instanceof Error ? error.message : String(error)));
+      }
+      done += 1;
+      setProgress({ done, total: list.length, failed: [...failed] });
+      return next();
+    }
+    await Promise.all([next(), next(), next()]);
     await reload();
-    setMessage("上传完成。构建并发布后，新内容才进入检索。");
+    setProgress(null);
+    const ok = list.length - failed.length;
+    if (failed.length)
+      throw new Error(`上传 ${ok} 个，失败 ${failed.length} 个：` + failed.join("；"));
+    setMessage(`已上传 ${ok} 个文件。点“构建并发布”后，新内容才进入检索。`);
   }
   async function patchDoc(d: Data, body: Data) {
     await api("/knowledge-bases/" + kb + "/documents/" + d.document_id, {
@@ -128,6 +150,7 @@ export function useDocuments() {
     setDocFilter,
     inspect,
     upload,
+    progress,
     patchDoc,
     download,
     deleteDocument,
