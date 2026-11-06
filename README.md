@@ -87,6 +87,22 @@ docker/, docs/         部署与说明
 
 每条告警最多 6 次模型请求、12 次工具调用、3 次知识检索。8 个合成案例的真实模型冒烟结果和 AI 开发复核见 [evaluation/agent/README.md](evaluation/agent/README.md)。
 
+## Agent 架构 Demo
+
+使用当前知识库构建设计建议时，可运行一个更小、更容易审查的示例：
+
+~~~powershell
+.\.venv\Scripts\python.exe -m agent.demo --goal "设计一个能暂停、恢复、超时、人工接管的安全告警调查 Agent"
+~~~
+
+如果只想检查 RAG 召回，不调用模型：
+
+~~~powershell
+.\.venv\Scripts\python.exe -m agent.demo --retrieval-only --goal "设计一个能暂停、恢复、超时、人工接管的安全告警调查 Agent"
+~~~
+
+这个 Demo 不是自动执行器.代码负责目标校验、双语/术语检索、相关性门槛、证据字符预算和来源校验；模型只根据证据输出组件、状态流转、失败恢复和实现顺序。没有通过门槛的证据时不会调用模型。检索过程中的召回、适用性和延迟问题记录在 [docs/rag_agent_findings.md](docs/rag_agent_findings.md)。
+
 ## 开发和必要检查
 
 ~~~powershell
