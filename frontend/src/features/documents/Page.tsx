@@ -30,6 +30,7 @@ export default function DocumentsPage() {
     setDocFilter,
     setMessage,
     upload,
+    progress,
   } = useDocuments();
 
   return (
@@ -59,6 +60,12 @@ export default function DocumentsPage() {
             <button disabled={busy} onClick={() => void act(() => job())}>
               构建并发布
             </button>
+            {progress && (
+              <span className="upload-progress" role="status">
+                正在上传 {progress.done}/{progress.total}
+                {progress.failed.length ? `，失败 ${progress.failed.length}` : ""}
+              </span>
+            )}
           </>
         )}
       </section>

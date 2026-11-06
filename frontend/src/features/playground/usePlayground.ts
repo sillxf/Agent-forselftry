@@ -9,6 +9,7 @@ export function usePlayground() {
     [extraQueries, setExtraQueries] = useState(""),
     [supplement, setSupplement] = useState(false),
     [filter, setFilter] = useState(""),
+    [minScore, setMinScore] = useState(""),
     [asOf, setAsOf] = useState("");
   const [k, setK] = useState(5),
     [result, setResult] = useState<Data | null>(null),
@@ -20,10 +21,18 @@ export function usePlayground() {
     setComparison([]);
   }, [kb]);
   function filters() {
+    const text = filter.trim();
+    if (text.startsWith("{")) {
+      try {
+        return JSON.parse(text);
+      } catch {
+        throw Error("过滤条件不是有效的 JSON");
+      }
+    }
     const out: Data = {};
-    for (const item of filter.split(",").filter(Boolean)) {
+    for (const item of text.split(",").filter(Boolean)) {
       const i = item.indexOf("=");
-      if (i < 1) throw Error("过滤格式：file_type=pdf,metadata.domain=研发");
+      if (i < 1) throw Error("过滤格式：file_type=pdf,metadata.domain=研发，或 JSON 对象");
       out[item.slice(0, i).trim()] = item.slice(i + 1).trim();
     }
     return out;
@@ -41,6 +50,7 @@ export function usePlayground() {
       filters: filters(),
       include_trace: true,
       as_of: asOf || null,
+      min_score: minScore === "" ? null : Number(minScore),
     };
     if (compare) {
       const rows = [];
@@ -74,6 +84,8 @@ export function usePlayground() {
     setSupplement,
     filter,
     setFilter,
+    minScore,
+    setMinScore,
     asOf,
     setAsOf,
     k,
