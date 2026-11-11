@@ -1,18 +1,23 @@
 """Bounded offline checks for query-time contracts; no real models or paid calls."""
 
-from pathlib import Path
-import sqlite3
 import json
+import sqlite3
 import tempfile
 import unittest
+from contextlib import closing
+from pathlib import Path
 
+import httpx
 from fastapi.testclient import TestClient
 
 from app.api import create_app
 from app.bootstrap import create_services
+from app.core.contracts import ModelConfig
 from app.core.exceptions import BusyError
 from app.indexing.worker import Worker
-from app.models.pool import ModelPool
+from app.models.embedding.provider import EmbeddingProvider
+from app.models.pool import ModelPool, usage_context
+from app.models.reranking.remote import RemoteRerankerProvider
 from app.retrieval.policy import RetrievalPolicy
 from tests.support import FakeEmbedding, Parser
 
@@ -124,7 +129,9 @@ class RetrievalContractTests(unittest.TestCase):
         legacy = RetrievalPolicy.model_validate({"max_context_chars": 24000})
         self.assertEqual(legacy.max_context_tokens, 8000)
         kb = self.base("Legacy", {"a.md": "legacy evidence"})
-        with sqlite3.connect(self.service.root / "catalog.sqlite3") as connection:
+        with closing(
+            sqlite3.connect(self.service.root / "catalog.sqlite3")
+        ) as connection, connection:
             data = json.loads(
                 connection.execute(
                     "SELECT data FROM knowledge_bases WHERE id=?", (kb,)
@@ -133,7 +140,8 @@ class RetrievalContractTests(unittest.TestCase):
             data["profile"].pop("max_context_tokens")
             data["profile"]["max_context_chars"] = 24000
             connection.execute(
-                "UPDATE knowledge_bases SET data=? WHERE id=?", (json.dumps(data), kb)
+                "UPDATE knowledge_bases SET data=? WHERE id=?",
+                (json.dumps(data), kb),
             )
         self.assertTrue(self.search([kb], "legacy")["results"])
 
@@ -156,9 +164,8 @@ class RetrievalContractTests(unittest.TestCase):
         held.wait(5)
         os.environ["RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS"] = "0.01"
         self.addCleanup(os.environ.pop, "RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS")
-        with self.assertRaises(BusyError):
-            with pool.use("model", object):
-                pass
+        with self.assertRaises(BusyError), pool.use("model", object):
+            pass
         self.assertFalse(issubclass(BusyError, OSError))
 
     def test_a_busy_model_does_not_block_other_models(self):
@@ -180,12 +187,10 @@ class RetrievalContractTests(unittest.TestCase):
         held.wait(5)
         os.environ["RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS"] = "0.05"
         self.addCleanup(os.environ.pop, "RAG_MODEL_ACQUIRE_TIMEOUT_SECONDS")
-        with pool.use("embedding", object):  # Not blocked by the running rerank.
-            with pool.use("embedding", object):  # Same thread may re-enter.
-                pass
-        with self.assertRaises(BusyError):
-            with pool.use("reranker", object):
-                pass
+        with pool.use("embedding", object), pool.use("embedding", object):
+            pass
+        with self.assertRaises(BusyError), pool.use("reranker", object):
+            pass
         # The pool is full and the reranker is in use: evict the idle model only.
         with pool.use("third", object):
             pass
@@ -394,12 +399,6 @@ class RetrievalContractTests(unittest.TestCase):
 
 
     def test_remote_reranker_and_pooled_embedding_client(self):
-        import httpx
-        from app.core.contracts import ModelConfig
-        from app.models.embedding.provider import EmbeddingProvider
-        from app.models.pool import usage_context
-        from app.models.reranking.remote import RemoteRerankerProvider
-
         seen = []
 
         def handler(request):
@@ -428,8 +427,14 @@ class RetrievalContractTests(unittest.TestCase):
                         model="x", base_url="https://e.example")
 
         embedding = EmbeddingProvider(
-            dict(kind="embedding", provider="openai_compatible", model="e",
-                 base_url="https://e.example/v1", dimension=2, tokenizer="t"),
+            {
+                "kind": "embedding",
+                "provider": "openai_compatible",
+                "model": "e",
+                "base_url": "https://e.example/v1",
+                "dimension": 2,
+                "tokenizer": "t",
+            },
             None, transport=transport)
         embedding.embed_query(["one"])
         first = embedding._client

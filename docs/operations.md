@@ -10,7 +10,7 @@ API 与 Worker 使用同一数据根和模型/凭据环境。管理员受信任�
 
 文档“删除”直接执行，不依赖 Worker：DELETE /api/v1/knowledge-bases/{kb_id}/documents/{document_id}?confirm=true，成功返回 200/status=completed 时，服务内原件、版本、相关索引和缓存已清理，文档不再出现在列表与检索中。不可恢复；包含它的旧快照也会撤销，外部原件与备份不在范围内。删除不加载模型或调用付费服务，未构建的上传文档也可以直接删除。失败时显示“删除未完成”，可重复请求恢复清理；构建等维护正在占锁时返回 409，不排队。
 
-可恢复操作改为“移入回收站”：POST .../documents/{document_id}/trash；恢复仍为 POST .../undelete。为避免旧客户端误删，未带 confirm=true 的 DELETE 会被拒绝，不再代表软删除。新的 purge 任务提交被拒绝，使用直接删除接口；既有队列仍兼容，直接删除成功会将同一文档尚未执行的旧 purge 任务标为完成，不执行其他待办。旧代际清理不等于文档删除。
+可恢复操作改为“移入回收站”：POST .../documents/{document_id}/trash；恢复仍为 POST .../undelete。为避免旧客户端误删，未带 confirm=true 的 DELETE 会被拒绝，不再代表软删除。新的 purge 任务提交被拒绝，使用直接删除接口；既有队列仍兼容，直接删除成功会将同一文档尚未完成的旧 purge 任务标为完成，不执行其他待办。旧代际清理不等于文档删除。
 
 备份前停止 API 和 Worker。使用 rag-service --data ./storage backup <新备份目录>；恢复使用 rag-service restore <备份目录> <新数据目录>。命令检查锁、校验备份，恢复到新目录，不覆盖活动数据。不是加密备份或介质安全擦除。旧单库迁移见 migrate-legacy --help，必须停写并指定外部备份。
 

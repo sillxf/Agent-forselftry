@@ -1,7 +1,8 @@
 """Durable jobs and optimistic publication guard."""
 
+import json
+import time
 from contextlib import contextmanager
-import json, time
 from uuid import uuid4
 
 
@@ -60,11 +61,11 @@ class JobRepository:
             c.execute("DELETE FROM jobs WHERE kb_id=?", (kb_id,))
 
     def complete_pending_purges(self, kb_id, document_id, result):
-        """Retire only still-queued duplicates of a completed direct deletion."""
+        """Retire unfinished legacy purge jobs after a successful direct deletion."""
         with self.connect() as c:
             c.execute("BEGIN IMMEDIATE")
             rows = c.execute(
-                "SELECT id,payload FROM jobs WHERE kb_id=? AND operation='purge' AND status='queued'",
+                "SELECT id,payload FROM jobs WHERE kb_id=? AND operation='purge' AND status IN ('queued','interrupted','failed')",
                 (kb_id,),
             ).fetchall()
             for row in rows:

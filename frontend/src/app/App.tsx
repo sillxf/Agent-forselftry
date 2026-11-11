@@ -185,7 +185,7 @@ function Shell() {
           )}
           {busy && <div className="working">正在处理…</div>}
           <footer>
-            知序 RAG · 原始证据，而非自动结论<span>REST / MCP · v1.1</span>
+            知序 RAG · 原始证据，而非自动结论<span>REST / MCP · v1.3.0</span>
           </footer>
         </div>
       </main>

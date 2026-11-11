@@ -5,7 +5,7 @@ import re
 import shutil
 import sqlite3
 from contextlib import closing
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -88,7 +88,7 @@ def purge_document(workspace, document_id):
                 "generations": generations,
                 "source_path": document.source_path,
                 "source_hashes": sorted({v.content_hash for v in versions}),
-                "created_at": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
             }
             atomic_json(plan_path, plan)
         current = workspace.repository.current_pointer()
@@ -96,13 +96,13 @@ def purge_document(workspace, document_id):
             "purge", current["generation"] if current else None
         )
         try:
+            published = workspace.repository.load_published()
+            if published and published[1]["signature"].get("version", 0) < 8:
+                raise ValueError("Publish a managed format-8 generation before purging")
             if not document.purged_at:
                 workspace.registry.mark_purged(
                     document_id
                 )  # All old in-memory runtimes fail closed now.
-            published = workspace.repository.load_published()
-            if published and published[1]["signature"].get("version", 0) < 8:
-                raise ValueError("Publish a managed format-8 generation before purging")
             snapshot, pointer = published if published else (None, None)
             if snapshot and any(
                 d.document_id == document_id for d in snapshot.documents
@@ -265,7 +265,7 @@ def purge_document(workspace, document_id):
                 "status": "completed",
                 "external_original_preserved": external_preserved,
                 "backup_erasure": "not_in_scope",
-                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "completed_at": datetime.now(UTC).isoformat(),
             }
             atomic_json(plan_path, result)
             workspace.registry.finish_job(
