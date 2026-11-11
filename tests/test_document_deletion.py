@@ -1,9 +1,10 @@
 """Bounded offline deletion checks; temporary data, no real models or paid calls."""
 
-from pathlib import Path
-import tempfile
+import json
 import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -567,6 +568,43 @@ class DocumentDeletionTests(unittest.TestCase):
         self.assertEqual(execute.call_count, 1)
         self.assertEqual(execute.call_args.args[0]["id"], old_build["id"])
         self.assertEqual(jobs.job(old_build["id"])["status"], "succeeded")
+
+    def test_old_published_format_does_not_mark_document_purged_before_preflight(self):
+        target = self.upload("legacy-format.md")
+        self.build()
+        pointer = self.workspace.repository.current_pointer()
+        manifest_path = (
+            self.workspace.repository.root / pointer["generation"] / "manifest.json"
+        )
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["signature"]["version"] = 7
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        pointer["signature"]["version"] = 7
+        (self.workspace.repository.root / "current.json").write_text(
+            json.dumps(pointer), encoding="utf-8"
+        )
+
+        response = self.response("DELETE", self.path(target) + "?confirm=true")
+
+        self.assertEqual(response.status_code, 409)
+        self.assertIsNone(self.workspace.registry.get_document(target).purged_at)
+        source_path = self.workspace.registry.get_document(target).source_path
+        self.assertTrue(Path(source_path).exists())
+
+    def test_direct_delete_completes_legacy_purge_already_held_as_interrupted(self):
+        target = self.upload("legacy-purge.md")
+        jobs = self.service.indexing.jobs
+        old_purge = jobs.enqueue(self.kb, "purge", {"document_id": target})
+
+        Worker(self.service.indexing).run(once=True, desktop_safe_start=True)
+        self.assertEqual(jobs.job(old_purge["id"])["status"], "interrupted")
+
+        result = self.delete(target)
+
+        self.assertEqual(result["status"], "completed")
+        completed = jobs.job(old_purge["id"])
+        self.assertEqual(completed["status"], "succeeded")
+        self.assertTrue(json.loads(completed["result"])["completed_directly"])
 
 
 if __name__ == "__main__":

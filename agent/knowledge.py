@@ -33,16 +33,20 @@ class RAGKnowledge:
             follow_redirects=False,
         )
 
-    def search(self, query, *, queries=(), top_k=5):
+    def search(self, query, *, queries=(), top_k=5, min_score=None, include_trace=False):
+        payload = {
+            "query": query,
+            "queries": list(queries),
+            "knowledge_base_ids": self.knowledge_base_ids,
+            "top_k": top_k,
+            "include_trace": include_trace,
+        }
+        if min_score is not None:
+            payload["min_score"] = min_score
         try:
             response = self.client.post(
                 "/api/v1/search",
-                json=dict(
-                    query=query,
-                    queries=list(queries),
-                    knowledge_base_ids=self.knowledge_base_ids,
-                    top_k=top_k,
-                ),
+                json=payload,
             )
         except httpx.TimeoutException as exc:
             raise KnowledgeUnavailable("timeout", True) from exc
