@@ -4,3 +4,13 @@
 *.xlsx binary
 *.pptx binary
 *.png binary
+
+# Benchmark hashes must survive Windows checkout without newline conversion.
+tests/rag_benchmark/documents/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+tests/rag_benchmark/dataset/*.json* -text whitespace=trailing-space,space-before-tab,cr-at-eol
+tests/rag_benchmark/manifest.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+evaluation_results/baselines/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+*.zip binary
+
+# Extended benchmark inputs are immutable, hash-checked bytes.
+tests/rag_benchmark/v1/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

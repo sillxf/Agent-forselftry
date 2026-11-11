@@ -1,0 +1,1586 @@
+{
+  "dataset_sha256": "070cda0b190aa3b41f2ad058ecf9a28f1190e6d11c693fcb5f776646cbb38cbf",
+  "notes_sha256": "05f75d0d83aeb53bfda524965e330c1bbad4bb6d9adee4130b1d0f53b0536ae0",
+  "questions": [
+    {
+      "question_id": "rag_001",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b1-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "c2440acc-92b4-55a1-8358-fc947f7295d9"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1059.001: PowerShell"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "T1059.001: PowerShell",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 21,
+          "matching_child_ids": [
+            "540ea747-41da-59ee-8cfc-15ec29520986"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "固定 ATT&CK T1059.001 标题直接给出 PowerShell 名称；未引用在线最新版。",
+        "human_decisions": [
+          "确认标题正文证据口径，是否另行评价章节元数据中的答案。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_002",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b20-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "a48dc3aa-8f9c-5c85-b374-1f7e73d0822a"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1110: Brute Force"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "T1110: Brute Force",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 18,
+          "matching_child_ids": [
+            "1ba1ee21-8635-5711-915e-773ef0e6ad7c"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "T1110 与 Brute Force 的对应关系有直接标题证据；排名第一的文档总标题不包含该对应关系。",
+        "human_decisions": [
+          "核准“空泛总标题命中”属于排序失败，而非标注遗漏。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_003",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b33-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "ff189459-e060-5175-9606-305270c8b3e2"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1078: Valid Accounts"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "T1078: Valid Accounts",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 21,
+          "matching_child_ids": [
+            "e016b4d5-29d9-5a36-be29-4f56084c78a0"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "T1078 标题直接给出 Valid Accounts；部分 Child 正文未重现标题，但 section_path 已含答案。",
+        "human_decisions": [
+          "决定是否保留当前“只计正文证据”的统一口径；不要仅为本题放宽。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_004",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b1-1",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "5e57aec8-0467-56af-ae82-5d6a0ddc5fb1"
+          ],
+          "section_path": [
+            "Testing for SQL Injection"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "ID: WSTG-INPV-05",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 16,
+          "matching_child_ids": [
+            "61bc522d-f34a-5400-b47a-c5aeaacfe63c"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "WSTG-INPV-05 位于文件开头 ID 表中；命中文档标题并不能单独回答编号。",
+        "human_decisions": [
+          "确认 Child 缺失而 Parent 命中的情况单独报告，不合并两层 Recall。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_005",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "continued_rules-b1-1",
+          "alternative_number": 0,
+          "document_id": "87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd",
+          "source": "continued_rules.pdf",
+          "source_block_ids": [
+            "0a3d43db-7507-5175-932e-b0e4c63d7cc4",
+            "23a74a07-c821-5432-9917-c1bcab1862ff"
+          ],
+          "section_path": [
+            "Detection Rules"
+          ],
+          "page_number": 1,
+          "page_end": 2,
+          "text_quote": "Rule ID: R002\nSeverity: Critical\nResponse: Isolate",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 50,
+          "matching_child_ids": [
+            "99eecf64-305c-506a-b474-55f527d252a6"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "PDF 第一页的 R002 行为 Critical / Isolate；合并表的索引页范围为 1–2。",
+        "human_decisions": [
+          "确认页范围表示合并证据范围，不伪造为精确行级页码。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_006",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b7-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "33fd520c-129b-5f4b-8df8-a97aacf70b18"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1059.001: PowerShell"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "PowerShell may also be used to download and run executables from the Internet, which can be executed from disk or in memory without touching disk.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 146,
+          "matching_child_ids": [
+            "540ea747-41da-59ee-8cfc-15ec29520986"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "PowerShell 描述明确允许下载后从内存执行，不需首先写入磁盘。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_007",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b21-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "4d51492c-82c9-5070-bbb3-9fdb5fbfde4f"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1110: Brute Force"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "offline against previously acquired credential data, such as password hashes.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 77,
+          "matching_child_ids": [
+            "1ba1ee21-8635-5711-915e-773ef0e6ad7c"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "离线口令猜测与 password hashes 在同一原文句子中；缩短 anchor 去掉无关在线验证背景。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_008",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b35-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "bb628f12-2e55-5087-9388-86597c2be15c"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1078: Valid Accounts"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "the original account user will not be present to identify any anomalous activity taking place on their account.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 111,
+          "matching_child_ids": [
+            "e016b4d5-29d9-5a36-be29-4f56084c78a0",
+            "f0f5770b-8bea-5b73-bb4b-ad730c26d616"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 2,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "停用账户原使用者无法发现异常是原文明示的规避检测理由；保留完整因果片段。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_009",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b17-1",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "43da13f1-0522-5462-9973-325458b7c9e8"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "Summary"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Inferential or Blind: there is no actual transfer of data, but the tester is able to reconstruct the information by sending particular requests and observing the resulting behavior of the DB Server.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 198,
+          "matching_child_ids": [
+            "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "Summary 的 Blind 定义完整支持无直接数据传输、通过请求/行为重构信息。",
+        "human_decisions": [
+          "判断 Boolean/Time Delay 后续实例是否应作为额外替代证据；目前不把含 blind 一词的任意片段都算正确。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_010",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "nist_sp80061r3_pp10-12-b1-1",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "ff45e0e6-d8a0-516a-9adf-527fecaebd31"
+          ],
+          "section_path": [],
+          "page_number": 1,
+          "page_end": 1,
+          "text_quote": "Within this document, an event is any observable occurrence that involves computing assets, including physical and virtual platforms, networks, services, and cloud environments.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 177,
+          "matching_child_ids": [
+            "0054058a-7844-5b98-9ada-06310a90907e"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "NIST 节选物理第 1 页支持事件定义；不是原 PDF 的物理第 1 页。",
+        "human_decisions": [
+          "核对原始标题 1. Introduction；解析得到的 section_path 不等于可靠的原始层级。"
+        ],
+        "human_review_required": true,
+        "visible_source_section": [
+          "1. Introduction"
+        ]
+      }
+    },
+    {
+      "question_id": "rag_011",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "brute_force-b10-1",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "c74f8193-1c4e-505f-8635-a2ee3765eb35"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Block suspicious IP",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 19,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b11-2",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "e4c5acd1-6a01-5eb2-b76f-921c176f8483"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Enable MFA",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 10,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b12-3",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "fdc90658-40c0-5122-b255-1b934a93812b"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Investigate affected accounts",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 29,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "本地 brute_force.md Response 的三个动作均已标注；保留中文问题与英文语料，不改写为更容易检索的问法。",
+        "human_decisions": [
+          "确认跨语言查询是预期使用场景；先核准标签，再解释检索失败。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_012",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "malware-b17-1",
+          "alternative_number": 0,
+          "document_id": "3e305e96177e5e472096791b6977d6a6ca821cbe1e478eba62b47492cd5e37fa",
+          "source": "malware.md",
+          "source_block_ids": [
+            "cddc7cd0-ca46-5b71-9ce2-04c512eba076"
+          ],
+          "section_path": [
+            "Malware",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Reset compromised credentials",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 29,
+          "matching_child_ids": [
+            "e09b2a00-f3d5-5eb6-bc06-82b042f21798"
+          ]
+        },
+        {
+          "evidence_id": "malware-b18-2",
+          "alternative_number": 0,
+          "document_id": "3e305e96177e5e472096791b6977d6a6ca821cbe1e478eba62b47492cd5e37fa",
+          "source": "malware.md",
+          "source_block_ids": [
+            "192826d3-d01b-531a-b2f0-c19e1f69f940"
+          ],
+          "section_path": [
+            "Malware",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Restore systems from clean backups",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 34,
+          "matching_child_ids": [
+            "e09b2a00-f3d5-5eb6-bc06-82b042f21798"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "malware.md 直接列出重置受损凭证与从干净备份恢复两项措施。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_013",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "malware-b14-1",
+          "alternative_number": 0,
+          "document_id": "3e305e96177e5e472096791b6977d6a6ca821cbe1e478eba62b47492cd5e37fa",
+          "source": "malware.md",
+          "source_block_ids": [
+            "673d2578-1560-51e1-a55a-1323de1d3798"
+          ],
+          "section_path": [
+            "Malware",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Isolate affected systems from the network",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 41,
+          "matching_child_ids": [
+            "e09b2a00-f3d5-5eb6-bc06-82b042f21798"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "malware.md 的隔离步骤是指定来源；普通响应清单中的同名隔离动作不自动视为同一语境证据。",
+        "human_decisions": [
+          "确认提问中的 malware checklist 来源约束是否符合实际用户需求。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_014",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "sql_injection-b9-1",
+          "alternative_number": 0,
+          "document_id": "43df01ed52ac2c6a53b1c3bfd828f33e26dba7f78724daeb4aeb003860b73943",
+          "source": "sql_injection.md",
+          "source_block_ids": [
+            "e13ebf1a-556b-55b7-9bf3-e89f062b4bf6"
+          ],
+          "section_path": [
+            "SQL Injection",
+            "Prevention"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Prepared statements",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 19,
+          "matching_child_ids": [
+            "733dd27d-f7b2-5223-a487-c6d64e95c953"
+          ]
+        },
+        {
+          "evidence_id": "sql_injection-b10-2",
+          "alternative_number": 0,
+          "document_id": "43df01ed52ac2c6a53b1c3bfd828f33e26dba7f78724daeb4aeb003860b73943",
+          "source": "sql_injection.md",
+          "source_block_ids": [
+            "4dfe812d-d459-533d-ae8a-6066c26ecc95"
+          ],
+          "section_path": [
+            "SQL Injection",
+            "Prevention"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Input validation",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 16,
+          "matching_child_ids": [
+            "733dd27d-f7b2-5223-a487-c6d64e95c953"
+          ]
+        },
+        {
+          "evidence_id": "sql_injection-b11-3",
+          "alternative_number": 0,
+          "document_id": "43df01ed52ac2c6a53b1c3bfd828f33e26dba7f78724daeb4aeb003860b73943",
+          "source": "sql_injection.md",
+          "source_block_ids": [
+            "0c38339f-b554-59f9-a5cd-c230f13ef0d7"
+          ],
+          "section_path": [
+            "SQL Injection",
+            "Prevention"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Least privilege",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 15,
+          "matching_child_ids": [
+            "733dd27d-f7b2-5223-a487-c6d64e95c953"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "本地 SQL 注入文件列出 prepared statements、input validation、least privilege；链接到其他指南不等于其内容已入库。",
+        "human_decisions": [
+          "确认中文查询与指定本地来源约束；不可用外部未入库知识补标签。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_015",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "nist_sp80061r3_pp10-12-b38-1",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+          ],
+          "section_path": [
+            "2.1. Incident Response Life Cycle Model",
+            "Containment"
+          ],
+          "page_number": 3,
+          "page_end": 3,
+          "text_quote": "The lessons learned during incident response should often be shared as soon as they are identified, not delayed until after recovery concludes.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 143,
+          "matching_child_ids": [
+            "2fc6b299-365e-56c9-8c6a-8e3b4f4f17a9",
+            "28d6194d-ece9-50be-b310-cc54cd624ee8"
+          ]
+        },
+        {
+          "evidence_id": "nist-modern-incident-complexity",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+          ],
+          "section_path": [
+            "2.1. Incident Response Life Cycle Model",
+            "Containment"
+          ],
+          "page_number": 3,
+          "page_end": 3,
+          "text_quote": "Today, incidents occur frequently and cause far more damage. Recovering from them often takes weeks or months due to their breadth, complexity, and dynamic nature.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 163,
+          "matching_child_ids": [
+            "2fc6b299-365e-56c9-8c6a-8e3b4f4f17a9"
+          ]
+        },
+        {
+          "evidence_id": "nist-continuous-improvement",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+          ],
+          "section_path": [
+            "2.1. Incident Response Life Cycle Model",
+            "Containment"
+          ],
+          "page_number": 3,
+          "page_end": 3,
+          "text_quote": "Continuous improvement is increasingly necessary for all facets of cybersecurity risk management in order to keep up with modern threats.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 137,
+          "matching_child_ids": [
+            "28d6194d-ece9-50be-b310-cc54cd624ee8"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 2,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "旧引用只重复“及时分享”的要求，不能完整解释原因；保留该时机主张，补充现代事件复杂性与持续改进两项解释性事实。",
+        "human_decisions": [
+          "确认时机主张及两项原因是否均为本题必要事实，并核准分级相关性；不能把图中的旧版生命周期结论当作现代建议。"
+        ],
+        "human_review_required": true,
+        "visible_source_section": [
+          "2. Incident Response as Part of Cybersecurity Risk Management",
+          "2.1. Incident Response Life Cycle Model"
+        ],
+        "metadata_issue": "Diagram label Containment was treated as a native section heading and contaminates the later section path."
+      }
+    },
+    {
+      "question_id": "rag_016",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "continued_rules-b1-1",
+          "alternative_number": 0,
+          "document_id": "87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd",
+          "source": "continued_rules.pdf",
+          "source_block_ids": [
+            "0a3d43db-7507-5175-932e-b0e4c63d7cc4",
+            "23a74a07-c821-5432-9917-c1bcab1862ff"
+          ],
+          "section_path": [
+            "Detection Rules"
+          ],
+          "page_number": 1,
+          "page_end": 2,
+          "text_quote": "Rule ID: R004\nSeverity: High\nResponse: Block",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 44,
+          "matching_child_ids": [
+            "b183339e-ab70-5672-9df8-a0d4b54a9958"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "R004 在 PDF 第二页，High / Block；该表原始跨页来源可追溯，合并后的字段仅提供 1–2 范围。",
+        "human_decisions": [
+          "是否后续需要行级页码：本轮不把合并页范围改装成精确行定位。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_017",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "continued_rules-b1-1",
+          "alternative_number": 0,
+          "document_id": "87510542255f99549117a1506c95237fab2294df0f2ca0288eb3f7c48c6979cd",
+          "source": "continued_rules.pdf",
+          "source_block_ids": [
+            "0a3d43db-7507-5175-932e-b0e4c63d7cc4",
+            "23a74a07-c821-5432-9917-c1bcab1862ff"
+          ],
+          "section_path": [
+            "Detection Rules"
+          ],
+          "page_number": 1,
+          "page_end": 2,
+          "text_quote": "Rule ID: R003\nSeverity: Medium\nResponse: Review",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 47,
+          "matching_child_ids": [
+            "b71a8739-7d34-54fe-8a03-2e010628fe27"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "R003 在第二页，Medium / Review；不是任意命中同一表都可作答。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_018",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "numbered_steps-b1-1",
+          "alternative_number": 0,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "34337ceb-b993-5c48-af5a-98498100cf5a"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "1. Check firewall configuration",
+          "relevance_grade": 3,
+          "alternatives": [
+            {
+              "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+              "source": "numbered_steps.docx",
+              "source_block_ids": [
+                "0399ed62-9955-5a35-9f8a-1775a5ca6523"
+              ],
+              "section_path": [
+                "Response checklist"
+              ],
+              "page_number": null,
+              "page_end": null,
+              "text_quote": "1. 检查防火墙配置"
+            }
+          ],
+          "quote_characters": 31,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        },
+        {
+          "evidence_id": "numbered_steps-b1-1",
+          "alternative_number": 1,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "0399ed62-9955-5a35-9f8a-1775a5ca6523"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "1. 检查防火墙配置",
+          "quote_characters": 10,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        },
+        {
+          "evidence_id": "numbered_steps-b2-2",
+          "alternative_number": 0,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "aec40a56-e98b-5dcf-943a-e3c9512395d8"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "2. Collect authentication logs",
+          "relevance_grade": 3,
+          "alternatives": [
+            {
+              "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+              "source": "numbered_steps.docx",
+              "source_block_ids": [
+                "1ab919e2-3620-5597-9e98-b8b94a223c6d"
+              ],
+              "section_path": [
+                "Response checklist"
+              ],
+              "page_number": null,
+              "page_end": null,
+              "text_quote": "2. 收集认证日志"
+            }
+          ],
+          "quote_characters": 30,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        },
+        {
+          "evidence_id": "numbered_steps-b2-2",
+          "alternative_number": 1,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "1ab919e2-3620-5597-9e98-b8b94a223c6d"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "2. 收集认证日志",
+          "quote_characters": 9,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        },
+        {
+          "evidence_id": "numbered_steps-b3-3",
+          "alternative_number": 0,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "4c284a64-54ca-5487-a6c4-5d69aa0e3c81"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "3. Isolate affected hosts",
+          "relevance_grade": 3,
+          "alternatives": [
+            {
+              "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+              "source": "numbered_steps.docx",
+              "source_block_ids": [
+                "a390c03e-eeaa-5e65-9e46-831ddbfbd5ae"
+              ],
+              "section_path": [
+                "Response checklist"
+              ],
+              "page_number": null,
+              "page_end": null,
+              "text_quote": "3. 隔离受影响主机"
+            }
+          ],
+          "quote_characters": 25,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        },
+        {
+          "evidence_id": "numbered_steps-b3-3",
+          "alternative_number": 1,
+          "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+          "source": "numbered_steps.docx",
+          "source_block_ids": [
+            "a390c03e-eeaa-5e65-9e46-831ddbfbd5ae"
+          ],
+          "section_path": [
+            "Response checklist"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "3. 隔离受影响主机",
+          "quote_characters": 10,
+          "matching_child_ids": [
+            "5d5c299e-dc40-52e3-b592-38fe68895a1a"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "同一 DOCX 的中英文编号列表重复相同三步；新增三个中文替代位置，每个事实仍只计一次。",
+        "human_decisions": [
+          "核准中英文语义对应与顺序；不能要求必须同时召回两种语言版本。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_019",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "sentence_continuation-b1-1",
+          "alternative_number": 0,
+          "document_id": "f6a0fa52f99b5e686bbfd5b355af7e908f562705a6f8895a01a2c2ce0c46a4ca",
+          "source": "sentence_continuation.pdf",
+          "source_block_ids": [
+            "a29b1520-dbe7-59b7-8f00-c089f5767197"
+          ],
+          "section_path": [
+            "Authentication investigation"
+          ],
+          "page_number": 1,
+          "page_end": 2,
+          "text_quote": "The authentication rule checks events, then correlates failed login attempts across accounts.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 93,
+          "matching_child_ids": [
+            "ef204da5-aaba-5b71-b07f-e8547de83589"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "两页续句连接后完整表达检查事件再关联跨账户失败登录；源 ID 和页范围均保留。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_020",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b34-1",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "2a3b25de-590d-55a4-a251-2cfef4274def"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "How to Test",
+            "Detection Techniques"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "The tester has to make a list of all input fields whose values could be used in crafting a SQL query, including the hidden fields of POST requests and then test them separately, trying to interfere with the query and to generate an error. Consider also HTTP headers and Cookies.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 278,
+          "matching_child_ids": [
+            "169a848c-8109-55ab-9ffb-e2b303a46899"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "OWASP Detection Techniques 原文明确要求包含 hidden POST、HTTP headers、Cookies；完整片段在当前 Child 中可定位。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_021",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b15-1",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "ca6280cf-0816-550f-8857-089ee53e158d"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "Summary"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Inband: data is extracted using the same channel that is used to inject the SQL code.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 85,
+          "matching_child_ids": [
+            "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+          ]
+        },
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b16-2",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "f2a22a75-f5e5-51f3-a548-4d7639e958b8"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "Summary"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Out-of-band: data is retrieved using a different channel",
+          "relevance_grade": 3,
+          "alternatives": [
+            {
+              "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+              "source": "owasp_wstg_v4_2_sql_injection.md",
+              "source_block_ids": [
+                "27bb783b-3793-5506-8d5a-98d5e9581fc4"
+              ],
+              "section_path": [
+                "Testing for SQL Injection",
+                "Summary"
+              ],
+              "page_number": null,
+              "page_end": null,
+              "text_quote": "Out-of-band: technique used to retrieve data using a different channel"
+            }
+          ],
+          "quote_characters": 56,
+          "matching_child_ids": [
+            "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+          ]
+        },
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b16-2",
+          "alternative_number": 1,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "27bb783b-3793-5506-8d5a-98d5e9581fc4"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "Summary"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Out-of-band: technique used to retrieve data using a different channel",
+          "quote_characters": 70,
+          "matching_child_ids": [
+            "4a868b13-59ee-51d9-8ec2-8f9151d99c8c",
+            "0c4540cf-878d-5a57-a41a-a0fc9a97b554"
+          ]
+        },
+        {
+          "evidence_id": "owasp_wstg_v4_2_sql_injection-b17-3",
+          "alternative_number": 0,
+          "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+          "source": "owasp_wstg_v4_2_sql_injection.md",
+          "source_block_ids": [
+            "43da13f1-0522-5462-9973-325458b7c9e8"
+          ],
+          "section_path": [
+            "Testing for SQL Injection",
+            "Summary"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Inferential or Blind: there is no actual transfer of data, but the tester is able to reconstruct the information by sending particular requests and observing the resulting behavior of the DB Server.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 198,
+          "matching_child_ids": [
+            "9e442b7d-ac16-5d43-8fe3-a3bfb4317505"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 3,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "三类信息获取方式定义均有来源；后面的 Out-of-band technique 描述是相同事实的另一位置，已作为 OR 替代。",
+        "human_decisions": [
+          "核准两处 Out-of-band 证据等价，而非增加必须召回的第四个事实。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_022",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "nist_sp80061r3_pp10-12-b14-1",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+          ],
+          "section_path": [
+            "A cybersecurity incident (or simply incident) is"
+          ],
+          "page_number": 2,
+          "page_end": 2,
+          "text_quote": "Because the details of how to perform incident response activities change so often and vary so much across technologies, environments, and organizations, it is no longer feasible to capture and maintain that information in a single static publication.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 251,
+          "matching_child_ids": [
+            "a08d6629-2a2f-5dd4-8c6f-f4f0ddd08215"
+          ]
+        },
+        {
+          "evidence_id": "nist_sp80061r3_pp10-12-b14-2",
+          "alternative_number": 0,
+          "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+          "source": "nist_sp80061r3_pp10-12.pdf",
+          "source_block_ids": [
+            "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+          ],
+          "section_path": [
+            "A cybersecurity incident (or simply incident) is"
+          ],
+          "page_number": 2,
+          "page_end": 2,
+          "text_quote": "this version focuses on improving cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 127,
+          "matching_child_ids": [
+            "a08d6629-2a2f-5dd4-8c6f-f4f0ddd08215",
+            "264e4e0b-0ed0-51e7-82b1-2ec23a007ea7"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 2,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "NIST Scope 明示细节变化太快，转向所有 CSF 2.0 Functions；两条必要事实均在节选第二页。",
+        "human_decisions": [
+          "实际标题应为 1.1 Purpose and Scope；当前解析路径受前一处非章节标题影响，需单列 Metadata 缺陷。"
+        ],
+        "human_review_required": true,
+        "visible_source_section": [
+          "1. Introduction",
+          "1.1. Purpose and Scope"
+        ],
+        "metadata_issue": "Parser carries the incident-definition line as a heading into Purpose and Scope; source heading is different."
+      }
+    },
+    {
+      "question_id": "rag_023",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b5-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "a3d32a81-9c33-58d7-bb87-3e48ded23c83"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1059.001: PowerShell"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Invoke-Command",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 14,
+          "matching_child_ids": [
+            "540ea747-41da-59ee-8cfc-15ec29520986"
+          ]
+        },
+        {
+          "evidence_id": "mitre_attack_v17_1-b6-2",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "05d2351c-251b-5dc8-9104-11f43821c958"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1059.001: PowerShell"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "administrator permissions are required to use PowerShell to connect to remote systems",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 85,
+          "matching_child_ids": [
+            "540ea747-41da-59ee-8cfc-15ec29520986"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 1,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "Invoke-Command 与远程管理员权限分别被解析成两个相邻片段；两个事实都已标注。",
+        "human_decisions": [],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_024",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "brute_force-b6-1",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "efffc5d5-51e8-5756-bb79-b4c0dfc8bc6b"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Detection"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Same source IP attacking multiple accounts",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 42,
+          "matching_child_ids": [
+            "bdff355c-a9d0-524a-9d2f-5a595b19db8a"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b7-2",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "6423c98c-3b78-50dc-9d12-d5d4dad460e9"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Detection"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "High frequency authentication failures",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 38,
+          "matching_child_ids": [
+            "bdff355c-a9d0-524a-9d2f-5a595b19db8a"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b10-3",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "c74f8193-1c4e-505f-8635-a2ee3765eb35"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Block suspicious IP",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 19,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b11-4",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "e4c5acd1-6a01-5eb2-b76f-921c176f8483"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Enable MFA",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 10,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        },
+        {
+          "evidence_id": "brute_force-b12-5",
+          "alternative_number": 0,
+          "document_id": "219450061de1a4e313195418629a3092055a4129f1ec565cc80cd72d63aa65aa",
+          "source": "brute_force.md",
+          "source_block_ids": [
+            "fdc90658-40c0-5122-b255-1b934a93812b"
+          ],
+          "section_path": [
+            "Brute Force Attack",
+            "Response"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Investigate affected accounts",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 29,
+          "matching_child_ids": [
+            "248d9fc6-316f-5292-a86c-63d04e9b9451"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 2,
+      "positive_parent_units": 2,
+      "notes": {
+        "source_audit_note": "跨账户/高频失败在 Detection，三个措施在 Response，共五个必要事实，跨两个 Parent。",
+        "human_decisions": [
+          "确认是否确需完整五项，避免以答案冗余内容制造过严 Recall 分母。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_025",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [
+        {
+          "evidence_id": "mitre_attack_v17_1-b34-1",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "9df49cee-b541-5e50-a1db-22159ec3bf17"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1078: Valid Accounts"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "Compromised credentials may be used to bypass access controls",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 61,
+          "matching_child_ids": [
+            "e016b4d5-29d9-5a36-be29-4f56084c78a0"
+          ]
+        },
+        {
+          "evidence_id": "mitre_attack_v17_1-b36-2",
+          "alternative_number": 0,
+          "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+          "source": "mitre_attack_v17_1.md",
+          "source_block_ids": [
+            "b96b8f17-37a3-5d39-b01e-c367ec19ce11"
+          ],
+          "section_path": [
+            "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+            "T1078: Valid Accounts"
+          ],
+          "page_number": null,
+          "page_end": null,
+          "text_quote": "The overlap of permissions for local, domain, and cloud accounts across a network of systems is of concern because the adversary may be able to pivot across accounts and systems to reach a high level of access (i.e., domain or enterprise administrator) to bypass access controls set within the enterprise.",
+          "relevance_grade": 3,
+          "alternatives": [],
+          "quote_characters": 305,
+          "matching_child_ids": [
+            "f0f5770b-8bea-5b73-bb4b-ad730c26d616"
+          ]
+        }
+      ],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 2,
+      "positive_parent_units": 1,
+      "notes": {
+        "source_audit_note": "两个 ATT&CK 段落分别支持访问控制绕过和跨账户权限提升；去掉引用标记而未删语义条件。",
+        "human_decisions": [
+          "这些是参考风险，不表示当前告警已发生凭证滥用或提权。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_026",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 0,
+      "positive_parent_units": 0,
+      "notes": {
+        "source_audit_note": "冻结语料是公开指引与合成样例，没有 Acme 生产密钥或部署记录。",
+        "human_decisions": [
+          "人工确认整个冻结语料不能回答；不能把示例密码或 SQL 测试字符串当作生产密钥。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_027",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 0,
+      "positive_parent_units": 0,
+      "notes": {
+        "source_audit_note": "虚构 CVE-2099-99999 及专属 IOC 不在冻结知识库。",
+        "human_decisions": [
+          "确认不可回答标签；相似攻击知识不是该虚构编号的 IOC。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_028",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 0,
+      "positive_parent_units": 0,
+      "notes": {
+        "source_audit_note": "语料不包含 2026-10-31 的生产登录遥测或告警账户事实。",
+        "human_decisions": [
+          "该问题要求 observed_event，不能用 reference_knowledge 推断实际登录账户。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_029",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 0,
+      "positive_parent_units": 0,
+      "notes": {
+        "source_audit_note": "没有 QuantumShield X900 厂商手册或固件命令。",
+        "human_decisions": [
+          "确认整个语料没有可支持该专属命令的依据。"
+        ],
+        "human_review_required": true
+      }
+    },
+    {
+      "question_id": "rag_030",
+      "source_locations_valid": true,
+      "human_review_status": "pending",
+      "anchors": [],
+      "unreachable_positive_facts": [],
+      "positive_child_units": 0,
+      "positive_parent_units": 0,
+      "notes": {
+        "source_audit_note": "没有 ACME 该日期事件的损失记录。",
+        "human_decisions": [
+          "人工确认不可回答；不能从一般损害描述推算具体金额。"
+        ],
+        "human_review_required": true
+      }
+    }
+  ],
+  "all_source_locations_valid": true,
+  "all_positive_facts_reachable_in_index": true,
+  "human_review_pending": 30
+}

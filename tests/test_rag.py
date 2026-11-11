@@ -58,3 +58,18 @@ def test_identical_source_files_are_indexed_once(rag_factory):
     add_manual(rag_factory)
     (rag_factory.knowledge / "copy.md").write_bytes((rag_factory.knowledge / "manual.md").read_bytes())
     assert len(rag_factory().documents) == 1
+
+
+def test_embedding_model_change_builds_a_separate_generation(rag_factory):
+    import json
+
+    add_manual(rag_factory)
+    rag_factory(model_name="all-MiniLM-L6-v2")
+    pointer = rag_factory.storage / "indexes/current.json"
+    previous = json.loads(pointer.read_text(encoding="utf-8"))
+    retriever = rag_factory(model_name="BAAI/bge-m3")
+    current = json.loads(pointer.read_text(encoding="utf-8"))
+    assert current["signature"]["model"] == "BAAI/bge-m3"
+    assert current["generation"] != previous["generation"]
+    assert (pointer.parent / previous["generation"] / "faiss.index").exists()
+    assert retriever.search("failed login", 2)

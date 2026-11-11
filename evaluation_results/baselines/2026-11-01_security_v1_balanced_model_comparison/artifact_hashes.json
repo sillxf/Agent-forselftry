@@ -1,0 +1,11 @@
+{
+  "algorithm": "sha256",
+  "scope": "All files below this run directory except artifact_hashes.json itself",
+  "files": {
+    "code.json": "77d050ca70596c02947c9e6ef6b1edd2888a213c1bf0cf82ddcb218fe05b80bd",
+    "english_queries.json": "fc5fb10ceb476a4fb6388a1ea0ad81ff32bc4c53cb24c2464a40c775a9415c02",
+    "source_snapshot.zip": "db614a652029bfe56c14693640c329e4cbbbf8d1c9c293459fbed08f5d23b982",
+    "status.json": "65155da55db4f6173718e01c4e6cffadd4d735a43d88f0ff551601d3aac2deec",
+    "wiring_verification.json": "65532f52d24a75b7a20173daca457acd9345e7695c40803514b5ea6dfda2e61d"
+  }
+}

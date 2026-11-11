@@ -1,0 +1,24 @@
+{
+  "created_at": "2026-11-01T20:11:20.998125+08:00",
+  "dataset_sha256": "0d1c86f478883b3b385e01828f5fddc9ac37f6df44e7bcc955fc88bca4ef37e3",
+  "ground_truth_shared": true,
+  "frozen_chunk_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_balanced_minilm",
+  "translations_sha256": "fc5fb10ceb476a4fb6388a1ea0ad81ff32bc4c53cb24c2464a40c775a9415c02",
+  "translation_review_status": "pending, not human-certified",
+  "cross_encoder": false,
+  "production_changes": false,
+  "A": {
+    "status": "completed",
+    "metrics_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_balanced_minilm\\hybrid\\multik_metrics.json"
+  },
+  "B": {
+    "status": "unavailable",
+    "model": "BAAI/bge-m3",
+    "reason": "Model config/weights are not cached locally; --offline forbids downloading. No BGE vectors, scores or winning-model claim were produced."
+  },
+  "C": {
+    "status": "unavailable",
+    "model": "BAAI/bge-m3",
+    "reason": "Model config/weights are not cached locally; --offline forbids downloading. No BGE vectors, scores or winning-model claim were produced."
+  }
+}

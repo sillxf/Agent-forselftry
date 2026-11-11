@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "translation_method": "AI-prepared fixed literal translations; no answer text or query expansion",
+  "review_status": "pending",
+  "reviewer": null,
+  "questions": [
+    {
+      "question_id": "rag_011",
+      "original_query": "暴力破解告警的本地响应清单建议采取哪些措施？",
+      "english_query": "What actions does the local brute-force alert response checklist recommend?",
+      "semantic_check": "保留本地/告警响应清单/哪些措施的范围；brute-force 是暴力破解的术语翻译，没有添加 IP、MFA 或其他答案词。尚需人工确认。"
+    },
+    {
+      "question_id": "rag_014",
+      "original_query": "本地 SQL 注入知识库列出了哪些预防措施？",
+      "english_query": "What prevention measures are listed in the local SQL injection knowledge base?",
+      "semantic_check": "保留本地/SQL 注入/预防措施的范围，没有添加 prepared statements 等答案词。尚需人工确认。"
+    }
+  ]
+}

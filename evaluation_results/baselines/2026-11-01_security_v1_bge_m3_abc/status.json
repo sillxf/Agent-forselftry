@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-11-01T21:41:10.899643+08:00",
+  "dataset_sha256": "0d1c86f478883b3b385e01828f5fddc9ac37f6df44e7bcc955fc88bca4ef37e3",
+  "ground_truth_shared": true,
+  "frozen_chunk_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_balanced_minilm",
+  "translations_sha256": "f8df84debee587a805b4370ac969efcb39216ea74e08a5896e2815ab47549d01",
+  "translation_review_status": "pending, not human-certified",
+  "cross_encoder": false,
+  "production_changes": false,
+  "A": {
+    "status": "completed",
+    "metrics_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_balanced_minilm\\hybrid\\multik_metrics.json"
+  },
+  "B": {
+    "status": "completed",
+    "model": "BAAI/bge-m3",
+    "metrics_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_bge_m3_abc\\B\\multik_metrics.json",
+    "embedding": {
+      "name": "BAAI/bge-m3",
+      "resolved_revision": "5617a9f61b028005a4858fdac845db406aefb181",
+      "weights_sha256": "bb5b2fc7aeec304b11a6a33dd1553fcb573cf79e3b8f68c4c2afbe7d3a63bd4e",
+      "tokenizer_sha256": "ce00ba030a7522ef58a8fc3ef6340f3994be0627deb0ba08519e9f7fd7cff6e0",
+      "max_sequence_length": 8192,
+      "device": "cpu"
+    }
+  },
+  "C": {
+    "status": "completed",
+    "model": "BAAI/bge-m3",
+    "metrics_reference": "D:\\AI-SecOps-Agent\\evaluation_results\\baselines\\2026-11-01_security_v1_bge_m3_abc\\C\\multik_metrics.json",
+    "embedding": {
+      "name": "BAAI/bge-m3",
+      "resolved_revision": "5617a9f61b028005a4858fdac845db406aefb181",
+      "weights_sha256": "bb5b2fc7aeec304b11a6a33dd1553fcb573cf79e3b8f68c4c2afbe7d3a63bd4e",
+      "tokenizer_sha256": "ce00ba030a7522ef58a8fc3ef6340f3994be0627deb0ba08519e9f7fd7cff6e0",
+      "max_sequence_length": 8192,
+      "device": "cpu"
+    }
+  }
+}

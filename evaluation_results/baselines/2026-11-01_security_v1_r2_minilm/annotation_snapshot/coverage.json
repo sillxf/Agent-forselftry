@@ -1,0 +1,196 @@
+{
+  "audit_type": "AI source/structure checks, not human approval",
+  "legacy_dataset_sha256": "04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7",
+  "expanded_dataset_sha256": "620948c65adfe6a790cdafac35606f97028630b1f5f6ff85c6b24d20f02061bb",
+  "legacy": {
+    "questions": 30,
+    "answerable": 25,
+    "languages": {
+      "en": 26,
+      "mixed": 2,
+      "zh": 2
+    },
+    "topics": {
+      "account_abuse": 3,
+      "authentication": 4,
+      "credential_access": 1,
+      "detection_rules": 3,
+      "execution": 2,
+      "incident_response": 6,
+      "knowledge_gap": 5,
+      "remote_execution": 1,
+      "sql_injection": 5
+    },
+    "difficulty": {
+      "easy": 8,
+      "hard": 10,
+      "medium": 12
+    },
+    "question_types": {
+      "english": 15,
+      "mixed_terms": 2,
+      "paraphrase": 7,
+      "unanswerable": 5,
+      "zh_to_en": 1
+    },
+    "review_status": {
+      "pending": 30
+    },
+    "named_reviewers": 0,
+    "distinct_positive_sources": 9,
+    "distinct_source_quote_facts": 39,
+    "explicit_identifier_queries": [
+      "rag_001",
+      "rag_002",
+      "rag_003",
+      "rag_005",
+      "rag_016"
+    ],
+    "mean_english_query_token_overlap_with_gold": 0.3005591630591631,
+    "overlap_scope": "Non-stopword English query-token containment in positive quote text; this is a lexical proxy, not semantic hardness or a Chinese/English similarity metric.",
+    "overlapping_multi_document_questions": []
+  },
+  "expanded": {
+    "questions": 100,
+    "answerable": 90,
+    "languages": {
+      "en": 34,
+      "mixed": 15,
+      "zh": 51
+    },
+    "topics": {
+      "account_abuse": 6,
+      "authentication": 15,
+      "credential_access": 12,
+      "detection_rules": 3,
+      "execution": 25,
+      "incident_response": 11,
+      "knowledge_gap": 5,
+      "persistence": 6,
+      "remote_execution": 7,
+      "sql_injection": 10
+    },
+    "difficulty": {
+      "easy": 8,
+      "hard": 51,
+      "medium": 41
+    },
+    "question_types": {
+      "english": 15,
+      "mixed_terms": 15,
+      "multi_document": 5,
+      "paraphrase": 15,
+      "technique_confusion": 15,
+      "unanswerable": 10,
+      "zh_to_en": 25
+    },
+    "review_status": {
+      "pending": 100
+    },
+    "named_reviewers": 0,
+    "distinct_positive_sources": 21,
+    "distinct_source_quote_facts": 63,
+    "explicit_identifier_queries": [
+      "rag_001",
+      "rag_002",
+      "rag_003",
+      "rag_005",
+      "rag_016"
+    ],
+    "mean_english_query_token_overlap_with_gold": 0.24997331372331372,
+    "overlap_scope": "Non-stopword English query-token containment in positive quote text; this is a lexical proxy, not semantic hardness or a Chinese/English similarity metric.",
+    "overlapping_multi_document_questions": [
+      "rag_096",
+      "rag_097",
+      "rag_098",
+      "rag_099",
+      "rag_100"
+    ]
+  },
+  "corpus_documents": 21,
+  "inherited_core_fields_unchanged": true,
+  "all_100_evidence_locations_valid": true,
+  "new_question_ids": [
+    "rag_031",
+    "rag_032",
+    "rag_033",
+    "rag_034",
+    "rag_035",
+    "rag_036",
+    "rag_037",
+    "rag_038",
+    "rag_039",
+    "rag_040",
+    "rag_041",
+    "rag_042",
+    "rag_043",
+    "rag_044",
+    "rag_045",
+    "rag_046",
+    "rag_047",
+    "rag_048",
+    "rag_049",
+    "rag_050",
+    "rag_051",
+    "rag_052",
+    "rag_053",
+    "rag_054",
+    "rag_055",
+    "rag_056",
+    "rag_057",
+    "rag_058",
+    "rag_059",
+    "rag_060",
+    "rag_061",
+    "rag_062",
+    "rag_063",
+    "rag_064",
+    "rag_065",
+    "rag_066",
+    "rag_067",
+    "rag_068",
+    "rag_069",
+    "rag_070",
+    "rag_071",
+    "rag_072",
+    "rag_073",
+    "rag_074",
+    "rag_075",
+    "rag_076",
+    "rag_077",
+    "rag_078",
+    "rag_079",
+    "rag_080",
+    "rag_081",
+    "rag_082",
+    "rag_083",
+    "rag_084",
+    "rag_085",
+    "rag_086",
+    "rag_087",
+    "rag_088",
+    "rag_089",
+    "rag_090",
+    "rag_091",
+    "rag_092",
+    "rag_093",
+    "rag_094",
+    "rag_095",
+    "rag_096",
+    "rag_097",
+    "rag_098",
+    "rag_099",
+    "rag_100"
+  ],
+  "validation_index": {
+    "documents": 21,
+    "parents": 70,
+    "children": 301
+  },
+  "limitations": [
+    "All labels and literal English translations remain candidates pending review.",
+    "Inherited 010/015/024/025 wording/support concerns are preserved, not silently repaired.",
+    "Repeated facts across language variants are not independent examples; split future holdouts by fact family.",
+    "No Agent or generation/refusal evaluation is performed by this retrieval benchmark."
+  ]
+}

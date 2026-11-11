@@ -6,3 +6,7 @@ __pycache__/
 .DS_Store
 # Local parsed documents, extracted images and generated RAG indexes
 app/storage/
+
+# Keep selected baseline artifacts, not every local benchmark run.
+evaluation_results/*
+!evaluation_results/baselines/

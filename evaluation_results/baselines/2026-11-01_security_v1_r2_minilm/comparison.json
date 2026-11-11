@@ -1,0 +1,122 @@
+{
+  "dense": {
+    "questions": 100,
+    "answerable": 90,
+    "unanswerable": 10,
+    "pending_human_review": 100,
+    "errors": 0,
+    "child": {
+      "recall": 0.4166666666666667,
+      "precision": 0.09777777777777778,
+      "mrr": 0.3861111111111111,
+      "ndcg": 0.39142707946923466
+    },
+    "parent": {
+      "recall": 0.49166666666666664,
+      "precision": 0.10222222222222223,
+      "mrr": 0.43425925925925923,
+      "ndcg": 0.44884475443730915
+    },
+    "latency_ms": {
+      "mean": 9.936205000267364,
+      "p50": 9.798900005989708,
+      "p95": 12.414465003530495
+    },
+    "mean_candidate_count": 40,
+    "no_result_rate": 0,
+    "coverage_diagnostics": {
+      "child_hit_parent_miss_questions": 0,
+      "parent_hit_child_miss_questions": 8,
+      "missing_child_evidence_questions": 53,
+      "nonrelevant_top_k_child_results": 406
+    },
+    "unanswerable_stats": {
+      "questions": 10,
+      "returned_context_count": 10,
+      "no_result_count": 0,
+      "correct_refusal_rate": null,
+      "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+    },
+    "mean_parent_context_characters": 13720.59
+  },
+  "bm25": {
+    "questions": 100,
+    "answerable": 90,
+    "unanswerable": 10,
+    "pending_human_review": 100,
+    "errors": 0,
+    "child": {
+      "recall": 0.4388888888888889,
+      "precision": 0.09777777777777778,
+      "mrr": 0.3509259259259259,
+      "ndcg": 0.36403753125891036
+    },
+    "parent": {
+      "recall": 0.45555555555555555,
+      "precision": 0.09333333333333334,
+      "mrr": 0.36333333333333334,
+      "ndcg": 0.38775246461639884
+    },
+    "latency_ms": {
+      "mean": 2.4052999999548774,
+      "p50": 2.3864999966463074,
+      "p95": 4.012934992351802
+    },
+    "mean_candidate_count": 16.08,
+    "no_result_rate": 0.18,
+    "coverage_diagnostics": {
+      "child_hit_parent_miss_questions": 0,
+      "parent_hit_child_miss_questions": 2,
+      "missing_child_evidence_questions": 51,
+      "nonrelevant_top_k_child_results": 200
+    },
+    "unanswerable_stats": {
+      "questions": 10,
+      "returned_context_count": 6,
+      "no_result_count": 4,
+      "correct_refusal_rate": null,
+      "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+    },
+    "mean_parent_context_characters": 6702.75
+  },
+  "hybrid": {
+    "questions": 100,
+    "answerable": 90,
+    "unanswerable": 10,
+    "pending_human_review": 100,
+    "errors": 0,
+    "child": {
+      "recall": 0.46111111111111114,
+      "precision": 0.10666666666666667,
+      "mrr": 0.4216666666666667,
+      "ndcg": 0.4278338457230985
+    },
+    "parent": {
+      "recall": 0.5027777777777778,
+      "precision": 0.10444444444444445,
+      "mrr": 0.45925925925925926,
+      "ndcg": 0.46968805486296844
+    },
+    "latency_ms": {
+      "mean": 13.508377000252949,
+      "p50": 13.65734999126289,
+      "p95": 18.076720007957192
+    },
+    "mean_candidate_count": 49.05,
+    "no_result_rate": 0,
+    "coverage_diagnostics": {
+      "child_hit_parent_miss_questions": 0,
+      "parent_hit_child_miss_questions": 5,
+      "missing_child_evidence_questions": 49,
+      "nonrelevant_top_k_child_results": 402
+    },
+    "unanswerable_stats": {
+      "questions": 10,
+      "returned_context_count": 10,
+      "no_result_count": 0,
+      "correct_refusal_rate": null,
+      "reason": "Retrieval-only benchmark; returning a neighbour is not an answer or refusal."
+    },
+    "mean_parent_context_characters": 14709.57
+  }
+}

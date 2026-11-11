@@ -1,0 +1,130 @@
+{
+  "previous_dataset_sha256": "348ab0951186a1c873a7209cf3c378e13af215d74f31d8f6df141e7b4d1adbfc",
+  "dataset_sha256": "04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7",
+  "facts_answers_queries_quotes_grades_unchanged": true,
+  "corpus_unchanged": true,
+  "changes": [
+    {
+      "question_id": "rag_010",
+      "evidence_id": "nist_sp80061r3_pp10-12-b1-1",
+      "before_location": {
+        "section_path": [],
+        "page_number": 1,
+        "page_end": 1
+      },
+      "after_location": {
+        "section_path": [
+          "1. Introduction"
+        ],
+        "page_number": 1,
+        "page_end": 1
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    },
+    {
+      "question_id": "rag_015",
+      "evidence_id": "nist_sp80061r3_pp10-12-b38-1",
+      "before_location": {
+        "section_path": [
+          "2.1. Incident Response Life Cycle Model",
+          "Containment"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "after_location": {
+        "section_path": [
+          "2. Incident Response as Part of Cybersecurity Risk Management",
+          "2.1. Incident Response Life Cycle Model"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    },
+    {
+      "question_id": "rag_015",
+      "evidence_id": "nist-modern-incident-complexity",
+      "before_location": {
+        "section_path": [
+          "2.1. Incident Response Life Cycle Model",
+          "Containment"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "after_location": {
+        "section_path": [
+          "2. Incident Response as Part of Cybersecurity Risk Management",
+          "2.1. Incident Response Life Cycle Model"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    },
+    {
+      "question_id": "rag_015",
+      "evidence_id": "nist-continuous-improvement",
+      "before_location": {
+        "section_path": [
+          "2.1. Incident Response Life Cycle Model",
+          "Containment"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "after_location": {
+        "section_path": [
+          "2. Incident Response as Part of Cybersecurity Risk Management",
+          "2.1. Incident Response Life Cycle Model"
+        ],
+        "page_number": 3,
+        "page_end": 3
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    },
+    {
+      "question_id": "rag_022",
+      "evidence_id": "nist_sp80061r3_pp10-12-b14-1",
+      "before_location": {
+        "section_path": [
+          "A cybersecurity incident (or simply incident) is"
+        ],
+        "page_number": 2,
+        "page_end": 2
+      },
+      "after_location": {
+        "section_path": [
+          "1. Introduction",
+          "1.1. Purpose and Scope"
+        ],
+        "page_number": 2,
+        "page_end": 2
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    },
+    {
+      "question_id": "rag_022",
+      "evidence_id": "nist_sp80061r3_pp10-12-b14-2",
+      "before_location": {
+        "section_path": [
+          "A cybersecurity incident (or simply incident) is"
+        ],
+        "page_number": 2,
+        "page_end": 2
+      },
+      "after_location": {
+        "section_path": [
+          "1. Introduction",
+          "1.1. Purpose and Scope"
+        ],
+        "page_number": 2,
+        "page_end": 2
+      },
+      "reason": "Generic parser fix; source coordinates updated, not relevance/answer tuning"
+    }
+  ],
+  "from_version": "rag-benchmark-v0.3-fact-audited-candidate",
+  "to_version": "rag-benchmark-v0.3.1-structure-corrected-candidate"
+}

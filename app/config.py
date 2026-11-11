@@ -30,8 +30,8 @@ def _rag_path(name: str, default: str) -> Path:
 
 RAG_KNOWLEDGE_DIR = _rag_path("RAG_KNOWLEDGE_DIR", "app/knowledge")
 RAG_STORAGE_DIR = _rag_path("RAG_STORAGE_DIR", "app/storage")
-# Preserve the lightweight baseline; evaluate BAAI/bge-m3 via configuration.
-RAG_EMBEDDING_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+# Multilingual default validated by the Security RAG Benchmark; env overrides remain supported.
+RAG_EMBEDDING_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "BAAI/bge-m3")
 RAG_PARENT_MAX_TOKENS = int(os.getenv("RAG_PARENT_MAX_TOKENS", "1600"))
 RAG_CHILD_MAX_TOKENS = int(os.getenv("RAG_CHILD_MAX_TOKENS", "400"))
 RAG_CHILD_OVERLAP_TOKENS = int(os.getenv("RAG_CHILD_OVERLAP_TOKENS", "60"))

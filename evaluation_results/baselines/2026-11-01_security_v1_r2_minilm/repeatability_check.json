@@ -1,0 +1,10 @@
+{
+  "note": "Independent repeat of the first unbalanced design, before the r2 language revision; not the final balanced dataset despite the directory name.",
+  "semantic_rankings_equal": {
+    "dense": true,
+    "bm25": true,
+    "hybrid": true
+  },
+  "prior_run": "evaluation_results\\baselines\\2026-11-01_security_v1_minilm",
+  "final_reference": "evaluation_results\\baselines\\2026-11-01_security_v1_balanced_minilm"
+}

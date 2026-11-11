@@ -1,0 +1,23 @@
+{
+  "annotation_snapshot/annotation_changes.json": "fbd405f2efcd884600335b63682f12f824f9d6d9cb1cc4e860928432df3d8e46",
+  "annotation_snapshot/audit_notes.json": "18073e128b7bdf801598f0354854c15d5c602ac3fe53ed01df43c5b202bcd536",
+  "annotation_snapshot/dataset.json": "d43086f563a0f4e1f650afda805ade52d1e0fbea50dfb6abd098493d69c3c33b",
+  "annotation_snapshot/human_review.json": "9d8be95844533c9bd107971f791208aecfe90764892fde9c2a02dc56f03d6069",
+  "annotation_snapshot/human_review.md": "2d39910dc8e34ddb77fac80316d5acd52e581c6e58c63cfced070f95455da088",
+  "annotation_snapshot/phase2_annotation_changes.json": "ad34df8db25aa5a954c5113c87fb5763478b98b8a63007df88707649b9344228",
+  "annotation_snapshot/phase2_audit.md": "208dbab0c5550dc28c4f1603f84ee1b5d8ffabd2f451ca6cecc56f13314713d4",
+  "annotation_snapshot/phase2_review_notes_changes.json": "092334e2b2fc994ddb947c0ea9ec73f1ec85bdf24e91b83e16a4cd8684d7ac00",
+  "annotation_snapshot/phase2_structure_location_changes.json": "8fe32fc0704212555f29b4a6b143a40d03bfcc998246d181cac343f378e170c0",
+  "annotation_snapshot/questions.jsonl": "43d5c7cab1f12f5d1205ca600689deed10f65cce084969b1e5484d79d5d5997d",
+  "annotation_snapshot/README.md": "534c3e568edb067fbec0daf58a2a0adefa7c33b1135a967b85fefc2cee5b8860",
+  "annotation_snapshot/review.md": "5d9b7c2805e6a4f037ba266b895f6afa9485547b71ae7b3c1064991a26043574",
+  "corpus_manifest.json": "e5ed786f01adaf8544c70402773741991b4a31d71e5edabadd9c1d2ceab5e375",
+  "display_revision.json": "b7ff77f1fbc4a88b7e6f733a8fffadbf609f729e20d7ea77b3bea49323ef399e",
+  "observations.md": "abd19b632a484dae86185c2efd342e4550ebc0db109c485770a47561a2537e8d",
+  "results.jsonl": "f34a9adf83a0c86f36f67a59ef6b4aa60be4d5de7d46ac0be4177fc4406b014b",
+  "retrieval_reference.json": "582ab65ac5af58c8c09404ae84e32ef4781a7bd665f8187105bebfc69517f65b",
+  "review.html": "309f0cc33f858836959e08c63e0eb5f9a8039ccf15c39f46fdbf42ae81574a4f",
+  "review.md": "c01f01824ab994414ccbb356ad22360885476b006730fbc2eb1b47e498c06b74",
+  "run.json": "6d7354d86225c00c4c6cc9d16e91bf497303c116eafb3604612290111ca6f6e4",
+  "source_snapshot.zip": "5022a9cf5b3835754c28bbde05c4c1ebc56870032f8ddd42d530c140626a40ef"
+}

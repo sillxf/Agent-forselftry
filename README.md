@@ -64,8 +64,11 @@ untrusted reference data. Its analysis output schema is unchanged.
 ### Configuration and indexing
 
 Install `requirements.txt`; see `.env.example` for RAG settings. Relative paths resolve
-against the repository. The default embedding remains `all-MiniLM-L6-v2`; set
-`RAG_EMBEDDING_MODEL=BAAI/bge-m3` to evaluate the larger multilingual candidate.
+against the repository. The default embedding is `BAAI/bge-m3`, using the existing
+Dense + BM25 + RRF Hybrid retrieval. MiniLM is retained as a historical benchmark only.
+Remove an old `RAG_EMBEDDING_MODEL=all-MiniLM-L6-v2` override from your environment
+or change it to `BAAI/bge-m3`; then rebuild the index and restart the running service.
+The dual-query translation experiment is not enabled in production.
 Embedding and PDF layout/OCR models may download on first use.
 
 ```powershell
@@ -79,6 +82,10 @@ Embedding and PDF layout/OCR models may download on first use.
 `build=False` loads/builds on the first search. Initialization reuses an index when
 source hashes, model and chunk settings match. A running process retains its in-memory
 index until explicit rebuild or restart. Identical files are indexed once.
+Model changes create a new index generation; previous generations are retained.
+New BGE indexes use its tokenizer with the configured 400-token child cap, not the
+MiniLM-frozen 254-token chunks used in the A/B/C experiment; its scores are not
+a production acceptance result.
 
 Generated files live in the Git-ignored `app/storage/` directory:
 
@@ -188,3 +195,84 @@ Recommendation:
 Block IP
 Enable MFA
 Investigate account
+
+## RAG retrieval benchmark (candidate v0.3.1)
+
+Nine frozen documents and 30 English/Chinese questions are evaluated with Dense,
+BM25Plus and Hybrid RRF. Child retrieval and Parent context have separate metrics.
+
+```powershell
+python scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline
+# Only after real human review:
+python scripts/run_rag_benchmark.py --retriever all --offline --require-reviewed
+```
+
+**All 30 labels still need human review.** AI source checks are not approval.
+`--require-reviewed` rejects pending labels. These are development results, not a
+certified acceptance benchmark or an Agent accuracy/refusal evaluation.
+
+Phase 2 separates table-rule fact IDs, preserves equivalent evidence as OR
+alternatives, tests the existing `result-qrels-v2` metric contract and repairs PDF
+figure-label/heading/column mistakes using source layout. It does not change the
+production embedding model, RRF, Top-K or add a reranker. A separate four-group
+Chinese/English/multilingual/dual-query experiment keeps original queries frozen.
+
+See [the Phase 2 report](docs/rag_benchmark_phase2_report.md),
+[benchmark commands](tests/rag_benchmark/README.md),
+[dataset audit](tests/rag_benchmark/dataset/phase2_audit.md),
+[human worksheet](tests/rag_benchmark/dataset/review.md), and
+[Agent evaluation design — not implemented](docs/agent_evaluation_design.md).
+
+Historical v0.1/v0.2 experiment directories remain unchanged. Their differing
+annotation/metric conventions are recorded in their own reports; do not interpret
+old score-definition changes as retrieval improvements. The latest report records
+actual test/CI results and explicitly distinguishes skipped PDF/OCR tests.
+
+
+For a question-by-question comparison of reference answers, actual HTTP-route
+retrieval and gold-blind LLM-generated answers, see the
+[actual answer review](evaluation_results/baselines/2026-11-01_http_answer_review_candidate_v2/review.md).
+This exploratory evaluation adds generation in its script; `/knowledge/search`
+itself remains a retrieval-only endpoint. Prior named human approvals have been
+withdrawn; development comparisons do not require manually approving each label.
+
+The current development reference is documented in
+[the retrieval reference](docs/rag_retrieval_reference.md): Parent Evidence
+Recall@3 is 92% on 25 answerable questions. This is not generated-answer accuracy.
+
+## Production / evaluation boundary
+
+Production parsing, indexing and retrieval live in `app/rag/`. Dataset runners,
+metrics, experiments and evaluation-only answer generation live in
+[`evaluation/`](evaluation/README.md). The application never imports that package.
+Existing scripts remain CLI entry points. Agent evaluation has its own reserved
+`evaluation/agent/` package; its runner/judges/metrics are not implemented yet.
+
+## Security Benchmark V1 — 100 candidate questions
+
+The extended dataset is isolated in `tests/rag_benchmark/v1/`; the original
+30 questions and historical results remain unchanged. It contains 21 frozen
+sources, cross-language/indirect/confusable-technique cases and 10 unanswerable
+questions. Every label and experimental translation remains pending review.
+
+- [Usage, measured MiniLM results and A/B/C commands](docs/rag_benchmark_expansion.md)
+- [Coverage audit](tests/rag_benchmark/dataset/benchmark_expansion_report.md)
+- [100-question source review sheet](tests/rag_benchmark/v1/dataset/review.md)
+- [Actual grouped multi-K results](evaluation_results/baselines/2026-11-01_security_v1_balanced_minilm/hybrid/multik_report.md)
+
+BGE-M3 and dual-query comparison code is prepared, but no B/C scores are claimed:
+the model is not cached locally for this offline run. No production embedding or
+retrieval algorithm, Cross-Encoder or Agent refusal judge was introduced.
+
+## Current milestone — 2026-11-02
+
+The current RAG evaluation phase is complete for now: Benchmark V1 and the
+MiniLM/BGE-M3 A/B/C comparison are archived, and `BAAI/bge-m3` is now the default
+embedding with the existing Hybrid retrieval. The local production index was rebuilt;
+Chinese-query API and Agent Top2 retrieval smoke checks passed. Regression tests:
+123 passed, 10 skipped (PDF/OCR model tests requiring explicit opt-in).
+
+Further work on the improvement plan is paused pending a new instruction. This is
+a stopping milestone for this evaluation phase, not completion of all planned Agent
+features; no Reranker, online translation chain or new refusal mechanism is enabled
+by this milestone. Existing service processes need a restart to load the new defaults.

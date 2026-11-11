@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256",
+  "scope": "All files below this run directory except artifact_hashes.json itself",
+  "files": {
+    "code.json": "dd179d208eeb869b50f2cc2654faf663b61e714869f12df911f44af510570ad3",
+    "source_snapshot.zip": "4df3493c9118a0377e5254d7cb54f49fadedc6b117dd106186c0779271ebb1bf",
+    "status.json": "6d5c61a12541ff88f11e0332d2fee10723b50cff6ba96e47815f628917be5fa9"
+  }
+}

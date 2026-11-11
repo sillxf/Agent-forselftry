@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-11-01T20:01:24.276435+08:00",
+  "action": "Frozen index copied after the run; hash-checked against as-run config. Raw results/config/source snapshot unchanged.",
+  "generation": "dbe54826202949ffb77665772160a4a8",
+  "files": {
+    "chunks.jsonl": "7975f4f40ceeecb64a636360eb8511d8478a8a2c51b258cecec371b25f824b73",
+    "faiss.index": "c4c2205221100a2e86ed56ecb21ab6aed7181d57a25f8486c33c6f8ea4b1f439",
+    "metadata.db": "969daa5a5e7dabd40c899f36415cfebca4f64947d00dea85c84ad9844ea8fc96"
+  }
+}

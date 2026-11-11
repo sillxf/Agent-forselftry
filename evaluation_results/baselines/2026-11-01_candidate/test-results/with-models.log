@@ -1,0 +1,148 @@
+Windows fatal exception: access violation
+
+Thread 0x0000338c (most recent call first):
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\main.py", line 280 in __init__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 738 in _timings_from_decoder
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 1233 in __init__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 1778 in get_task
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 1768 in iterate_results
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\backend\docling_parse_backend.py", line 405 in iter_pages
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\backend\pdf_backend.py", line 198 in iter_pdf_page_backends
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 957 in _produce_pages
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x000028ec (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 321 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x0000373c (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 321 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x00001bfc (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 321 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x00005334 (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 321 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x000046f4 (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 321 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x00002860 (most recent call first):
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 1446 in _get_default_image
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling_parse\pdf_parser.py", line 1530 in get_image
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\backend\docling_parse_backend.py", line 285 in get_page_image
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\datamodel\base_models.py", line 615 in get_image
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\models\stages\page_preprocessing\page_preprocessing_model.py", line 82 in _populate_page_images
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\models\stages\page_preprocessing\page_preprocessing_model.py", line 72 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 552 in _process_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 324 in _run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 992 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x00000500 (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 659 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\tqdm\_monitor.py", line 69 in run
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1041 in _bootstrap_inner
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1012 in _bootstrap
+
+Thread 0x00004a70 (most recent call first):
+  File "C:\Users\86181\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 363 in wait
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 216 in get_batch
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\standard_pdf_pipeline.py", line 1013 in _build_document
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\pipeline\base_pipeline.py", line 99 in execute
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 1039 in _execute_pipeline
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 1003 in _process_document
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 985 in _process_indexed_document
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 925 in _convert
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 786 in convert_all
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\document_converter.py", line 706 in convert
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\_internal\_validate_call.py", line 137 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\_internal\_validate_call.py", line 40 in wrapper_function
+  File "D:\AI-SecOps-Agent\app\rag\ingestion\docling_parser.py", line 80 in parse
+  File "D:\AI-SecOps-Agent\tests\test_rag_corpus.py", line 34 in test_document_corpus
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\python.py", line 167 in pytest_pyfunc_call
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\python.py", line 1707 in runtest
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 184 in pytest_runtest_call
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 250 in <lambda>
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 361 in from_call
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 249 in call_and_report
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 139 in runtestprotocol
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\runner.py", line 118 in pytest_runtest_protocol
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\main.py", line 408 in pytest_runtestloop
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\main.py", line 384 in _main
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\main.py", line 330 in wrap_session
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\main.py", line 377 in pytest_cmdline_main
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\config\__init__.py", line 229 in _main
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\_pytest\config\__init__.py", line 253 in _console_main
+  File "D:\AI-SecOps-Agent\.venv\Lib\site-packages\pytest\__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
+........................................................................ [ 93%]
+.....                                                                    [100%]
+============================== warnings summary ===============================
+tests/test_rag_corpus.py::test_document_corpus[pdf/text_based/nist_sp80061r3_pp10-12.pdf]
+tests/test_rag_corpus.py::test_document_corpus[pdf/cross_page/sentence_continuation.pdf]
+tests/test_rag_corpus.py::test_document_corpus[pdf/tables/continued_rules.pdf]
+tests/test_rag_corpus.py::test_document_corpus[images/no_ocr.png]
+tests/test_rag_corpus.py::test_document_corpus[images/ocr_note.png]
+tests/test_rag_corpus.py::test_document_corpus[images/multi_region_ocr.png]
+tests/test_rag_corpus.py::test_document_corpus[pdf/scanned/incident_note.pdf]
+tests/test_rag_corpus.py::test_document_corpus[pdf/cross_page/figure_interrupts_text.pdf]
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\pydantic\main.py:587: DeprecationWarning: `force_full_page_ocr` is deprecated; set `mode=OcrMode.FULL_PAGE` instead.
+    return self.__pydantic_serializer__.to_json(
+
+tests/test_rag_corpus.py::test_document_corpus[pdf/text_based/nist_sp80061r3_pp10-12.pdf]
+tests/test_rag_corpus.py::test_document_corpus[images/no_ocr.png]
+tests/test_rag_corpus.py::test_document_corpus[pdf/scanned/incident_note.pdf]
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\docling\models\stages\ocr\rapid_ocr_model.py:686: DeprecationWarning: deprecated
+    if self.options.rec_font_path is not None:
+
+tests/test_rag_corpus.py::test_document_corpus[pdf/text_based/nist_sp80061r3_pp10-12.pdf]
+  D:\AI-SecOps-Agent\.venv\Lib\site-packages\torch\nn\modules\conv.py:560: UserWarning: Using padding='same' with even kernel lengths and odd dilation may require a zero-padded copy of the input be created (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\aten\src\ATen\native\Convolution.cpp:1105.)
+    return F.conv2d(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+77 passed, 12 warnings in 86.57s (0:01:26)

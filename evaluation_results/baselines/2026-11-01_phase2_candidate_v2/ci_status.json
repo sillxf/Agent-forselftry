@@ -1,0 +1,106 @@
+{
+  "verified_commit": "7dbd41eec127f13fa442181e9a5f18eb419b4503",
+  "run_id": 41286832600,
+  "html_url": "https://github.com/sillxf/Agent-forselftry/actions/runs/41286832600",
+  "conclusion": "success",
+  "scope": "Engineering commit used by the experiment; final documentation/artifact commit will trigger its own CI.",
+  "full_model_step": "skipped",
+  "jobs": [
+    {
+      "id": 124789729182,
+      "name": "regression",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T07:57:44Z",
+          "completed_at": "2026-11-01T07:57:59Z"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T07:57:59Z",
+          "completed_at": "2026-11-01T07:58:27Z"
+        },
+        {
+          "name": "Run actions/setup-python@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T07:58:27Z",
+          "completed_at": "2026-11-01T07:58:43Z"
+        },
+        {
+          "name": "Run python -m pip install -r requirements.txt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T07:58:43Z",
+          "completed_at": "2026-11-01T08:01:41Z"
+        },
+        {
+          "name": "Run python -m pip check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-01T08:01:41Z",
+          "completed_at": "2026-11-01T08:01:42Z"
+        },
+        {
+          "name": "Run python -m pytest -q --junitxml=test-results/default.xml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-01T08:01:42Z",
+          "completed_at": "2026-11-01T08:04:15Z"
+        },
+        {
+          "name": "Full corpus including PDF and OCR",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-01T08:04:15Z",
+          "completed_at": "2026-11-01T08:04:15Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-01T08:04:15Z",
+          "completed_at": "2026-11-01T08:04:16Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-01T08:04:16Z",
+          "completed_at": "2026-11-01T08:04:16Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T08:04:16Z",
+          "completed_at": "2026-11-01T08:04:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T08:04:20Z",
+          "completed_at": "2026-11-01T08:04:20Z"
+        }
+      ]
+    }
+  ]
+}

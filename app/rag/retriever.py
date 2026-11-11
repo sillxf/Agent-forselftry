@@ -49,7 +49,7 @@ def reciprocal_rank_fusion(dense_results, sparse_results, rank_constant=60):
 
 
 class KnowledgeRetriever:
-    INDEX_VERSION = 3
+    INDEX_VERSION = 5
 
     def __init__(
         self, build=True, *, knowledge_dir=None, storage_dir=None, parser=None,
@@ -74,7 +74,7 @@ class KnowledgeRetriever:
         self.store: VectorStoreInterface | None = None
         self.parents = {}
         self.documents = []
-        self._tokens = []
+        self._postings = {}
         self._bm25 = None
         self._lock = RLock()
         if build:
@@ -150,9 +150,13 @@ class KnowledgeRetriever:
         self._build_sparse()
 
     def _build_sparse(self):
-        self._tokens = [tokenize(record["search_text"]) for record in self.store.records]
+        tokens = [tokenize(record["search_text"]) for record in self.store.records]
         # BM25+ avoids zero/negative IDF for identifiers in tiny knowledge bases.
-        self._bm25 = BM25Plus([tokens or ["__empty__"] for tokens in self._tokens]) if self._tokens else None
+        self._bm25 = BM25Plus([terms or ["__empty__"] for terms in tokens]) if tokens else None
+        self._postings = {}
+        for index, terms in enumerate(tokens):
+            for term in set(terms):
+                self._postings.setdefault(term, []).append(index)
 
     def _save(self, signature, store, documents, parents):
         root = self.storage_dir / "indexes"
@@ -196,10 +200,57 @@ class KnowledgeRetriever:
 
     def _sparse_search(self, query, limit):
         tokens = tokenize(query)
-        scores = self._bm25.get_scores(tokens)
-        matches = [i for i, terms in enumerate(self._tokens) if set(tokens) & set(terms)]
-        matches.sort(key=lambda i: -float(scores[i]))
-        return [{**self.store.records[i], "sparse_score": float(scores[i])} for i in matches[:limit]]
+        # Keep corpus order before the stable score sort, including tied scores.
+        matches = sorted({index for term in set(tokens) for index in self._postings.get(term, ())})
+        if not matches:
+            return []
+        scores = self._bm25.get_batch_scores(tokens, matches)
+        ranked = sorted(zip(matches, scores), key=lambda item: -item[1])
+        return [{**self.store.records[index], "sparse_score": float(score)}
+                for index, score in ranked[:limit]]
+
+    def _rank_children(self, query, k, strategy="hybrid"):
+        if strategy not in {"dense", "bm25", "hybrid"}:
+            raise ValueError(f"Unknown retrieval strategy: {strategy}")
+        dense, sparse = [], []
+        if strategy in {"dense", "hybrid"}:
+            vector = self._embed([query])[0]
+            dense = self.store.search(vector, max(self.dense_top_k, k * 4))
+        if strategy in {"bm25", "hybrid"}:
+            sparse = self._sparse_search(query, max(self.bm25_top_k, k * 4))
+        if strategy == "hybrid":
+            return reciprocal_rank_fusion(dense, sparse)
+        return dense if strategy == "dense" else sparse
+
+    def _restore_parents(self, ranked, k):
+        results, seen = [], set()
+        for item in ranked:
+            parent = self.parents[item["parent_id"]]
+            if parent.parent_id in seen:
+                continue
+            seen.add(parent.parent_id)
+            results.append({
+                **item, "source": item["source_name"], "chunk_content": item["content"],
+                "content": parent.content, "page_start": parent.page_start, "page_end": parent.page_end,
+                "matched_page_start": item["page_start"], "matched_page_end": item["page_end"],
+                "image_paths": list(dict.fromkeys(b.image_path for b in parent.blocks if b.image_path)),
+            })
+            if len(results) >= k:
+                break
+        return results
+
+    def search_rankings(self, query: str, k: int = 5, strategy: str = "hybrid"):
+        """Diagnostic view of child ranks and the independently deduplicated parent ranks."""
+        if not query.strip() or k <= 0:
+            return {"children": [], "parents": [], "candidate_count": 0}
+        with self._lock:
+            self._ensure_index()
+            ranked = self._rank_children(query, k, strategy) if self.store.records else []
+            return {
+                "children": [dict(item, source_block_ids=item["block_ids"]) for item in ranked[:k]],
+                "parents": self._restore_parents(ranked, k),
+                "candidate_count": len(ranked),
+            }
 
     def search(self, query: str, k: int = 2):
         if not query.strip() or k <= 0:
@@ -208,21 +259,4 @@ class KnowledgeRetriever:
             self._ensure_index()
             if not self.store.records:
                 return []
-            vector = self._embed([query])[0]
-            dense = self.store.search(vector, max(self.dense_top_k, k * 4))
-            sparse = self._sparse_search(query, max(self.bm25_top_k, k * 4))
-            results, seen = [], set()
-            for item in reciprocal_rank_fusion(dense, sparse):
-                parent = self.parents[item["parent_id"]]
-                if parent.parent_id in seen:
-                    continue
-                seen.add(parent.parent_id)
-                results.append({
-                    **item, "source": item["source_name"], "chunk_content": item["content"],
-                    "content": parent.content, "page_start": parent.page_start, "page_end": parent.page_end,
-                    "matched_page_start": item["page_start"], "matched_page_end": item["page_end"],
-                    "image_paths": list(dict.fromkeys(b.image_path for b in parent.blocks if b.image_path)),
-                })
-                if len(results) >= k:
-                    break
-            return results
+            return self._restore_parents(self._rank_children(query, k), k)

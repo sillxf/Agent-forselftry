@@ -1,0 +1,2270 @@
+{
+  "metric_contract": "result-qrels-v2",
+  "evaluation_ks": [
+    1,
+    3,
+    5,
+    10
+  ],
+  "ranking_depth": 10,
+  "prefix_policy": "One ranking to maximum K; all smaller K values are prefixes. Candidate pools are chosen for that depth, not the historical smaller-K run.",
+  "overall": {
+    "questions": 100,
+    "answerable": 90,
+    "unanswerable": 10,
+    "by_k": {
+      "1": {
+        "child": {
+          "recall": 0.3333333333333333,
+          "precision": 0.35555555555555557,
+          "mrr": 0.35555555555555557,
+          "ndcg": 0.35555555555555557
+        },
+        "parent": {
+          "recall": 0.3648148148148148,
+          "precision": 0.37777777777777777,
+          "mrr": 0.37777777777777777,
+          "ndcg": 0.37777777777777777
+        }
+      },
+      "3": {
+        "child": {
+          "recall": 0.49333333333333335,
+          "precision": 0.18148148148148147,
+          "mrr": 0.42777777777777776,
+          "ndcg": 0.42998107834317245
+        },
+        "parent": {
+          "recall": 0.5266666666666666,
+          "precision": 0.18518518518518517,
+          "mrr": 0.45185185185185184,
+          "ndcg": 0.4708636737693358
+        }
+      },
+      "5": {
+        "child": {
+          "recall": 0.5166666666666667,
+          "precision": 0.11777777777777779,
+          "mrr": 0.4305555555555556,
+          "ndcg": 0.44327008407637103
+        },
+        "parent": {
+          "recall": 0.5333333333333333,
+          "precision": 0.11333333333333334,
+          "mrr": 0.45185185185185184,
+          "ndcg": 0.47379776402014234
+        }
+      },
+      "10": {
+        "child": {
+          "recall": 0.5277777777777778,
+          "precision": 0.06222222222222223,
+          "mrr": 0.43214285714285716,
+          "ndcg": 0.4503567566410805
+        },
+        "parent": {
+          "recall": 0.5444444444444444,
+          "precision": 0.05777777777777778,
+          "mrr": 0.4534391534391534,
+          "ndcg": 0.47750146772384605
+        }
+      }
+    },
+    "unanswerable_stats": {
+      "questions": 10,
+      "unrelated_context_return_rate": 0.6,
+      "returned_context_questions": [
+        "rag_026",
+        "rag_027",
+        "rag_029",
+        "rag_030",
+        "rag_092",
+        "rag_095"
+      ],
+      "false_positive_high_relevance_judgment": null,
+      "correct_refusal_rate": null,
+      "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+    }
+  },
+  "groups": {
+    "question_type": {
+      "english": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.7333333333333333,
+              "precision": 0.7333333333333333,
+              "mrr": 0.7333333333333333,
+              "ndcg": 0.7333333333333333
+            },
+            "parent": {
+              "recall": 0.7333333333333333,
+              "precision": 0.7333333333333333,
+              "mrr": 0.7333333333333333,
+              "ndcg": 0.7333333333333333
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.9333333333333333,
+              "precision": 0.3111111111111111,
+              "mrr": 0.8111111111111111,
+              "ndcg": 0.806680565306281
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.3111111111111111,
+              "mrr": 0.8222222222222222,
+              "ndcg": 0.8507906338095277
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9333333333333333,
+              "precision": 0.18666666666666668,
+              "mrr": 0.8111111111111111,
+              "ndcg": 0.806680565306281
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.18666666666666668,
+              "mrr": 0.8222222222222222,
+              "ndcg": 0.8507906338095277
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9333333333333333,
+              "precision": 0.10666666666666667,
+              "mrr": 0.8111111111111111,
+              "ndcg": 0.8269783784723155
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.09333333333333334,
+              "mrr": 0.8222222222222222,
+              "ndcg": 0.8507906338095277
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "mixed_terms": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.5666666666666667,
+              "precision": 0.6,
+              "mrr": 0.6,
+              "ndcg": 0.6
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.8333333333333334,
+              "precision": 0.28888888888888886,
+              "mrr": 0.7333333333333333,
+              "ndcg": 0.7424577471367526
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.3111111111111111,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.18666666666666668,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.18666666666666668,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.09333333333333334,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.09333333333333334,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "multi_document": {
+        "questions": 5,
+        "answerable": 5,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.16666666666666666,
+              "precision": 0.4,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            },
+            "parent": {
+              "recall": 0.16666666666666666,
+              "precision": 0.4,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.26666666666666666,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.26666666666666666,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.16,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.16,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.08,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.08,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "paraphrase": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.24444444444444444,
+              "precision": 0.26666666666666666,
+              "mrr": 0.26666666666666666,
+              "ndcg": 0.26666666666666666
+            },
+            "parent": {
+              "recall": 0.26666666666666666,
+              "precision": 0.26666666666666666,
+              "mrr": 0.26666666666666666,
+              "ndcg": 0.26666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.5933333333333334,
+              "precision": 0.24444444444444444,
+              "mrr": 0.45555555555555555,
+              "ndcg": 0.45535284071123727
+            },
+            "parent": {
+              "recall": 0.6266666666666667,
+              "precision": 0.2222222222222222,
+              "mrr": 0.45555555555555555,
+              "ndcg": 0.4974148242826678
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.6666666666666666,
+              "precision": 0.18666666666666668,
+              "mrr": 0.45555555555555555,
+              "ndcg": 0.5063751045722025
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.14666666666666667,
+              "mrr": 0.45555555555555555,
+              "ndcg": 0.5150193657875072
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.7333333333333333,
+              "precision": 0.1,
+              "mrr": 0.4650793650793651,
+              "ndcg": 0.5285973267944247
+            },
+            "parent": {
+              "recall": 0.7333333333333333,
+              "precision": 0.08,
+              "mrr": 0.4650793650793651,
+              "ndcg": 0.5372415880097294
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "technique_confusion": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.4,
+              "mrr": 0.4,
+              "ndcg": 0.4
+            },
+            "parent": {
+              "recall": 0.4666666666666667,
+              "precision": 0.4666666666666667,
+              "mrr": 0.4666666666666667,
+              "ndcg": 0.4666666666666667
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.4666666666666667,
+              "precision": 0.15555555555555556,
+              "mrr": 0.43333333333333335,
+              "ndcg": 0.4420619835714305
+            },
+            "parent": {
+              "recall": 0.5333333333333333,
+              "precision": 0.17777777777777776,
+              "mrr": 0.5,
+              "ndcg": 0.5087286502380972
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.4666666666666667,
+              "precision": 0.09333333333333334,
+              "mrr": 0.43333333333333335,
+              "ndcg": 0.4420619835714305
+            },
+            "parent": {
+              "recall": 0.5333333333333333,
+              "precision": 0.10666666666666667,
+              "mrr": 0.5,
+              "ndcg": 0.5087286502380972
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.4666666666666667,
+              "precision": 0.04666666666666667,
+              "mrr": 0.43333333333333335,
+              "ndcg": 0.4420619835714305
+            },
+            "parent": {
+              "recall": 0.5333333333333333,
+              "precision": 0.05333333333333334,
+              "mrr": 0.5,
+              "ndcg": 0.5087286502380972
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "unanswerable": {
+        "questions": 10,
+        "answerable": 0,
+        "unanswerable": 10,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "3": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "5": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "10": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 10,
+          "unrelated_context_return_rate": 0.6,
+          "returned_context_questions": [
+            "rag_026",
+            "rag_027",
+            "rag_029",
+            "rag_030",
+            "rag_092",
+            "rag_095"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "zh_to_en": {
+        "questions": 25,
+        "answerable": 25,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      }
+    },
+    "language_pair": {
+      "en->en": {
+        "questions": 35,
+        "answerable": 35,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.6142857142857143,
+              "precision": 0.6571428571428571,
+              "mrr": 0.6571428571428571,
+              "ndcg": 0.6571428571428571
+            },
+            "parent": {
+              "recall": 0.6523809523809524,
+              "precision": 0.6857142857142857,
+              "mrr": 0.6857142857142857,
+              "ndcg": 0.6857142857142857
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.8828571428571429,
+              "precision": 0.3333333333333333,
+              "mrr": 0.7761904761904762,
+              "ndcg": 0.7731837383952638
+            },
+            "parent": {
+              "recall": 0.9257142857142857,
+              "precision": 0.3333333333333333,
+              "mrr": 0.8095238095238095,
+              "ndcg": 0.8386860464272683
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9142857142857143,
+              "precision": 0.21714285714285717,
+              "mrr": 0.7761904761904762,
+              "ndcg": 0.7950504229071059
+            },
+            "parent": {
+              "recall": 0.9428571428571428,
+              "precision": 0.20571428571428574,
+              "mrr": 0.8095238095238095,
+              "ndcg": 0.8462308499293423
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9428571428571428,
+              "precision": 0.11714285714285715,
+              "mrr": 0.7802721088435374,
+              "ndcg": 0.8132732952163588
+            },
+            "parent": {
+              "recall": 0.9714285714285714,
+              "precision": 0.10571428571428572,
+              "mrr": 0.8136054421768707,
+              "ndcg": 0.8557546594531518
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "en->mixed": {
+        "questions": 1,
+        "answerable": 1,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.3333333333333333,
+              "ndcg": 0.5
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "en->none": {
+        "questions": 4,
+        "answerable": 0,
+        "unanswerable": 4,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "3": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "5": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "10": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 4,
+          "unrelated_context_return_rate": 1,
+          "returned_context_questions": [
+            "rag_026",
+            "rag_027",
+            "rag_029",
+            "rag_030"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "mixed->en": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.5666666666666667,
+              "precision": 0.6,
+              "mrr": 0.6,
+              "ndcg": 0.6
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.8333333333333334,
+              "precision": 0.28888888888888886,
+              "mrr": 0.7333333333333333,
+              "ndcg": 0.7424577471367526
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.3111111111111111,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.18666666666666668,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.18666666666666668,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.09333333333333334,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.09333333333333334,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "zh->en": {
+        "questions": 39,
+        "answerable": 39,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "zh->none": {
+        "questions": 6,
+        "answerable": 0,
+        "unanswerable": 6,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "3": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "5": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "10": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 6,
+          "unrelated_context_return_rate": 0.3333333333333333,
+          "returned_context_questions": [
+            "rag_092",
+            "rag_095"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      }
+    },
+    "language": {
+      "en": {
+        "questions": 40,
+        "answerable": 36,
+        "unanswerable": 4,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.5972222222222222,
+              "precision": 0.6388888888888888,
+              "mrr": 0.6388888888888888,
+              "ndcg": 0.6388888888888888
+            },
+            "parent": {
+              "recall": 0.6342592592592593,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.8861111111111111,
+              "precision": 0.3333333333333333,
+              "mrr": 0.7638888888888888,
+              "ndcg": 0.7655953012176175
+            },
+            "parent": {
+              "recall": 0.9277777777777778,
+              "precision": 0.3333333333333333,
+              "mrr": 0.7962962962962963,
+              "ndcg": 0.8292781006931775
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9166666666666666,
+              "precision": 0.21666666666666667,
+              "mrr": 0.7638888888888888,
+              "ndcg": 0.786854577826353
+            },
+            "parent": {
+              "recall": 0.9444444444444444,
+              "precision": 0.20555555555555557,
+              "mrr": 0.7962962962962963,
+              "ndcg": 0.8366133263201939
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9444444444444444,
+              "precision": 0.11666666666666667,
+              "mrr": 0.7678571428571429,
+              "ndcg": 0.8045712592381267
+            },
+            "parent": {
+              "recall": 0.9722222222222222,
+              "precision": 0.10555555555555556,
+              "mrr": 0.8002645502645502,
+              "ndcg": 0.8458725855794531
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 4,
+          "unrelated_context_return_rate": 1,
+          "returned_context_questions": [
+            "rag_026",
+            "rag_027",
+            "rag_029",
+            "rag_030"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "mixed": {
+        "questions": 15,
+        "answerable": 15,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.5666666666666667,
+              "precision": 0.6,
+              "mrr": 0.6,
+              "ndcg": 0.6
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.8333333333333334,
+              "precision": 0.28888888888888886,
+              "mrr": 0.7333333333333333,
+              "ndcg": 0.7424577471367526
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.3111111111111111,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.18666666666666668,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.18666666666666668,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.9,
+              "precision": 0.09333333333333334,
+              "mrr": 0.75,
+              "ndcg": 0.7711695176749788
+            },
+            "parent": {
+              "recall": 0.9333333333333333,
+              "precision": 0.09333333333333334,
+              "mrr": 0.8,
+              "ndcg": 0.8349146009523887
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "zh": {
+        "questions": 45,
+        "answerable": 39,
+        "unanswerable": 6,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            },
+            "parent": {
+              "recall": 0.0,
+              "precision": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 6,
+          "unrelated_context_return_rate": 0.3333333333333333,
+          "returned_context_questions": [
+            "rag_092",
+            "rag_095"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      }
+    },
+    "difficulty": {
+      "easy": {
+        "questions": 8,
+        "answerable": 8,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.5,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 0.5,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.875,
+              "precision": 0.29166666666666663,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.7202324383928644
+            },
+            "parent": {
+              "recall": 0.875,
+              "precision": 0.29166666666666663,
+              "mrr": 0.6875,
+              "ndcg": 0.7365986575892965
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.875,
+              "precision": 0.17500000000000002,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.7202324383928644
+            },
+            "parent": {
+              "recall": 0.875,
+              "precision": 0.17500000000000002,
+              "mrr": 0.6875,
+              "ndcg": 0.7365986575892965
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.875,
+              "precision": 0.08750000000000001,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.7202324383928644
+            },
+            "parent": {
+              "recall": 0.875,
+              "precision": 0.08750000000000001,
+              "mrr": 0.6875,
+              "ndcg": 0.7365986575892965
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "hard": {
+        "questions": 51,
+        "answerable": 41,
+        "unanswerable": 10,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.34959349593495936,
+              "precision": 0.3902439024390244,
+              "mrr": 0.3902439024390244,
+              "ndcg": 0.3902439024390244
+            },
+            "parent": {
+              "recall": 0.3861788617886179,
+              "precision": 0.4146341463414634,
+              "mrr": 0.4146341463414634,
+              "ndcg": 0.4146341463414634
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.4975609756097561,
+              "precision": 0.19512195121951217,
+              "mrr": 0.45934959349593496,
+              "ndcg": 0.4463310082119833
+            },
+            "parent": {
+              "recall": 0.5463414634146342,
+              "precision": 0.2032520325203252,
+              "mrr": 0.483739837398374,
+              "ndcg": 0.4990542040058541
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.524390243902439,
+              "precision": 0.12682926829268293,
+              "mrr": 0.45934959349593496,
+              "ndcg": 0.45921238004479265
+            },
+            "parent": {
+              "recall": 0.5609756097560976,
+              "precision": 0.12682926829268293,
+              "mrr": 0.483739837398374,
+              "ndcg": 0.5054948899222588
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.524390243902439,
+              "precision": 0.06829268292682927,
+              "mrr": 0.45934959349593496,
+              "ndcg": 0.46663840925187844
+            },
+            "parent": {
+              "recall": 0.5609756097560976,
+              "precision": 0.06341463414634146,
+              "mrr": 0.483739837398374,
+              "ndcg": 0.5054948899222588
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 10,
+          "unrelated_context_return_rate": 0.6,
+          "returned_context_questions": [
+            "rag_026",
+            "rag_027",
+            "rag_029",
+            "rag_030",
+            "rag_092",
+            "rag_095"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "medium": {
+        "questions": 41,
+        "answerable": 41,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.2845528455284553,
+              "precision": 0.2926829268292683,
+              "mrr": 0.2926829268292683,
+              "ndcg": 0.2926829268292683
+            },
+            "parent": {
+              "recall": 0.3170731707317073,
+              "precision": 0.3170731707317073,
+              "mrr": 0.3170731707317073,
+              "ndcg": 0.3170731707317073
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.4146341463414634,
+              "precision": 0.14634146341463414,
+              "mrr": 0.34959349593495936,
+              "ndcg": 0.3569967367573485
+            },
+            "parent": {
+              "recall": 0.43902439024390244,
+              "precision": 0.14634146341463414,
+              "mrr": 0.37398373983739835,
+              "ndcg": 0.39082241498258125
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.43902439024390244,
+              "precision": 0.0975609756097561,
+              "mrr": 0.3556910569105691,
+              "ndcg": 0.3732863531193653
+            },
+            "parent": {
+              "recall": 0.43902439024390244,
+              "precision": 0.0878048780487805,
+              "mrr": 0.37398373983739835,
+              "ndcg": 0.39082241498258125
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.4634146341463415,
+              "precision": 0.051219512195121955,
+              "mrr": 0.3591753774680604,
+              "ndcg": 0.3814164344201783
+            },
+            "parent": {
+              "recall": 0.4634146341463415,
+              "precision": 0.046341463414634146,
+              "mrr": 0.37746806039488967,
+              "ndcg": 0.39895249628339424
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      }
+    },
+    "topic": {
+      "account_abuse": {
+        "questions": 6,
+        "answerable": 6,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.16666666666666666,
+              "precision": 0.16666666666666666,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.16666666666666666
+            },
+            "parent": {
+              "recall": 0.16666666666666666,
+              "precision": 0.16666666666666666,
+              "mrr": 0.16666666666666666,
+              "ndcg": 0.16666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.5833333333333334,
+              "precision": 0.2222222222222222,
+              "mrr": 0.3888888888888889,
+              "ndcg": 0.35515495892857624
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.2222222222222222,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.48213154345239545
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.6666666666666666,
+              "precision": 0.2,
+              "mrr": 0.3888888888888889,
+              "ndcg": 0.43869926481889077
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.13333333333333333,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.48213154345239545
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.6666666666666666,
+              "precision": 0.1,
+              "mrr": 0.3888888888888889,
+              "ndcg": 0.43869926481889077
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.06666666666666667,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.48213154345239545
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "authentication": {
+        "questions": 15,
+        "answerable": 14,
+        "unanswerable": 1,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.35714285714285715,
+              "precision": 0.35714285714285715,
+              "mrr": 0.35714285714285715,
+              "ndcg": 0.35714285714285715
+            },
+            "parent": {
+              "recall": 0.35714285714285715,
+              "precision": 0.35714285714285715,
+              "mrr": 0.35714285714285715,
+              "ndcg": 0.35714285714285715
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.45714285714285713,
+              "precision": 0.16666666666666666,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.42410738213958477
+            },
+            "parent": {
+              "recall": 0.45714285714285713,
+              "precision": 0.16666666666666666,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.42410738213958477
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.5,
+              "precision": 0.1142857142857143,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.44296939089476983
+            },
+            "parent": {
+              "recall": 0.5,
+              "precision": 0.1142857142857143,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.44296939089476983
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.5,
+              "precision": 0.05714285714285715,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.44296939089476983
+            },
+            "parent": {
+              "recall": 0.5,
+              "precision": 0.05714285714285715,
+              "mrr": 0.4166666666666667,
+              "ndcg": 0.44296939089476983
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 1,
+          "unrelated_context_return_rate": 0,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "credential_access": {
+        "questions": 12,
+        "answerable": 11,
+        "unanswerable": 1,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.22727272727272727,
+              "precision": 0.2727272727272727,
+              "mrr": 0.2727272727272727,
+              "ndcg": 0.2727272727272727
+            },
+            "parent": {
+              "recall": 0.22727272727272727,
+              "precision": 0.2727272727272727,
+              "mrr": 0.2727272727272727,
+              "ndcg": 0.2727272727272727
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.5454545454545454,
+              "precision": 0.2121212121212121,
+              "mrr": 0.4090909090909091,
+              "ndcg": 0.4447990237013066
+            },
+            "parent": {
+              "recall": 0.5454545454545454,
+              "precision": 0.2121212121212121,
+              "mrr": 0.4090909090909091,
+              "ndcg": 0.4447990237013066
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.5454545454545454,
+              "precision": 0.1272727272727273,
+              "mrr": 0.4090909090909091,
+              "ndcg": 0.4447990237013066
+            },
+            "parent": {
+              "recall": 0.5454545454545454,
+              "precision": 0.1272727272727273,
+              "mrr": 0.4090909090909091,
+              "ndcg": 0.4447990237013066
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.6363636363636364,
+              "precision": 0.07272727272727274,
+              "mrr": 0.42207792207792205,
+              "ndcg": 0.4751020540043369
+            },
+            "parent": {
+              "recall": 0.6363636363636364,
+              "precision": 0.07272727272727274,
+              "mrr": 0.42207792207792205,
+              "ndcg": 0.4751020540043369
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 1,
+          "unrelated_context_return_rate": 1,
+          "returned_context_questions": [
+            "rag_092"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "detection_rules": {
+        "questions": 3,
+        "answerable": 3,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.6666666666666666,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            },
+            "parent": {
+              "recall": 0.6666666666666666,
+              "precision": 0.6666666666666666,
+              "mrr": 0.6666666666666666,
+              "ndcg": 0.6666666666666666
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.3333333333333333,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.2,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            },
+            "parent": {
+              "recall": 1.0,
+              "precision": 0.1,
+              "mrr": 0.8333333333333334,
+              "ndcg": 0.8769765845238192
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "execution": {
+        "questions": 25,
+        "answerable": 24,
+        "unanswerable": 1,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.4513888888888889,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 0.4722222222222222,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.5625,
+              "precision": 0.20833333333333331,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5364586124961822
+            },
+            "parent": {
+              "recall": 0.5833333333333334,
+              "precision": 0.20833333333333331,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5525774794642881
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.5625,
+              "precision": 0.125,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5364586124961822
+            },
+            "parent": {
+              "recall": 0.5833333333333334,
+              "precision": 0.125,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5525774794642881
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.5625,
+              "precision": 0.0625,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5364586124961822
+            },
+            "parent": {
+              "recall": 0.5833333333333334,
+              "precision": 0.0625,
+              "mrr": 0.5416666666666666,
+              "ndcg": 0.5525774794642881
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 1,
+          "unrelated_context_return_rate": 0,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "incident_response": {
+        "questions": 11,
+        "answerable": 10,
+        "unanswerable": 1,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.4666666666666667,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            },
+            "parent": {
+              "recall": 0.5,
+              "precision": 0.5,
+              "mrr": 0.5,
+              "ndcg": 0.5
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.6,
+              "precision": 0.2333333333333333,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            },
+            "parent": {
+              "recall": 0.6,
+              "precision": 0.19999999999999998,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.6,
+              "precision": 0.14,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            },
+            "parent": {
+              "recall": 0.6,
+              "precision": 0.12000000000000001,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.6,
+              "precision": 0.07,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            },
+            "parent": {
+              "recall": 0.6,
+              "precision": 0.060000000000000005,
+              "mrr": 0.5333333333333333,
+              "ndcg": 0.55
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 1,
+          "unrelated_context_return_rate": 1,
+          "returned_context_questions": [
+            "rag_095"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "knowledge_gap": {
+        "questions": 5,
+        "answerable": 0,
+        "unanswerable": 5,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "3": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "5": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          },
+          "10": {
+            "child": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            },
+            "parent": {
+              "recall": null,
+              "precision": null,
+              "mrr": null,
+              "ndcg": null
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 5,
+          "unrelated_context_return_rate": 0.8,
+          "returned_context_questions": [
+            "rag_026",
+            "rag_027",
+            "rag_029",
+            "rag_030"
+          ],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "persistence": {
+        "questions": 6,
+        "answerable": 5,
+        "unanswerable": 1,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.2,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.2
+            },
+            "parent": {
+              "recall": 0.2,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.2
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.13333333333333333,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.13333333333333333,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.08,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.08,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.4,
+              "precision": 0.04,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.04,
+              "mrr": 0.3,
+              "ndcg": 0.3261859507142915
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 1,
+          "unrelated_context_return_rate": 0,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "remote_execution": {
+        "questions": 7,
+        "answerable": 7,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.14285714285714285,
+              "precision": 0.14285714285714285,
+              "mrr": 0.14285714285714285,
+              "ndcg": 0.14285714285714285
+            },
+            "parent": {
+              "recall": 0.2857142857142857,
+              "precision": 0.2857142857142857,
+              "mrr": 0.2857142857142857,
+              "ndcg": 0.2857142857142857
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.14285714285714285,
+              "precision": 0.047619047619047616,
+              "mrr": 0.14285714285714285,
+              "ndcg": 0.14285714285714285
+            },
+            "parent": {
+              "recall": 0.2857142857142857,
+              "precision": 0.09523809523809523,
+              "mrr": 0.2857142857142857,
+              "ndcg": 0.2857142857142857
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.2857142857142857,
+              "precision": 0.05714285714285715,
+              "mrr": 0.17857142857142858,
+              "ndcg": 0.20438236543905616
+            },
+            "parent": {
+              "recall": 0.2857142857142857,
+              "precision": 0.05714285714285715,
+              "mrr": 0.2857142857142857,
+              "ndcg": 0.2857142857142857
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.2857142857142857,
+              "precision": 0.028571428571428574,
+              "mrr": 0.17857142857142858,
+              "ndcg": 0.20438236543905616
+            },
+            "parent": {
+              "recall": 0.2857142857142857,
+              "precision": 0.028571428571428574,
+              "mrr": 0.2857142857142857,
+              "ndcg": 0.2857142857142857
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      },
+      "sql_injection": {
+        "questions": 10,
+        "answerable": 10,
+        "unanswerable": 0,
+        "by_k": {
+          "1": {
+            "child": {
+              "recall": 0.2,
+              "precision": 0.2,
+              "mrr": 0.2,
+              "ndcg": 0.2
+            },
+            "parent": {
+              "recall": 0.3,
+              "precision": 0.3,
+              "mrr": 0.3,
+              "ndcg": 0.3
+            }
+          },
+          "3": {
+            "child": {
+              "recall": 0.3,
+              "precision": 0.09999999999999999,
+              "mrr": 0.25,
+              "ndcg": 0.21002084795942141
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.13333333333333333,
+              "mrr": 0.35,
+              "ndcg": 0.36309297535714574
+            }
+          },
+          "5": {
+            "child": {
+              "recall": 0.3,
+              "precision": 0.060000000000000005,
+              "mrr": 0.25,
+              "ndcg": 0.21002084795942141
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.08,
+              "mrr": 0.35,
+              "ndcg": 0.36309297535714574
+            }
+          },
+          "10": {
+            "child": {
+              "recall": 0.3,
+              "precision": 0.05,
+              "mrr": 0.25,
+              "ndcg": 0.24046756770847322
+            },
+            "parent": {
+              "recall": 0.4,
+              "precision": 0.04,
+              "mrr": 0.35,
+              "ndcg": 0.36309297535714574
+            }
+          }
+        },
+        "unanswerable_stats": {
+          "questions": 0,
+          "unrelated_context_return_rate": null,
+          "returned_context_questions": [],
+          "false_positive_high_relevance_judgment": null,
+          "correct_refusal_rate": null,
+          "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+        }
+      }
+    },
+    "multi_document_required": {
+      "questions": 5,
+      "answerable": 5,
+      "unanswerable": 0,
+      "by_k": {
+        "1": {
+          "child": {
+            "recall": 0.16666666666666666,
+            "precision": 0.4,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          },
+          "parent": {
+            "recall": 0.16666666666666666,
+            "precision": 0.4,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          }
+        },
+        "3": {
+          "child": {
+            "recall": 0.4,
+            "precision": 0.26666666666666666,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          },
+          "parent": {
+            "recall": 0.4,
+            "precision": 0.26666666666666666,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          }
+        },
+        "5": {
+          "child": {
+            "recall": 0.4,
+            "precision": 0.16,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          },
+          "parent": {
+            "recall": 0.4,
+            "precision": 0.16,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          }
+        },
+        "10": {
+          "child": {
+            "recall": 0.4,
+            "precision": 0.08,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          },
+          "parent": {
+            "recall": 0.4,
+            "precision": 0.08,
+            "mrr": 0.4,
+            "ndcg": 0.4
+          }
+        }
+      },
+      "unanswerable_stats": {
+        "questions": 0,
+        "unrelated_context_return_rate": null,
+        "returned_context_questions": [],
+        "false_positive_high_relevance_judgment": null,
+        "correct_refusal_rate": null,
+        "note": "No relevance threshold, answerability classifier, generator or Agent judge is used. Returned context is not an accepted answer."
+      }
+    }
+  }
+}

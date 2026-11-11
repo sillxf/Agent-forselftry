@@ -1,0 +1,5 @@
+{
+  "report_source": "evaluation/rag/comparison_report.py",
+  "report_source_sha256": "f7b97a3f408785c1a36e2b22c9a532d6a045a8eee1fd9f9f7452dc82a933cf5b",
+  "note": "Summary re-rendered after adding route-level failure diagnostics; B/C raw query results and metrics are unchanged. source_snapshot.zip files preserve retrieval code as run."
+}

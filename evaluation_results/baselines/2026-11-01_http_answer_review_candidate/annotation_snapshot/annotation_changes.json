@@ -1,0 +1,804 @@
+{
+  "from_version": "rag-benchmark-v0.1-candidate",
+  "to_version": "rag-benchmark-v0.2-source-audited-candidate",
+  "queries_and_reference_answers_unchanged": true,
+  "corpus_unchanged": true,
+  "human_review_granted": false,
+  "changes": [
+    {
+      "question_id": "rag_007",
+      "before": {
+        "id": "rag_007",
+        "question": "Can password guessing be performed without contacting a live authentication service?",
+        "category": "semantic",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Yes; brute forcing can run offline against acquired credential data such as password hashes.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b21-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "4d51492c-82c9-5070-bbb3-9fdb5fbfde4f"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1110: Brute Force"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Brute forcing passwords can take place via interaction with a service that will check the validity of those credentials or offline against previously acquired credential data, such as password hashes.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The same paragraph also describes online guessing, so offline context is required.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_007",
+        "question": "Can password guessing be performed without contacting a live authentication service?",
+        "category": "semantic",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Yes; brute forcing can run offline against acquired credential data such as password hashes.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b21-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "4d51492c-82c9-5070-bbb3-9fdb5fbfde4f"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1110: Brute Force"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "offline against previously acquired credential data, such as password hashes.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The anchor isolates the offline-credential clause; surrounding online-guessing details are not required to answer.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_008",
+      "before": {
+        "id": "rag_008",
+        "question": "Why might an intruder reuse an employee account that is no longer active?",
+        "category": "semantic",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "The original user is absent and cannot notice anomalous account activity.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b35-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "bb628f12-2e55-5087-9388-86597c2be15c"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Using these accounts may allow the adversary to evade detection, as the original account user will not be present to identify any anomalous activity taking place on their account.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "This targets the reason for inactive-account abuse, not the technique title.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_008",
+        "question": "Why might an intruder reuse an employee account that is no longer active?",
+        "category": "semantic",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "The original user is absent and cannot notice anomalous account activity.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b35-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "bb628f12-2e55-5087-9388-86597c2be15c"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "the original account user will not be present to identify any anomalous activity taking place on their account.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The anchor retains the reason inactive accounts can evade their original users' detection, without unrelated background.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_015",
+      "before": {
+        "id": "rag_015",
+        "question": "Why should lessons learned during incident response be shared before recovery has finished?",
+        "category": "response",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Modern incidents are frequent, complex and lengthy; lessons should be shared as identified to support continuous improvement.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b38-1",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+            ],
+            "section_path": [
+              "2.1. Incident Response Life Cycle Model",
+              "Containment"
+            ],
+            "page_number": 3,
+            "page_end": 3,
+            "text_quote": "The lessons learned during incident response should often be shared as soon as they are identified, not delayed until after recovery concludes.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The final paragraph of the excerpt directly states the timing rationale.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_015",
+        "question": "Why should lessons learned during incident response be shared before recovery has finished?",
+        "category": "response",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Modern incidents are frequent, complex and lengthy; lessons should be shared as identified to support continuous improvement.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b38-1",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+            ],
+            "section_path": [
+              "2.1. Incident Response Life Cycle Model",
+              "Containment"
+            ],
+            "page_number": 3,
+            "page_end": 3,
+            "text_quote": "The lessons learned during incident response should often be shared as soon as they are identified, not delayed until after recovery concludes.",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "nist-modern-incident-complexity",
+            "relevance_grade": 3,
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+            ],
+            "section_path": [
+              "2.1. Incident Response Life Cycle Model",
+              "Containment"
+            ],
+            "page_number": 3,
+            "page_end": 3,
+            "text_quote": "Today, incidents occur frequently and cause far more damage. Recovering from them often takes weeks or months due to their breadth, complexity, and dynamic nature."
+          },
+          {
+            "evidence_id": "nist-continuous-improvement",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "f6162960-05d9-52ae-9d47-a71be9bf79ae"
+            ],
+            "section_path": [
+              "2.1. Incident Response Life Cycle Model",
+              "Containment"
+            ],
+            "page_number": 3,
+            "page_end": 3,
+            "text_quote": "Continuous improvement is increasingly necessary for all facets of cybersecurity risk management in order to keep up with modern threats.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The original timing claim is preserved. Added anchors explain modern incident complexity and the need for continuous improvement, rather than treating the timing recommendation alone as its own explanation.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_018",
+      "before": {
+        "id": "rag_018",
+        "question": "What are the three numbered actions in the response checklist, in order?",
+        "category": "tables_steps",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Check firewall configuration; collect authentication logs; isolate affected hosts.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "numbered_steps-b1-1",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "34337ceb-b993-5c48-af5a-98498100cf5a"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "1. Check firewall configuration",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "numbered_steps-b2-2",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "aec40a56-e98b-5dcf-943a-e3c9512395d8"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "2. Collect authentication logs",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "numbered_steps-b3-3",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "4c284a64-54ca-5487-a6c4-5d69aa0e3c81"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "3. Isolate affected hosts",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Operational steps should remain body text and all three must be retrievable.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_018",
+        "question": "What are the three numbered actions in the response checklist, in order?",
+        "category": "tables_steps",
+        "difficulty": "medium",
+        "answerable": true,
+        "expected_answer": "Check firewall configuration; collect authentication logs; isolate affected hosts.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "numbered_steps-b1-1",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "34337ceb-b993-5c48-af5a-98498100cf5a"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "1. Check firewall configuration",
+            "relevance_grade": 3,
+            "alternatives": [
+              {
+                "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+                "source": "numbered_steps.docx",
+                "source_block_ids": [
+                  "0399ed62-9955-5a35-9f8a-1775a5ca6523"
+                ],
+                "section_path": [
+                  "Response checklist"
+                ],
+                "page_number": null,
+                "page_end": null,
+                "text_quote": "1. 检查防火墙配置"
+              }
+            ]
+          },
+          {
+            "evidence_id": "numbered_steps-b2-2",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "aec40a56-e98b-5dcf-943a-e3c9512395d8"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "2. Collect authentication logs",
+            "relevance_grade": 3,
+            "alternatives": [
+              {
+                "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+                "source": "numbered_steps.docx",
+                "source_block_ids": [
+                  "1ab919e2-3620-5597-9e98-b8b94a223c6d"
+                ],
+                "section_path": [
+                  "Response checklist"
+                ],
+                "page_number": null,
+                "page_end": null,
+                "text_quote": "2. 收集认证日志"
+              }
+            ]
+          },
+          {
+            "evidence_id": "numbered_steps-b3-3",
+            "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+            "source": "numbered_steps.docx",
+            "source_block_ids": [
+              "4c284a64-54ca-5487-a6c4-5d69aa0e3c81"
+            ],
+            "section_path": [
+              "Response checklist"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "3. Isolate affected hosts",
+            "relevance_grade": 3,
+            "alternatives": [
+              {
+                "document_id": "d2dec7fde7d94f12b6cec329a37a41be2664a9aadea8a10760c5b4c9018ef314",
+                "source": "numbered_steps.docx",
+                "source_block_ids": [
+                  "a390c03e-eeaa-5e65-9e46-831ddbfbd5ae"
+                ],
+                "section_path": [
+                  "Response checklist"
+                ],
+                "page_number": null,
+                "page_end": null,
+                "text_quote": "3. 隔离受影响主机"
+              }
+            ]
+          }
+        ],
+        "rationale": "The checklist repeats the same three ordered actions in English and Chinese. Each translated item is an alternative location for one required action, not a fourth/fifth/sixth fact.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_021",
+      "before": {
+        "id": "rag_021",
+        "question": "How do inband, out-of-band and blind SQL injection differ in the way information is obtained?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Inband uses the injection channel; out-of-band uses another channel; blind infers from behaviour without direct data transfer.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b15-1",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "ca6280cf-0816-550f-8857-089ee53e158d"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Inband: data is extracted using the same channel that is used to inject the SQL code. This is the most straightforward kind of attack, in which the retrieved data is presented directly in the application web page.",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b16-2",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "f2a22a75-f5e5-51f3-a548-4d7639e958b8"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Out-of-band: data is retrieved using a different channel (e.g., an email with the results of the query is generated and sent to the tester).",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b17-3",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "43da13f1-0522-5462-9973-325458b7c9e8"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Inferential or Blind: there is no actual transfer of data, but the tester is able to reconstruct the information by sending particular requests and observing the resulting behavior of the DB Server.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Requires three distinct source definitions.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_021",
+        "question": "How do inband, out-of-band and blind SQL injection differ in the way information is obtained?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Inband uses the injection channel; out-of-band uses another channel; blind infers from behaviour without direct data transfer.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b15-1",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "ca6280cf-0816-550f-8857-089ee53e158d"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Inband: data is extracted using the same channel that is used to inject the SQL code.",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b16-2",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "f2a22a75-f5e5-51f3-a548-4d7639e958b8"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Out-of-band: data is retrieved using a different channel",
+            "relevance_grade": 3,
+            "alternatives": [
+              {
+                "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+                "source": "owasp_wstg_v4_2_sql_injection.md",
+                "source_block_ids": [
+                  "27bb783b-3793-5506-8d5a-98d5e9581fc4"
+                ],
+                "section_path": [
+                  "Testing for SQL Injection",
+                  "Summary"
+                ],
+                "page_number": null,
+                "page_end": null,
+                "text_quote": "Out-of-band: technique used to retrieve data using a different channel"
+              }
+            ]
+          },
+          {
+            "evidence_id": "owasp_wstg_v4_2_sql_injection-b17-3",
+            "document_id": "2875edd4308dfe6d3c746f3d14d08c877916344c990cbacfdec12fcdcd272a25",
+            "source": "owasp_wstg_v4_2_sql_injection.md",
+            "source_block_ids": [
+              "43da13f1-0522-5462-9973-325458b7c9e8"
+            ],
+            "section_path": [
+              "Testing for SQL Injection",
+              "Summary"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Inferential or Blind: there is no actual transfer of data, but the tester is able to reconstruct the information by sending particular requests and observing the resulting behavior of the DB Server.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Three channel definitions are separate facts. The later out-of-band technique definition supports the same out-of-band fact and is an OR alternative, not an additional requirement.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_022",
+      "before": {
+        "id": "rag_022",
+        "question": "Why does NIST Rev. 3 emphasize cybersecurity risk management instead of maintaining every detailed response procedure?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Detailed procedures vary and change too often for one static publication; the revision focuses on all CSF 2.0 Functions.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b14-1",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+            ],
+            "section_path": [
+              "A cybersecurity incident (or simply incident) is"
+            ],
+            "page_number": 2,
+            "page_end": 2,
+            "text_quote": "Because the details of how to perform incident response activities change so often and vary so much across technologies, environments, and organizations, it is no longer feasible to capture and maintain that information in a single static publication.",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b14-2",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+            ],
+            "section_path": [
+              "A cybersecurity incident (or simply incident) is"
+            ],
+            "page_number": 2,
+            "page_end": 2,
+            "text_quote": "Instead, this version focuses on improving cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions [CSF2.0] to better support an organization's incident response capabilities.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Two explicit claims in the scope paragraph must be supported.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_022",
+        "question": "Why does NIST Rev. 3 emphasize cybersecurity risk management instead of maintaining every detailed response procedure?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Detailed procedures vary and change too often for one static publication; the revision focuses on all CSF 2.0 Functions.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b14-1",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+            ],
+            "section_path": [
+              "A cybersecurity incident (or simply incident) is"
+            ],
+            "page_number": 2,
+            "page_end": 2,
+            "text_quote": "Because the details of how to perform incident response activities change so often and vary so much across technologies, environments, and organizations, it is no longer feasible to capture and maintain that information in a single static publication.",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "nist_sp80061r3_pp10-12-b14-2",
+            "document_id": "dc95e150e756524e3bc38e81b5be7e2e912135c1633aea9f885667fe521e4830",
+            "source": "nist_sp80061r3_pp10-12.pdf",
+            "source_block_ids": [
+              "4a0e88f0-2723-5bcc-83f6-e62e853990cc"
+            ],
+            "section_path": [
+              "A cybersecurity incident (or simply incident) is"
+            ],
+            "page_number": 2,
+            "page_end": 2,
+            "text_quote": "this version focuses on improving cybersecurity risk management for all of the NIST Cybersecurity Framework (CSF) 2.0 Functions",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Two explicit claims in the scope paragraph must be supported.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_023",
+      "before": {
+        "id": "rag_023",
+        "question": "For remote PowerShell command execution, which cmdlet is mentioned and what permission prerequisite applies?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Invoke-Command; administrator permissions are required to connect to remote systems.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b5-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "a3d32a81-9c33-58d7-bb87-3e48ded23c83"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1059.001: PowerShell"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Invoke-Command",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "mitre_attack_v17_1-b6-2",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "05d2351c-251b-5dc8-9104-11f43821c958"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1059.001: PowerShell"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "cmdlet which runs a command locally or on a remote computer (though administrator permissions are required to use PowerShell to connect to remote systems).",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The Markdown parser splits inline code from surrounding text; both pieces are needed.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_023",
+        "question": "For remote PowerShell command execution, which cmdlet is mentioned and what permission prerequisite applies?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Invoke-Command; administrator permissions are required to connect to remote systems.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b5-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "a3d32a81-9c33-58d7-bb87-3e48ded23c83"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1059.001: PowerShell"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Invoke-Command",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "mitre_attack_v17_1-b6-2",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "05d2351c-251b-5dc8-9104-11f43821c958"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1059.001: PowerShell"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "administrator permissions are required to use PowerShell to connect to remote systems",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "The Markdown parser splits inline code from surrounding text; both pieces are needed.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    },
+    {
+      "question_id": "rag_025",
+      "before": {
+        "id": "rag_025",
+        "question": "What does the valid-accounts description say about both bypassing access controls and moving across account types?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Compromised credentials can bypass controls; overlapping local, domain and cloud permissions can enable privilege escalation.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b34-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "9df49cee-b541-5e50-a1db-22159ec3bf17"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Compromised credentials may be used to bypass access controls",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "mitre_attack_v17_1-b36-2",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "b96b8f17-37a3-5d39-b01e-c367ec19ce11"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "The overlap of permissions for local, domain, and cloud accounts across a network of systems is of concern because the adversary may be able to pivot across accounts and systems to reach a high level of access (i.e., domain or enterprise administrator) to bypass access controls set within the enterprise.(Citation: TechNet Credential Theft)",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Two paragraphs describe access-control bypass and cross-account privilege concerns.",
+        "review_status": "pending",
+        "reviewer": null
+      },
+      "after": {
+        "id": "rag_025",
+        "question": "What does the valid-accounts description say about both bypassing access controls and moving across account types?",
+        "category": "context",
+        "difficulty": "hard",
+        "answerable": true,
+        "expected_answer": "Compromised credentials can bypass controls; overlapping local, domain and cloud permissions can enable privilege escalation.",
+        "relevant_evidence": [
+          {
+            "evidence_id": "mitre_attack_v17_1-b34-1",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "9df49cee-b541-5e50-a1db-22159ec3bf17"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "Compromised credentials may be used to bypass access controls",
+            "relevance_grade": 3
+          },
+          {
+            "evidence_id": "mitre_attack_v17_1-b36-2",
+            "document_id": "fad15d973d25ac6b0a026f3d89e484df60abe3b2f19e47fbdcebbc22fea5f08f",
+            "source": "mitre_attack_v17_1.md",
+            "source_block_ids": [
+              "b96b8f17-37a3-5d39-b01e-c367ec19ce11"
+            ],
+            "section_path": [
+              "MITRE ATT&CK Enterprise v17.1 — selected technique descriptions",
+              "T1078: Valid Accounts"
+            ],
+            "page_number": null,
+            "page_end": null,
+            "text_quote": "The overlap of permissions for local, domain, and cloud accounts across a network of systems is of concern because the adversary may be able to pivot across accounts and systems to reach a high level of access (i.e., domain or enterprise administrator) to bypass access controls set within the enterprise.",
+            "relevance_grade": 3
+          }
+        ],
+        "rationale": "Two source paragraphs support control bypass and cross-account privilege risks. Bibliographic citation markup is not part of the evidence requirement.",
+        "review_status": "pending",
+        "reviewer": null
+      }
+    }
+  ]
+}
