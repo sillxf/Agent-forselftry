@@ -1,0 +1,260 @@
+"""Read-only inspection of published documents, chunks and outlines."""
+
+from datetime import datetime, timezone
+from pathlib import Path
+import json
+from app.core.exceptions import InvalidRequest
+from app.core.serialization import public
+
+
+def _effective_replacement(document, documents, now):
+    replacement = next(
+        (d for d in documents if d.document_id == document.superseded_by), None
+    )
+    return (
+        replacement is not None
+        and not replacement.deleted_at
+        and not replacement.purged_at
+        and (
+            not replacement.effective_at
+            or datetime.fromisoformat(replacement.effective_at) <= now
+        )
+    )
+
+
+class DocumentInspectionService:
+    def __init__(self, workspaces, access):
+        self.workspaces, self.access = workspaces, access
+
+    def documents(self, actor, kb_id):
+        self.access.authorize(actor, kb_id)
+        r = self.workspaces.get(kb_id)
+        pointer = r.repository.current_pointer()
+        manifest = r.repository._read_manifest(pointer["generation"]) if pointer else {}
+        published = {x["document_id"]: x for x in (manifest or {}).get("documents", [])}
+        output = []
+        documents = r.registry.list_documents()
+        servable = r.registry.eligible_ids(
+            d.document_id for d in documents if not d.purged_at
+        )
+        now = datetime.now(timezone.utc)
+        # Two queries for the whole list instead of two per document.
+        all_versions = r.registry.versions_by_document()
+        all_views = {}
+        for state in r.registry.view_states():
+            all_views.setdefault(state["document_id"], []).append(state)
+        for d in documents:
+            state = (
+                "purged"
+                if d.purged_at
+                else "deleted"
+                if d.deleted_at
+                else "published"
+                if d.document_id in published
+                else "uploaded"
+            )
+            purge_state = None
+            if d.purged_at:
+                path = r.storage_dir / "purges" / (d.document_id + ".json")
+                purge_state = (
+                    json.loads(path.read_text())["status"]
+                    if path.exists()
+                    else "plan_unavailable"
+                )
+                if purge_state == "completed":
+                    continue  # Keep the internal tombstone, not a deleted row in the UI.
+                state = "purge_incomplete"
+            versions = all_versions.get(d.document_id, [])
+            served = published.get(d.document_id)
+            output.append(
+                public(
+                    dict(
+                        **d.model_dump(),
+                        name=Path(d.source_path).name,
+                        file_type=versions[-1].file_type if versions else "",
+                        status=state,
+                        purge_state=purge_state,
+                        published=served,
+                        needs_build=not d.purged_at
+                        and not d.deleted_at
+                        and (
+                            not served
+                            or served.get("version_id")
+                            != (d.selected_version_id or d.latest_version_id)
+                        ),
+                        # Why a published document is not returned by live search.
+                        hidden_reason=None
+                        if d.deleted_at or d.purged_at or d.document_id in servable
+                        else "superseded"
+                        if d.superseded_by
+                        and _effective_replacement(d, documents, now)
+                        else "outside_validity",
+                        review_due=bool(
+                            d.review_after
+                            and not d.deleted_at
+                            and datetime.fromisoformat(d.review_after) <= now
+                        ),
+                        versions=[v.model_dump() for v in versions],
+                        view_states=all_views.get(d.document_id, []),
+                        view_count=sum(
+                            v["count"]
+                            for v in (manifest or {}).get("view_assets", [])
+                            if v["document_id"] == d.document_id
+                        ),
+                    )
+                )
+            )
+        return output
+
+    def document(
+        self, actor, kb_id, document_id, *, generation_id=None, offset=0, limit=50
+    ):
+        self.access.authorize(actor, kb_id)
+        r = self.workspaces.get(kb_id)
+        d = r.registry.get_document(document_id)
+        if d.purged_at or d.deleted_at:
+            raise KeyError("Document unavailable")
+        pointer = r.repository.current_pointer()
+        if generation_id and generation_id not in {
+            p["generation"] for p in r.repository.publications() if p["available"]
+        }:
+            raise KeyError("Generation was never published or is unavailable")
+        snapshot = (
+            r.repository.load_generation(generation_id or pointer["generation"], cached=True)
+            if generation_id or pointer
+            else None
+        )
+        record = (
+            next((x for x in snapshot.documents if x.document_id == document_id), None)
+            if snapshot
+            else None
+        )
+        parents = (
+            [
+                p.model_dump(mode="json")
+                for p in snapshot.parents
+                if p.document_id == document_id
+            ]
+            if snapshot
+            else []
+        )
+        children = (
+            [c for c in snapshot.store.records if c["document_id"] == document_id]
+            if snapshot
+            else []
+        )
+        ids = {c["chunk_id"] for c in children}
+        views = (
+            [v for v in snapshot.view_store.records if v["source_child_id"] in ids]
+            if snapshot and snapshot.view_store
+            else []
+        )
+        markdown = None
+        if record:
+            path = r.storage_dir / "parsed" / (record.checksum + ".md")
+            if path.exists():
+                markdown = path.read_text(encoding="utf-8")
+        return public(
+            dict(
+                document=d.model_dump(),
+                generation_id=generation_id or (pointer or {}).get("generation"),
+                published=record.model_dump(mode="json") if record else None,
+                markdown=markdown[:200000] if markdown else markdown,
+                markdown_truncated=bool(markdown and len(markdown) > 200000),
+                pagination={
+                    "offset": offset,
+                    "limit": limit,
+                    "parents": len(parents),
+                    "children": len(children),
+                    "views": len(views),
+                },
+                parents=parents[offset : offset + limit],
+                children=children[offset : offset + limit],
+                views=views[offset : offset + limit],
+                outline=[
+                    {
+                        "section_path": p["section_path"],
+                        "page_start": p["page_start"],
+                        "parent_id": p["parent_id"],
+                    }
+                    for p in parents[:1000]
+                ],
+            )
+        )
+
+    def _snapshot(self, r, generation_id):
+        pointer = r.repository.current_pointer()
+        if not pointer and not generation_id:
+            raise KeyError("No published index")
+        if generation_id and generation_id not in {
+            p["generation"] for p in r.repository.publications() if p["available"]
+        }:
+            raise KeyError("Generation was never published or is unavailable")
+        return r.repository.load_generation(
+            generation_id or pointer["generation"], cached=True
+        ), generation_id or pointer["generation"]
+
+    def context(
+        self, actor, kb_id, chunk_id, *, before=1, after=1, unit="child", generation_id=None
+    ):
+        """Neighbours of a hit in reading order, within the same document.
+
+        unit=child returns adjacent chunks; unit=parent returns adjacent sections
+        (parents), the next step up when a matched chunk is not enough.
+        """
+        if unit not in {"child", "parent"} or not (0 <= before <= 5 and 0 <= after <= 5):
+            raise InvalidRequest("Use unit=child|parent and 0-5 neighbours on each side")
+        self.access.authorize(actor, kb_id)
+        r = self.workspaces.get(kb_id)
+        snapshot, generation = self._snapshot(r, generation_id)
+        hit = next((x for x in snapshot.store.records if x["chunk_id"] == chunk_id), None)
+        if hit is None or hit["document_id"] not in r.registry.eligible_ids(
+            [hit["document_id"]]
+        ):
+            raise KeyError("Chunk unavailable")
+        document = hit["document_id"]
+        if unit == "child":
+            # Records of one document stay in chunking order through incremental builds.
+            rows = [x for x in snapshot.store.records if x["document_id"] == document]
+            index = next(i for i, x in enumerate(rows) if x["chunk_id"] == chunk_id)
+        else:
+            rows = [p.model_dump(mode="json") for p in snapshot.parents if p.document_id == document]
+            index = next(i for i, x in enumerate(rows) if x["parent_id"] == hit["parent_id"])
+            for row in rows:
+                row.pop("blocks", None)
+        start, end = max(0, index - before), min(len(rows), index + after + 1)
+        return public(
+            dict(
+                knowledge_base_id=kb_id,
+                document_id=document,
+                generation_id=generation,
+                unit=unit,
+                position=index,
+                total=len(rows),
+                items=[
+                    dict(row, offset=i - index) for i, row in enumerate(rows[start:end], start)
+                ],
+            )
+        )
+
+    def chunk(self, actor, kb_id, chunk_id, *, generation_id=None):
+        self.access.authorize(actor, kb_id)
+        r = self.workspaces.get(kb_id)
+        pointer = r.repository.current_pointer()
+        if not pointer and not generation_id:
+            raise KeyError("No published index")
+        if generation_id and generation_id not in {
+            p["generation"] for p in r.repository.publications() if p["available"]
+        }:
+            raise KeyError("Generation was never published or is unavailable")
+        snapshot = r.repository.load_generation(
+            generation_id or pointer["generation"], cached=True
+        )
+        item = next(
+            (x for x in snapshot.store.records if x["chunk_id"] == chunk_id), None
+        )
+        if item is None or item["document_id"] not in r.registry.eligible_ids(
+            [item["document_id"]]
+        ):
+            raise KeyError("Chunk unavailable")
+        return public(item)

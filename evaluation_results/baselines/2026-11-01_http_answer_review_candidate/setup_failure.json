@@ -1,1 +1,0 @@
-{"status":"failed_before_queries", "reason":"Corpus validation imported config before explicit corpus environment was set; index validation caught default three-document corpus. No questions or generation requests executed. Fixed import order in subsequent run."}

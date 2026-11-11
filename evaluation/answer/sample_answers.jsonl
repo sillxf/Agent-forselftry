@@ -1,0 +1,6 @@
+{"id": "sample_001", "answer": "密码喷洒用一个常用密码去试很多不同账户，每个账户只失败一两次，所以不会触发账户锁定 [1]。"}
+{"id": "sample_002", "answer": "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run [1]"}
+{"id": "sample_003", "answer": "不对。读取 LSASS 内存中的凭据需要管理员或 SYSTEM 权限 [1]。"}
+{"id": "sample_004", "answer": "建议先封禁可疑 IP 并开启 MFA [2]。"}
+{"id": "sample_005", "answer": "知识库中没有找到。"}
+{"id": "sample_006", "answer": "T1110.003 在 v18 中改名为 Credential Spraying [1]。"}

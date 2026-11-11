@@ -1,72 +1,57 @@
-# 应用代码与评测代码的边界
+# 可选离线评测
 
-```text
-app/
-└── rag/                    # 生产解析、切分、索引、检索；不计算评测指标
+评测不参与服务启动，不调用付费模型。运行结果写入 `evaluation/results/`（Git 忽略）。
 
-evaluation/
-├── rag/
-│   ├── dataset.py          # 测试数据集与标注、语料一致性检查
-│   ├── runner.py           # 逐题检索、证据映射、排名诊断
-│   ├── metrics.py          # Recall、Precision、MRR、NDCG
-│   ├── report.py           # 评测结果与报告
-│   ├── benchmark.py        # 检索对照流程
-│   ├── answer_review.py    # 真实 HTTP 路由检索 + 评测专用答案生成
-│   ├── crosslingual.py     # 实验检索组合，不改变生产策略
-│   ├── crosslingual_experiment.py
-│   ├── analysis.py         # 失败归因
-│   ├── audit.py            # 历史标注核查工具
-│   └── provenance.py       # 模型指纹和源码快照
-└── agent/                  # Agent 评测边界已预留，执行器和 Judge 尚未实现
-```
+## 冻结基准：benchmark/security-v1
 
-## 依赖方向
+从 Git 历史恢复的 Security RAG Benchmark V1：100 题、21 份文档（MITRE ATT&CK、OWASP WSTG、NIST 节选及结构测试样例），版本 `security-rag-benchmark-v1-100-candidate-r2`。题目和证据由 AI 编写，**尚无人工审核**，结论只能作为候选参考。来源与许可见 `SOURCES.md`、`SOURCES_original9.md`、`licenses/`。文件按字节冻结（`.gitattributes` 禁止换行转换），实验开始时逐个校验 `manifest.json` 中的 SHA-256。
 
-- `app/` **不能导入** `evaluation/`、`scripts/` 或 `tests/`。
-- `evaluation/` 可以调用 `app/` 的真实生产能力，不能反向导入命令脚本或测试夹具模块。
-- `scripts/` 保留已有命令名称，评测入口只转发到 `evaluation/`，不再承载评分实现。
-- `tests/` 验证生产与评测代码；固定文档、标注和 Agent 候选案例继续留在现有测试数据目录，避免无意义地改变数据路径及历史哈希。
-- `evaluation_results/` 存输出，不作为生产知识库，也不作为应用导入模块。
+留出集：按 `query_family` 的稳定哈希划出约 20% 的题族（16 道可回答题），同一问题的不同语言变体始终在同一侧。留出集只用于确认，不用于选择参数。
 
-生产 `/knowledge/search` 仍只负责检索；`answer_review.py` 的 LLM 生成是评测步骤，不是生产问答接口。
-评测用独立进程和显式知识库/索引参数，不能在正在运行的生产进程里切换评测配置。
+## 分块参数实验：chunking_experiment.py
 
-## 已有命令不变
+问题：产品默认 child 400 / parent 1600 / overlap 60 是否合适。使用当前产品的解析、分块、BGE-M3 Dense、BM25 和 RRF 代码，不用重排，不用 LLM。每组同时测两种查询方式：只用原问题，以及原问题加 `english_queries.json` 中的英文翻译（等同于调用方使用 `queries` 字段）。
 
-```powershell
-.\.venv\Scripts\python.exe scripts/run_rag_benchmark.py --retriever all --top-k 5 --offline
-.\.venv\Scripts\python.exe scripts/run_rag_answer_review.py --offline-models --generate --top-k 3 `
-  --output-dir evaluation_results/new-answer-review
-```
+~~~powershell
+.\.venv\Scripts\python.exe -m evaluation.chunking_experiment --output evaluation/results/chunking-<日期> --offline
+~~~
 
-也可以直接使用模块入口：
+中断后用同一个输出目录重跑会复用已解析文档和已编码向量。
 
-```powershell
-.\.venv\Scripts\python.exe -m evaluation.rag.benchmark --help
-.\.venv\Scripts\python.exe -m evaluation.rag.answer_review --help
-```
+### 2026-11-06 结果
 
-新运行的源码快照包含 `app/`、`evaluation/`、`scripts/` 的 Python 文件及 requirements，
-不包含 `.env`、API key 或模型权重。迁移前的封存结果不改写，仍使用它们原来的源码快照复现。
-这次只是代码归属与导入路径调整，不改变生产策略、评分定义或既有开发参考分数。
+环境：Linux 2 核 CPU，docling 2.145.0、transformers 5.19.0、sentence-transformers 6.1.0、torch 2.14.1，与本机 Windows 依赖版本一致；BGE-M3 revision `5617a9f6`，权重 SHA-256 与历史报告一致。71 个 Parent。开发集 74 道、留出集 16 道可回答题全部计分。单位为百分比，Parent 粒度。
 
-## Agent 评测
+| 配置 | 开发集 R@5 | 开发集 MRR@5 | 留出集 R@5 | 留出集 MRR@5 |
+| --- | ---: | ---: | ---: | ---: |
+| child200，仅原问题 | 94.26 | 76.46 | 93.75 | 70.00 |
+| child400（默认），仅原问题 | 91.89 | 73.76 | 93.75 | 69.48 |
+| child800，仅原问题 | 91.89 | 72.91 | 87.50 | 68.23 |
+| child200，加英文查询 | 97.30 | 91.49 | 100.00 | 88.75 |
+| child400（默认），加英文查询 | 100.00 | 89.23 | 100.00 | 85.62 |
+| child800，加英文查询 | 97.30 | 87.66 | 93.75 | 84.38 |
 
-规划见 [`agent/README.md`](agent/README.md)。未来的 `runner.py`、`judges.py`、`metrics.py`
-应在 `evaluation/agent/` 实现，不能放进生产 Agent 或 RAG 包。目前不添加空实现来冒充完成。
+首轮运行发现 rag_019 的证据无法定位：Docling 把跨页句子的前半句“The authentication rule checks events,”识别成了章节标题，句子被拆到两个章节。已修复（以逗号、分号结尾的长句不当作标题，见 tests/test_structure_recovery.py），其余 20 份文档的解析结果逐块对比不变。上表是修复后的结果。
 
-## Security V1 扩展工具
+结论：
 
-- `rag/expansion.py`：固定来源节选、设计输入到标签的显式生成，拒绝覆盖已有 labels。
-- `rag/coverage_audit.py`：旧集与新集覆盖审查、真实证据校验和未签字复核单。
-- `rag/multik.py`：共享排名前缀的多 K/分组指标与失败、噪声诊断。
-- `rag/model_comparison.py`：冻结 Chunk 的 A/B/C 实验；缺权重时明确记未运行。
+1. 调用方补充一条英文查询的收益最大：默认分块下开发集 MRR@5 从 73.76 升到 89.23。这证实了 `queries` 字段的价值，调用方 LLM 应该为中文问题补一条文档语言的查询。
+2. 分块长度的影响在 2 到 3 道题之内，而且方向不稳定。只用原问题时 child200 略好（按预设停止规则判为“可切换”）；加英文查询后 child200 的开发集 R@5 反而低 2.7 个百分点（rag_009、rag_074 掉出前 5）。预设规则只看了原问题路径，没有覆盖推荐用法。
+3. 因此**保持默认 400 不变**。child800 在留出集上 R@5 下降，不建议调大。
+4. 局限：语料只有 21 份、多为短文档，基准未经人工审核，接近饱和。分块问题的最终判断需要更长、更真实的文档和人工审核过的题目。
 
-这些模块不被 `app/` 导入；没有引入生产模型切换或 Cross-Encoder。
+## 压测：scripts/load_test.py
 
-## 查询组件复用
+见脚本说明。2026-11-06 在 2 核 CPU 上的实测（BGE-M3 本地向量，12 份短文档，不开重排）：单并发 p50 约 430 ms，约每秒 2.4 次；8 并发时修复前 80 个请求中 75 个立即返回 503，加入最多 10 秒的排队后 80 个全部成功，p50 约 3.3 秒，吞吐不变。吞吐上限来自串行的本地模型推理，提高吞吐需要把向量模型移到独立推理服务或 GPU。
 
-生产查询组件在 `app/rag/retrieval/`，由 `RetrievalPipeline` 编排。
-评测调用 `retriever.pipeline.rank_candidates()` 或直接组合公开 Dense/Sparse/Fusion/Context 组件，
-不再调用 Retriever 私有召回/Parent 方法。冻结索引通过 `attach_index()` 一次绑定 store、documents、parents 和查询模型。
-索引格式、评分协议和历史结果不因这次组件化改变。
+## 答案级评测：answer_eval.py
+
+见 [answer/README.md](answer/README.md)。检索、可选的付费生成和不调模型的判分三步，题目格式为 JSONL。附带的 6 道样例题只用于确认链路，由 AI 编写、未经审核，不能用来下质量结论；需要人工审核过的题目。
+
+## BM25 打分
+
+1.3 起 BM25 用 numpy 按词项倒排数组打分，分数和排序与之前的逐行 Python 实现逐位一致（tests/test_sparse.py 用旧公式做对照）。合成数据实测（2 核 CPU，中英混合短文本，每次检索返回 20 条）：2000 个片段每次查询 8.7 → 0.4 毫秒，50000 个片段 587 → 9.5 毫秒。只覆盖 BM25 一路，不含向量化。
+
+## metrics.py
+
+纯指标计算（result-qrels-v2）：Recall 按唯一必要事实计，Precision/MRR/NDCG 按结果位计。

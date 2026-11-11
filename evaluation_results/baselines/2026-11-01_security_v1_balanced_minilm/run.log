@@ -1,8 +1,0 @@
-PROVISIONAL: 100 questions still need human review.
-
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
-Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2470.99it/s]
-dense {"recall": 0.48333333333333334, "precision": 0.11555555555555556, "mrr": 0.44537037037037036, "ndcg": 0.451646199348659}
-bm25 {"recall": 0.5166666666666667, "precision": 0.11777777777777779, "mrr": 0.4305555555555556, "ndcg": 0.44327008407637103}
-hybrid {"recall": 0.5277777777777778, "precision": 0.12444444444444445, "mrr": 0.4753703703703704, "ndcg": 0.48484417631833693}
-Reports: D:\AI-SecOps-Agent\evaluation_results\baselines\2026-11-01_security_v1_balanced_minilm

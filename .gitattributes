@@ -14,3 +14,7 @@ evaluation_results/baselines/** -text whitespace=trailing-space,space-before-tab
 
 # Extended benchmark inputs are immutable, hash-checked bytes.
 tests/rag_benchmark/v1/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+evaluation/benchmark/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+
+# Double-click launchers must also run after checkout with core.autocrlf=false.
+*.cmd text eol=crlf

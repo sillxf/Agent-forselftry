@@ -1,0 +1,191 @@
+"""Versioned public contracts. Build settings and live query policy are deliberately separate."""
+
+from typing import Any, Literal
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from app.retrieval.policy import RetrievalPolicy
+
+
+class Contract(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class IndexBuildConfig(Contract):
+    schema_version: Literal[1] = 1
+    embedding_id: str = "default-embedding"
+    parent_tokens: int = Field(1600, ge=64, le=16000)
+    child_tokens: int = Field(400, ge=32, le=4000)
+    overlap_tokens: int = Field(60, ge=0, le=1000)
+    ocr_enabled: bool = True
+
+    @model_validator(mode="after")
+    def budgets(self):
+        if (
+            self.overlap_tokens >= self.child_tokens
+            or self.child_tokens > self.parent_tokens
+        ):
+            raise ValueError("Require overlap < child <= parent token budgets")
+        return self
+
+
+class RetrievalProfile(RetrievalPolicy):
+    # Inherits strict/frozen policy. No evidence-sufficiency detection.
+    default_strategy: Literal["dense", "bm25", "hybrid", "hybrid_rerank"] = "hybrid"
+    reranker_id: str = "default-reranker"
+    candidate_k: int = Field(20, ge=1, le=100)
+
+
+class KnowledgeBaseCreate(Contract):
+    name: str = Field(min_length=1, max_length=120)
+    description: str = Field("", max_length=2000)
+    build: IndexBuildConfig = Field(default_factory=IndexBuildConfig)
+    profile: RetrievalProfile = Field(default_factory=RetrievalProfile)
+
+
+class SearchRequest(Contract):
+    query: str = Field(min_length=1, max_length=4000)
+    # Optional caller rewrites of the same question (e.g. translated into the
+    # document language). Each is retrieved and fused by RRF; the server calls no LLM.
+    queries: list[str] = Field(default_factory=list, max_length=4)
+    knowledge_base_ids: list[str] = Field(min_length=1, max_length=5)
+    top_k: int = Field(5, ge=1, le=20)
+    mode: Literal["default", "high_recall"] = "default"
+    supplement: bool = False
+    # Exact values, lists (any of), operator objects such as {"$gte": "2024"},
+    # and top-level "$and"/"$or" lists. Validated in app/retrieval/filters.py.
+    filters: dict[str, Any] = Field(default_factory=dict)
+    # Drop results whose relevance (reranker score, else cosine similarity) is lower.
+    min_score: float | None = Field(None, ge=0, le=1)
+    as_of: str | None = None
+    include_trace: bool = False
+
+    @model_validator(mode="after")
+    def valid(self):
+        if not self.query.strip():
+            raise ValueError("Query must not be blank")
+        if any(not q.strip() or len(q) > 4000 for q in self.queries):
+            raise ValueError("Each additional query must be 1-4000 non-blank characters")
+        if len(set(self.knowledge_base_ids)) != len(self.knowledge_base_ids):
+            raise ValueError("Duplicate knowledge base")
+        return self
+
+
+class ModelConfig(Contract):
+    kind: Literal["embedding", "reranker"]
+    # cohere_compatible: a POST {base_url}/rerank service (Cohere, Jina, vLLM, Infinity).
+    provider: Literal[
+        "sentence_transformers", "openai_compatible", "cross_encoder", "cohere_compatible"
+    ]
+    model: str = Field(min_length=1, max_length=300)
+    revision: str = Field("default", min_length=1, max_length=200)
+    dimension: int | None = Field(None, ge=1, le=65536)
+    normalize: Literal[True] = True
+    metric: Literal["cosine"] = "cosine"
+    query_prefix: str = Field("", max_length=1000)
+    document_prefix: str = Field("", max_length=1000)
+    encoding: Literal["encode", "query_document"] = "encode"
+    tokenizer: str | None = Field(None, max_length=300)
+    base_url: str | None = Field(None, max_length=1000)
+    secret_env: str | None = Field(None, pattern=r"^[A-Z][A-Z0-9_]{0,100}$")
+    timeout_seconds: float = Field(30, gt=0, le=180)
+    batch_size: int = Field(16, ge=1, le=128)
+
+    @model_validator(mode="after")
+    def compatible(self):
+        if self.kind == "reranker" and self.provider not in {
+            "cross_encoder",
+            "cohere_compatible",
+        }:
+            raise ValueError("Reranker requires cross_encoder or cohere_compatible")
+        if self.kind == "embedding" and self.provider in {
+            "cross_encoder",
+            "cohere_compatible",
+        }:
+            raise ValueError("Embedding provider required")
+        if self.provider == "cohere_compatible" and not self.base_url:
+            raise ValueError("Remote reranker requires base_url")
+        if self.provider == "openai_compatible" and not (
+            self.base_url and self.dimension and self.tokenizer
+        ):
+            raise ValueError(
+                "Remote embedding requires base_url, dimension and an explicit tokenizer"
+            )
+        if self.provider in {"openai_compatible", "cohere_compatible"}:
+            from urllib.parse import urlsplit
+
+            u = urlsplit(self.base_url)
+            if (
+                u.scheme not in {"http", "https"}
+                or not u.hostname
+                or u.username
+                or u.password
+                or u.query
+                or u.fragment
+            ):
+                raise ValueError(
+                    "Invalid provider URL; credentials belong in secret_env"
+                )
+        return self
+
+
+class KeyCreate(Contract):
+    name: str = Field(min_length=1, max_length=120)
+    knowledge_base_ids: list[str] = Field(min_length=1, max_length=100)
+    requests_per_minute: int = Field(60, ge=1, le=10000)
+
+
+class JobControlRequest(Contract):
+    action: Literal["pause", "resume", "cancel"]
+
+
+class JobRequest(Contract):
+    operation: Literal["build", "rollback", "purge", "gc"] = "build"
+    full: bool = False
+    generation_id: str | None = None
+    document_id: str | None = None
+    confirm: bool = False
+
+    @model_validator(mode="after")
+    def arguments(self):
+        if self.operation == "rollback" and not self.generation_id:
+            raise ValueError("generation_id required")
+        if self.operation == "purge" and not (self.document_id and self.confirm):
+            raise ValueError("Explicit purge confirmation required")
+        return self
+
+
+class EvidenceCitation(Contract):
+    knowledge_base_id: str
+    document_id: str
+    version_id: str | None = None
+    chunk_id: str
+    page_start: int | None = None
+    page_end: int | None = None
+
+
+class SearchEvidence(BaseModel):
+    # Route scores and source-specific metadata are extensible; source identity is stable.
+    model_config = ConfigDict(extra="allow")
+    knowledge_base_id: str
+    document_id: str
+    version_id: str | None = None
+    parent_id: str
+    chunk_id: str
+    generation_id: str
+    content: str
+    citation: EvidenceCitation
+
+
+class SearchMetadata(Contract):
+    snapshots: list[dict[str, Any]]
+    elapsed_ms: float
+    model_usage: list[dict[str, Any]]
+    warnings: list[str]
+
+
+class SearchResponse(Contract):
+    schema_version: Literal[1] = 1
+    request_id: str
+    query: str
+    results: list[SearchEvidence]
+    metadata: SearchMetadata
+    trace: list[dict[str, Any]] | None = None
