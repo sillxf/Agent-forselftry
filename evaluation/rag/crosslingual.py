@@ -1,10 +1,17 @@
 """Experimental query routes over frozen chunks; never changes production defaults."""
+from functools import partial
+
 from app.rag.embedder import embed_texts
-from app.rag.retriever import reciprocal_rank_fusion
+
+from app.rag.retrieval.dense import DenseRetriever
+from app.rag.retrieval.pipeline import RetrievalPipeline
 
 
 def fuse_query_rankings(rankings, rank_constant=60):
-    """Equal-weight query RRF; deduplicate by chunk identity, never sum raw scores."""
+    """Legacy query-level policy: first-route metadata and ID-only tie breaking.
+
+    Intentionally differs from production score-tied RRF; retain historical ranks.
+    """
     scores, records = {}, {}
     for ranked in rankings:
         seen = set()
@@ -20,18 +27,17 @@ def fuse_query_rankings(rankings, rank_constant=60):
 
 
 def rank_experiment(retriever, queries, strategy, top_k, *, model_name=None, store=None):
-    routes = []
-    for query in queries:
-        if store is None:
-            ranked = retriever._rank_children(query, top_k, strategy)
-        else:
-            dense = store.search(embed_texts([query], model_name)[0], max(retriever.dense_top_k, top_k * 4)) if strategy != "bm25" else []
-            sparse = retriever._sparse_search(query, max(retriever.bm25_top_k, top_k * 4)) if strategy != "dense" else []
-            ranked = reciprocal_rank_fusion(dense, sparse) if strategy == "hybrid" else (dense if strategy == "dense" else sparse)
-        routes.append(ranked)
+    pipeline = retriever.pipeline
+    if store is not None:
+        pipeline = RetrievalPipeline(
+            DenseRetriever(store, partial(embed_texts, model_name=model_name)),
+            pipeline.sparse, pipeline.fusion, pipeline.context_builder,
+            dense_top_k=pipeline.dense_top_k, bm25_top_k=pipeline.bm25_top_k,
+        )
+    routes = [pipeline.rank_candidates(query, top_k, strategy) for query in queries]
     ranked = routes[0] if len(routes) == 1 else fuse_query_rankings(routes)
     return {"children": [dict(r, source_block_ids=r["block_ids"]) for r in ranked[:top_k]],
-            "parents": retriever._restore_parents(ranked, top_k),
+            "parents": pipeline.context_builder.build(ranked, top_k),
             "candidate_count": len(ranked),
             "route_candidates": [{"query": query, "chunk_ids": [r["chunk_id"] for r in route]}
                                  for query, route in zip(queries, routes)]}

@@ -99,11 +99,44 @@ indexes/<generation>/
   metadata.db                     # document / parent / child relationships
 ```
 
-A generation is published after its files are saved. Old generations are retained;
+A generation is published only after its files are saved and its query components
+are successfully prepared. The facade switches its in-memory references after the
+atomic pointer replacement. Pre-publication failures leave the old index active.
+Old generations are retained;
 automatic cleanup, index repair and multi-user permissions are outside this round.
 Index files are local, trusted application data.
 
+### Composable retrieval
+
+Query-time logic is implemented by `DenseRetriever`, `SparseRetriever`, `RRFFusion`,
+`ParentContextBuilder` and `RetrievalPipeline` under `app/rag/retrieval/`.
+`KnowledgeRetriever` is the compatibility facade coordinating ingestion, indexing,
+`SnapshotRepository` persistence and the query pipeline. Its search API is unchanged.
+Components can be constructed independently and injected into the pipeline; no
+Reranker, compression or new evaluation phase is enabled by this refactor.
+See [component responsibilities and examples](docs/rag_retrieval_pipeline.md).
+
 ### Document processing
+
+`IngestionPipeline` in `app/rag/ingestion/pipeline.py` can run document processing
+independently and return documents, Parents and Children without vector encoding or
+index persistence. It receives the existing parser and chunkers; the caller supplies
+the tokenizer and effective token budget. `KnowledgeRetriever` delegates its document
+processing to this pipeline; index persistence is delegated to `SnapshotRepository`.
+See [standalone ingestion usage](docs/rag_retrieval_pipeline.md#独立文档处理第一步提取).
+
+`IndexingPipeline` in `app/rag/indexing/pipeline.py` accepts that existing chunk result,
+encodes Child `search_text` and returns an in-memory `IndexSnapshot`. Rebuild vectors
+with a different embedding function or vector-store factory without parsing again.
+The facade delegates persistence and publication to `SnapshotRepository`; index formats
+remain unchanged.
+See [chunk reuse and indexing examples](docs/rag_retrieval_pipeline.md#独立索引构建第二步提取).
+
+`SnapshotRepository` in `app/rag/indexing/snapshot_repository.py` saves/loads generations
+and publishes `current.json`. Build order is now: ingestion → indexing → save a fresh
+generation → prepare query components → publish the pointer → activate in memory.
+Existing generations load without migration; no automatic cleanup, recovery or
+multi-process coordination is introduced. See [snapshot lifecycle](docs/rag_retrieval_pipeline.md#快照仓库与兼容-facade第三四步整理).
 
 The ingestion-to-chunking path now runs:
 

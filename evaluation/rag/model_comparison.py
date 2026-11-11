@@ -21,29 +21,15 @@ from evaluation.rag.provenance import code_state, model_state
 ROOT=Path(__file__).resolve().parents[2]
 
 
-def fuse_routes(routes, rank_constant=60):
-    scores, records={},{}
-    for ranking in routes:
-        seen=set()
-        for rank,record in enumerate(ranking,1):
-            key=record['chunk_id']
-            if key in seen:
-                continue
-            seen.add(key)
-            scores[key]=scores.get(key,0)+1/(rank_constant+rank)
-            records[key]={**records.get(key,{}),**record}
-    keys=sorted(scores,key=lambda key:(-scores[key],-records[key].get('sparse_score',0),-records[key].get('dense_score',-1),key))
-    return [{**records[key],'score':scores[key]} for key in keys]
-
-
 def dual_query_rank(retriever, query, english, k):
+    pipeline=retriever.pipeline
     queries=list(dict.fromkeys([query,english]))
-    dense=[retriever._rank_children(q,k,'dense') for q in queries]
-    sparse=retriever._sparse_search(english,max(retriever.bm25_top_k,k*4))
+    dense=[pipeline.rank_candidates(q,k,'dense') for q in queries]
+    sparse=pipeline.sparse.retrieve(english,max(pipeline.bm25_top_k,k*4))
     routes=[*dense,sparse]
-    ranked=fuse_routes(routes)
+    ranked=pipeline.fusion.fuse(routes)
     return dict(children=[dict(r,source_block_ids=r['block_ids']) for r in ranked[:k]],
-                parents=retriever._restore_parents(ranked,k),candidate_count=len(ranked),
+                parents=pipeline.context_builder.build(ranked,k),candidate_count=len(ranked),
                 query_routes=[dict(kind='dense' if i<len(dense) else 'bm25',query=queries[i] if i<len(dense) else english,
                                    candidates=[dict(chunk_id=r['chunk_id'],rank=n,score=r.get('dense_score',r.get('sparse_score'))) for n,r in enumerate(route,1)]) for i,route in enumerate(routes)])
 
@@ -60,11 +46,11 @@ def load_reference(dataset, baseline, config):
     retriever=KnowledgeRetriever(build=False,knowledge_dir=dataset.documents_dir,model_name=config['embedding']['name'],
         parent_max_tokens=chunk['parent_max_tokens'],child_max_tokens=chunk['child_max_tokens'],overlap_tokens=chunk['overlap_tokens'],
         dense_top_k=config['retrieval']['dense_top_k'],bm25_top_k=config['retrieval']['bm25_top_k'])
-    retriever.store=FaissVectorStore.load(frozen)
+    store=FaissVectorStore.load(frozen)
     with closing(sqlite3.connect(frozen/'metadata.db')) as db:
-        retriever.documents=[DocumentRecord.model_validate_json(row[0]) for row in db.execute('SELECT data FROM documents')]
-        retriever.parents={p.parent_id:p for p in [ParentChunk.model_validate_json(row[0]) for row in db.execute('SELECT data FROM parents')]}
-    retriever._build_sparse()
+        documents=[DocumentRecord.model_validate_json(row[0]) for row in db.execute('SELECT data FROM documents')]
+        parents={p.parent_id:p for p in [ParentChunk.model_validate_json(row[0]) for row in db.execute('SELECT data FROM parents')]}
+    retriever.attach_index(store,documents,parents)
     dataset.validate_index(retriever)
     return retriever
 
@@ -139,9 +125,7 @@ def main():
     index_started=time.perf_counter()
     vectors=model.encode([r['search_text'] for r in records],batch_size=args.index_batch_size,normalize_embeddings=True,convert_to_numpy=True,show_progress_bar=True)
     store=FaissVectorStore(vectors.shape[1]);store.add(vectors,records);store.save(output/'bge_index')
-    retriever.model_name=args.model
-    retriever.store=store
-    retriever._build_sparse()
+    retriever.attach_index(store,retriever.documents,retriever.parents,model_name=args.model)
     index_seconds=time.perf_counter()-index_started
     environment=dict(python=sys.version,platform=platform.platform(),machine=platform.machine(),
                      torch_threads=torch.get_num_threads(),seed=0,

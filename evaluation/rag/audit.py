@@ -8,7 +8,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 from evaluation.rag.dataset import Dataset, Evidence, checksum
 from evaluation.rag.runner import derive_qrels, evaluation_units, map_evidence, portable_record, write_json
-from app.rag.retriever import KnowledgeRetriever, tokenize
+from app.rag.retriever import KnowledgeRetriever
+from app.rag.retrieval.sparse import tokenize
 from evaluation.rag.metrics import retrieval_metrics
 
 
@@ -96,7 +97,7 @@ def main():
             variants["english_diagnostic_only"] = CONTROL_QUERIES[question.id]
         for variant, query in variants.items():
             for strategy in ("dense", "bm25", "hybrid"):
-                ranked = retriever._rank_children(query, 5, strategy)
+                ranked = retriever.pipeline.rank_candidates(query, 5, strategy)
                 items, first_match = [], None
                 for rank, record in enumerate(ranked, 1):
                     source = dict(record, source_block_ids=record["block_ids"])

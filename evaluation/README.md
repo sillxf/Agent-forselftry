@@ -63,3 +63,10 @@ evaluation/
 - `rag/model_comparison.py`：冻结 Chunk 的 A/B/C 实验；缺权重时明确记未运行。
 
 这些模块不被 `app/` 导入；没有引入生产模型切换或 Cross-Encoder。
+
+## 查询组件复用
+
+生产查询组件在 `app/rag/retrieval/`，由 `RetrievalPipeline` 编排。
+评测调用 `retriever.pipeline.rank_candidates()` 或直接组合公开 Dense/Sparse/Fusion/Context 组件，
+不再调用 Retriever 私有召回/Parent 方法。冻结索引通过 `attach_index()` 一次绑定 store、documents、parents 和查询模型。
+索引格式、评分协议和历史结果不因这次组件化改变。
