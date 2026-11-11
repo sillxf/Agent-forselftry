@@ -1,18 +1,4 @@
-def split_text(
-    text,
-    chunk_size=300
-):
-
-    chunks=[]
-
-    for i in range(
-        0,
-        len(text),
-        chunk_size
-    ):
-
-        chunks.append(
-            text[i:i+chunk_size]
-        )
-
-    return chunks
+"""Compatibility alias; canonical implementation lives in rag_service.core.chunker."""
+import importlib
+import sys
+sys.modules[__name__] = importlib.import_module("rag_service.core.chunker")

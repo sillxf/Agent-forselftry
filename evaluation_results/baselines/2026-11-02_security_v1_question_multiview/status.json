@@ -1,0 +1,23 @@
+{
+  "recall_improved": [
+    "rag_079"
+  ],
+  "recall_regressed": [
+    "rag_004",
+    "rag_007",
+    "rag_038",
+    "rag_043",
+    "rag_045",
+    "rag_049",
+    "rag_050",
+    "rag_053",
+    "rag_072",
+    "rag_081"
+  ],
+  "historical_hybrid_unchanged": true,
+  "parent_recall5_delta_pp": -9.999999999999998,
+  "production_view_publication": false,
+  "query_errors": 0,
+  "questions": 100,
+  "views": 460
+}

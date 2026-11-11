@@ -38,3 +38,10 @@ RAG_CHILD_OVERLAP_TOKENS = int(os.getenv("RAG_CHILD_OVERLAP_TOKENS", "60"))
 RAG_DENSE_TOP_K = int(os.getenv("RAG_DENSE_TOP_K", "20"))
 RAG_BM25_TOP_K = int(os.getenv("RAG_BM25_TOP_K", "20"))
 RAG_OCR_ENABLED = os.getenv("RAG_OCR_ENABLED", "true").lower() in {"1", "true", "yes"}
+
+# Independent online policy; optional reranking is lazy and degrades to Hybrid.
+RAG_RETRIEVAL_STRATEGY = os.getenv("RAG_RETRIEVAL_STRATEGY", "hybrid")
+RAG_RERANKER_MODEL = os.getenv("RAG_RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
+RAG_CONTEXT_CHAR_BUDGET = int(os.getenv("RAG_CONTEXT_CHAR_BUDGET", "24000"))
+RAG_RERANKER_TIMEOUT_SECONDS = float(os.getenv("RAG_RERANKER_TIMEOUT_SECONDS", "2"))
+RAG_EMBEDDING_CACHE_REVISION = os.getenv("RAG_EMBEDDING_CACHE_REVISION", "1")

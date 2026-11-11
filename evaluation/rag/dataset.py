@@ -15,6 +15,13 @@ def normalize(text: str) -> str:
     return " ".join(text.casefold().split())
 
 
+def matches_source(anchor, document_id, source_checksum=None, source_name=None):
+    """Keep frozen checksum anchors without replacing managed logical identities."""
+    return (anchor.document_id == document_id or
+            (source_checksum is not None and anchor.document_id == source_checksum
+             and anchor.source == source_name))
+
+
 class SourceAnchor(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     document_id: str = Field(min_length=1)
@@ -125,13 +132,17 @@ class Dataset:
 
     def validate_index(self, retriever):
         """Fail before scoring if labels are stale or a quoted source is absent."""
-        if {d.document_id for d in retriever.documents} != {e["sha256"] for e in self.manifest["documents"]}:
+        expected = {(Path(e["file"]).name, e["sha256"]) for e in self.manifest["documents"]}
+        if {(d.filename, d.checksum) for d in retriever.documents} != expected:
             raise ValueError("Indexed documents do not match the benchmark corpus")
         for question in self.questions:
             for evidence in question.relevant_evidence:
                 for number, anchor in enumerate(evidence.anchors()):
                     label = f"{question.id}/{evidence.evidence_id}/anchor-{number}"
-                    blocks = [b for p in retriever.parents.values() if p.document_id == anchor.document_id
+                    documents = [d for d in retriever.documents if matches_source(
+                        anchor, d.document_id, d.checksum, d.filename)]
+                    document_ids = {d.document_id for d in documents}
+                    blocks = [b for p in retriever.parents.values() if p.document_id in document_ids
                               for b in p.blocks if set(b.source_block_ids or [b.block_id]) & set(anchor.source_block_ids)]
                     if not blocks or not any(normalize(anchor.text_quote) in normalize(b.text) for b in blocks):
                         raise ValueError(f"Unresolved source evidence: {label}")
@@ -142,6 +153,5 @@ class Dataset:
                     if not any(b.section_path == anchor.section_path and b.page_number == anchor.page_number
                                and b.page_end == anchor.page_end for b in matching):
                         raise ValueError(f"Stale evidence location: {label}")
-                    source = next(d.filename for d in retriever.documents if d.document_id == anchor.document_id)
-                    if anchor.source != source:
+                    if not any(d.filename == anchor.source for d in documents):
                         raise ValueError(f"Stale evidence filename: {label}")

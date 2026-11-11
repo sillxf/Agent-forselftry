@@ -1,4 +1,8 @@
 """Offline RAG fixtures: real parsing/FAISS, deterministic local embeddings."""
+import os
+os.environ["RAG_EMBEDDED_MODE"] = "true"
+os.environ["RAG_SERVICE_URL"] = ""  # Offline tests must never inherit a real service endpoint from .env.
+
 import hashlib
 import re
 
@@ -36,7 +40,7 @@ def rag_factory(tmp_path):
     def create(build=True, **options):
         defaults = dict(knowledge_dir=knowledge, storage_dir=storage, tokenizer=CharacterTokenizer(),
                         embedding_fn=LocalEmbedder(), model_name="test-local-v1",
-                        child_max_tokens=240, overlap_tokens=25)
+                        child_max_tokens=240, overlap_tokens=25, cache_enabled=False)
         defaults.update(options)
         return KnowledgeRetriever(build=build, **defaults)
 

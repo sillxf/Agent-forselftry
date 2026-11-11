@@ -293,9 +293,10 @@ questions. Every label and experimental translation remains pending review.
 - [100-question source review sheet](tests/rag_benchmark/v1/dataset/review.md)
 - [Actual grouped multi-K results](evaluation_results/baselines/2026-11-01_security_v1_balanced_minilm/hybrid/multik_report.md)
 
-BGE-M3 and dual-query comparison code is prepared, but no B/C scores are claimed:
-the model is not cached locally for this offline run. No production embedding or
-retrieval algorithm, Cross-Encoder or Agent refusal judge was introduced.
+The completed A/B/C comparison is archived in
+`evaluation_results/baselines/2026-11-01_security_v1_bge_m3_abc/abc_report.md`.
+BGE-M3 is now the default embedding. Frozen translated-query experiments do not
+imply an online translation chain, Cross-Encoder or Agent refusal judge.
 
 ## Current milestone — 2026-11-02
 
@@ -309,3 +310,121 @@ Further work on the improvement plan is paused pending a new instruction. This i
 a stopping milestone for this evaluation phase, not completion of all planned Agent
 features; no Reranker, online translation chain or new refusal mechanism is enabled
 by this milestone. Existing service processes need a restart to load the new defaults.
+
+
+## Optional Question Multi-View — 2026-11-02
+
+An experimental `multi_view` mode augments original Dense retrieval with a separate
+index of offline-generated Chinese/English questions. View hits map back to original
+Child/Parent evidence before context building; generated questions never become citations.
+Hybrid remains the default. No automatic retry, router, Summary/Entity views or Reranker.
+
+The historical experiment exposed retrieval modes to the Agent. The managed runtime
+now exposes only `knowledge_search(query, top_k)`; strategy stays on the server.
+`/knowledge/search` also accepts the optional mode; requesting a missing View index
+returns 409 rather than silently running Hybrid. Old generations load unchanged.
+
+The fixed 100-question pilot used the same BGE-M3 vectors, chunks, labels and retrieval
+parameters. The original Hybrid ranking fingerprint is unchanged; neither arm had query errors.
+
+| Parent metric | Hybrid | Question Multi-View |
+| --- | ---: | ---: |
+| All answerable Recall@5 | 94.44% | 84.44% |
+| Chinese → English Recall@5 | 92.31% | 74.36% |
+| All answerable Recall@10 | 97.78% | 97.78% |
+| All answerable MRR@5 | 0.7448 | 0.6807 |
+
+This implementation did **not** improve overall retrieval: one question gained Recall@5,
+ten lost it. Auxiliary views are not published to the current production knowledge base.
+The mode is available for explicit experiments, not recommended as the default or claimed
+as a validated LLM routing improvement. No labels or human-review statuses were changed.
+
+See [generation/build/replay commands](docs/rag_multiview.md) and
+[the full comparison and per-question rank changes](evaluation_results/baselines/2026-11-02_security_v1_question_multiview/comparison.md).
+
+## Managed knowledge operations (index format 7)
+
+Directory builds register stable logical document IDs in `app/storage/registry.db`,
+preserve immutable bytes in `app/storage/sources/<sha256>/source.<ext>`, and bind
+Parent/Child records to explicit content versions and processing artifacts. Identical
+bytes can be shared without merging different source identities. A registered latest
+version is not necessarily the version currently served: the published generation is
+always authoritative for content. Rebuilds and chunk-configuration changes do not
+create new content versions. Legacy snapshots and checksum-based benchmark labels
+remain readable without rewriting ground truth. Source-addressed retrieval tie keys
+keep logical UUID migration from silently changing Hybrid tie ordering.
+
+### Updates, safety and recovery
+
+- A file lock serializes builders across processes. Expensive parsing/encoding runs
+  outside the query lock; `build_index_async()` exposes an in-process background build.
+- A short SQLite write transaction checks lifecycle revision and publication checks
+  the expected current generation. Concurrent lifecycle edits invalidate stale builds.
+- Queries pin one runtime and filter tombstones and document-level validity bounds
+  before ranking and after optional reranking. Registry failure never bypasses filtering.
+- Other live instances follow the current pointer on their next request. Cold-load
+  leases keep GC from removing a generation while it is being loaded.
+- `current.json` and `previous.json` are published pointers, not arbitrary ready
+  directories. Startup can serve the last intact published index if a rebuild fails.
+- Build jobs persist running/succeeded/failed state, failures and cache counters.
+  An abandoned job is reconciled under the build lock; retry is explicit, not an
+  unbounded automatic retry loop. Rollback never restores deleted visibility and
+  remains pinned across restart until an explicit new build.
+
+### Cache and retention
+
+Unchanged documents reuse checksummed parsing/chunking artifacts; unchanged search
+text reuses checksummed embedding vectors. Corrupt disposable caches are regenerated
+from verified source bytes. Bump `RAG_EMBEDDING_CACHE_REVISION` when embedding weights
+or custom embedding behavior change without a model-name change. Source imports still
+verify bytes, so cache reuse is not a filesystem watcher or a zero-I/O update scheme.
+
+Explicit GC retains current/previous pointers plus the requested retention count,
+uses a default 24-hour grace period and removes only unreferenced generated artifacts
+and embedding-cache entries. It never purges registered source versions. Back up the
+whole storage directory, including registry, source blobs and extracted images.
+
+```powershell
+.venv\Scripts\python.exe scripts/rag_documents.py list
+.venv\Scripts\python.exe scripts/rag_documents.py versions <document-id>
+.venv\Scripts\python.exe scripts/rag_documents.py delete <document-id>
+.venv\Scripts\python.exe scripts/rag_documents.py restore <document-id>
+.venv\Scripts\python.exe scripts/rag_documents.py validity <document-id> --expires-at 2026-12-01T00:00:00+08:00
+# After renaming the source on disk, explicitly preserve its identity:
+.venv\Scripts\python.exe scripts/rag_documents.py rename <document-id> <new-file-path>
+.venv\Scripts\python.exe scripts/rag_documents.py rebuild
+.venv\Scripts\python.exe scripts/rag_documents.py jobs
+.venv\Scripts\python.exe scripts/rag_documents.py rollback <generation-id>
+.venv\Scripts\python.exe scripts/rag_documents.py gc --keep 3
+```
+
+Optional `--storage-dir`/`--knowledge-dir` arguments precede the command. Use an explicit
+rebuild before production format migration rather than making the first query do it.
+Physical source-file deletion is reflected by the next rebuild; use logical `delete`
+for immediate exclusion. A validity command replaces both bounds, and timestamps
+must include a timezone. These are document-level bounds, not historical `as_of` queries.
+
+### Online policy and cost boundaries
+
+The Agent tool is now `knowledge_search(query, top_k)`; server policy owns strategy.
+The HTTP experimental `retrieval_mode=multi_view` remains available for explicit
+experiments only. Automatic Multi-View and an LLM sufficiency checker remain disabled.
+
+`RAG_RETRIEVAL_STRATEGY=hybrid_rerank` opts into lazy BGE reranking with bounded candidates.
+The default two-second wait budget falls back to Hybrid; it does not kill a running
+model thread, and at most one reranking task runs per retriever. Tune the budget to
+measured hardware latency before expecting CPU reranking to finish. Reranker ordering
+and scores cannot replace canonical evidence text. Per-request diagnostics are available
+through `search_with_trace()` and `/knowledge/search?include_trace=true`.
+
+Whole Parent/Child evidence fits within a configurable **character** budget, never a
+falsely advertised exact token budget. Investigations allow at most three knowledge
+searches including initial retrieval, twelve tool calls and a bounded returned-evidence
+character total. Oversized queries and HTTP result counts are rejected.
+
+Offline Question View generation can use independent `RAG_VIEW_LLM_*` credentials/model,
+`--model` and `--base-url`; it preflights `--max-batches` (default 100), caps workers at four
+and disables client retries. Normal builds/queries never invoke the View LLM.
+Still deferred: document-version-level automatic View jobs and semantic quality gates,
+historical time queries, hard source-version purge, true mutable incremental indexes,
+and a benchmark-validated evidence-triggered Multi-View policy.
