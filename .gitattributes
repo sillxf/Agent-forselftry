@@ -1,0 +1,6 @@
+# Preserve document corpus bytes across platforms.
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.png binary

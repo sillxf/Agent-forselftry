@@ -4,3 +4,5 @@ __pycache__/
 .env
 *.py[cod]
 .DS_Store
+# Local parsed documents, extracted images and generated RAG indexes
+app/storage/

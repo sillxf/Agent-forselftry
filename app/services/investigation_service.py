@@ -206,11 +206,16 @@ class InvestigationService:
         knowledge
     ):
 
-        knowledge_text = "\n".join(
+        # Preserve evidence identities without copying duplicate retrieval-only fields.
+        knowledge_text = json.dumps(
             [
-                item["content"]
+                {key: item[key] for key in (
+                    "source", "document_id", "parent_id", "chunk_id",
+                    "page_start", "page_end", "content",
+                ) if key in item}
                 for item in knowledge
-            ]
+            ],
+            ensure_ascii=False,
         )
 
         prompt = SECURITY_ANALYSIS_PROMPT.format(
