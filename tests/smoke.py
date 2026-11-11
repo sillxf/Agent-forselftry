@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from app.api import create_app
 from app.bootstrap import create_services
 from app.indexing.worker import Worker
-from tests.support import FakeEmbedding, Parser
+from RAG.tests.support import FakeEmbedding, Parser
 
 TOKEN = "local-smoke-administrator-token-not-a-real-secret"
 

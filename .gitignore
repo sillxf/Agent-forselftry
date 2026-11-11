@@ -7,10 +7,11 @@ __pycache__/
 .DS_Store
 storage/*
 !storage/.gitignore
-frontend/node_modules/
+RAG/frontend/node_modules/
 .ruff_cache/
 .pytest_cache/
 build/
 dist/
 *.egg-info/
-evaluation/results/
+benchmark/runs/
+benchmark/results/

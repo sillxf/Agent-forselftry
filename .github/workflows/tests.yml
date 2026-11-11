@@ -19,12 +19,14 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: RAG/frontend/package-lock.json
       - run: npm ci
-        working-directory: frontend
+        working-directory: RAG/frontend
       - run: npm run build
-        working-directory: frontend
+        working-directory: RAG/frontend
       - run: python -m venv .venv
       - run: .venv\Scripts\python.exe -m pip install -e .
-      - run: .venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
+      - run: .venv\Scripts\python.exe -m unittest discover -s RAG/tests -p "test_*.py" -v
+      - run: .venv\Scripts\python.exe -m unittest discover -s agent/tests -p "test_*.py" -v
+      - run: .venv\Scripts\python.exe -m unittest discover -s benchmark/tests -p "test_*.py" -v
       - run: .venv\Scripts\python.exe -m tests.smoke
