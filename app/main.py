@@ -1,7 +1,8 @@
+import sqlite3
 import json
 from pathlib import Path
 from typing import Literal
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from app.schemas.alert import Alert
 from app.services.alert_deduplicator import (
     deduplicate_alerts
@@ -9,7 +10,6 @@ from app.services.alert_deduplicator import (
 from app.services.risk_analyzer import (
     analyze_alert
 )
-from app.rag.retriever import KnowledgeRetriever
 from app.llm.client import LLMClient
 from app.config import *
 from pydantic import ValidationError
@@ -32,9 +32,18 @@ llm = LLMClient(
     model=LLM_MODEL
 )
 
-knowledge_retriever = KnowledgeRetriever(
-    build=False
-)
+if os.getenv("RAG_SERVICE_URL"):
+    from rag_service.client import RAGClient
+    knowledge_retriever = RAGClient()
+elif os.getenv("RAG_EMBEDDED_MODE", "false").lower() == "true":
+    from app.rag.retriever import KnowledgeRetriever
+    knowledge_retriever = KnowledgeRetriever(build=False, auto_build=False)
+else:
+    class UnconfiguredKnowledge:
+        def search(self, *args, **kwargs):
+            raise RuntimeError("Configure RAG_SERVICE_URL/TOKEN/KNOWLEDGE_BASES or explicitly enable RAG_EMBEDDED_MODE")
+    knowledge_retriever = UnconfiguredKnowledge()
+
 
 investigation_service = InvestigationService(
     knowledge_retriever,
@@ -60,25 +69,12 @@ def load_alerts() -> list[Alert]:
     raw_data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     return [Alert.model_validate(item) for item in raw_data]
 
-@app.get("/knowledge/search")
-def search_knowledge(
-    q: str = Query(
-        ...,
-        description="Question or keyword"
-    ),
-    k: int = 3
-):
+from fastapi.staticfiles import StaticFiles
 
-    results = knowledge_retriever.search(
-        q,
-        k
-    )
-
-
-    return {
-        "query": q,
-        "results": results
-    }
+if os.getenv("RAG_EMBEDDED_MODE", "false").lower() == "true" and not os.getenv("RAG_SERVICE_URL"):
+    from app.api.knowledge import create_knowledge_router
+    app.include_router(create_knowledge_router(knowledge_retriever, search_provider=lambda: knowledge_retriever))
+app.mount("/knowledge/assets", StaticFiles(directory=Path(__file__).parent / "static/knowledge"), name="knowledge-assets")
 
 @app.get("/health")
 def health_check() -> dict[str, str]:
@@ -169,6 +165,9 @@ def analyze_alert_endpoint(
                     alert_pool=alerts,
                 )
 
+            except (OSError, sqlite3.DatabaseError) as exc:
+                raise HTTPException(status_code=503, detail="Knowledge storage unavailable.") from exc
+
             except LLMConfigurationError as exc:
                 raise HTTPException(
                     status_code=503,
@@ -199,11 +198,17 @@ def analyze_alert_endpoint(
                     detail="LLM response did not match the analysis schema.",
                 ) from exc
 
+            except ValueError as exc:
+                raise HTTPException(status_code=503, detail="Knowledge index unavailable; explicitly build or migrate it first.") from exc
+
             except ToolCallLimitError as exc:
                 raise HTTPException(
                     status_code=502,
                     detail="LLM exceeded the tool-call limit.",
                 ) from exc
+
+            except RuntimeError as exc:
+                raise HTTPException(status_code=503, detail="Knowledge service unavailable.") from exc
 
             return result
 

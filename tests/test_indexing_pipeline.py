@@ -77,7 +77,7 @@ def test_index_build_failure_preserves_active_store_pipeline_and_disk_pointer(ra
         broken_store.add.side_effect = RuntimeError("store add failed")
         retriever.store_factory = Mock(return_value=broken_store)
     with pytest.raises(RuntimeError, match="failed"):
-        retriever.build_index()
+        retriever.build_index(full=True)
     assert pointer.read_bytes() == previous_pointer
     assert retriever.store is previous_store
     assert retriever.pipeline is previous_pipeline

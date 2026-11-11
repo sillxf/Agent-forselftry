@@ -24,5 +24,8 @@ def test_investigation(rag_factory):
     assert "Multiple failed login attempts" in llm.chat.call_args.kwargs["messages"][0]["content"]
 
     prompt = llm.chat.call_args.kwargs["messages"][0]["content"]
+    assert load_alerts()[0].model_dump_json() in prompt
     assert "untrusted reference data" in prompt
+    assert "Failed logins alone do not confirm brute force" in prompt
+    assert "Available tools are read-only" in prompt
     assert result["knowledge"][0]["chunk_id"] in prompt

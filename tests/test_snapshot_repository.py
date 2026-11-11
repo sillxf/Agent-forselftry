@@ -34,7 +34,9 @@ def test_legacy_generation_load_save_and_publish_keep_existing_format_and_old_ve
     assert (repository.root / saved.generation / "faiss.index").read_bytes() == (legacy / "faiss.index").read_bytes()
     assert (repository.root / saved.generation / "chunks.jsonl").read_bytes() == (legacy / "chunks.jsonl").read_bytes()
     repository.publish(saved)
-    assert json.loads(pointer.read_text(encoding="utf-8")) == dict(generation=saved.generation, signature=signature)
+    published = json.loads(pointer.read_text(encoding="utf-8"))
+    assert published["generation"] == saved.generation and published["signature"] == signature
+    assert repository.publications()[0]["publication_id"] == published["publication_id"]
     restored = repository.load_current(signature)
     assert restored.documents == snapshot.documents
     assert restored.parents == snapshot.parents
@@ -106,10 +108,10 @@ def test_successful_build_prepares_query_before_publishing_and_only_then_switche
         events.append("saved")
         return saved
 
-    def prepare_new(store, parents, model_name):
+    def prepare_new(store, parents, model_name, **options):
         assert pointer.read_bytes() == previous
         assert retriever.store is old_store
-        prepared = prepare(store, parents, model_name)
+        prepared = prepare(store, parents, model_name, **options)
         events.append("prepared")
         return prepared
 

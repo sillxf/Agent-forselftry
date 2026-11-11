@@ -1,0 +1,13 @@
+# Standalone product: never commit credentials, knowledge contents or local runtime state.
+.env
+.env.*
+!.env.example
+rag-data/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+node_modules/
+.pytest_cache/

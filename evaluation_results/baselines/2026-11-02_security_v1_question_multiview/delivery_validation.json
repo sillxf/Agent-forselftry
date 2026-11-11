@@ -1,0 +1,30 @@
+{
+  "tests": {
+    "passed": 146,
+    "skipped": 10,
+    "command": "python -m pytest -q"
+  },
+  "repeat_ranking_fingerprints_equal": {
+    "hybrid": true,
+    "multi_view": true
+  },
+  "production": {
+    "query": "发现恶意软件后，应该如何隔离受感染的主机？",
+    "status": 200,
+    "sources": [
+      "malware.md",
+      "malware.md",
+      "malware.md"
+    ],
+    "unavailable_multi_view_status": 409,
+    "advertised_modes": [
+      "hybrid"
+    ],
+    "current_pointer_sha256": "ed305ab7c4c3f5ad5fea6a6c902e359cbbe7ecb3142d52790d1709a4ae9bef93",
+    "pointer_unchanged": true
+  },
+  "production_corpus_unchanged": true,
+  "benchmark_and_review_statuses_unchanged": true,
+  "archived_sources_match_delivered_code": true,
+  "source_snapshot_sha256": "265715cf86cbef38ba52809945ba2df2b85fdf3910d6cb3c1eef4c8cc111fe9d"
+}

@@ -96,7 +96,9 @@ def build_report(output, config, rows):
               "Pending labels are AI-prepared candidates, not human-certified ground truth. Review alternative",
               "valid sources, grades and unanswerable rationales before treating these scores as acceptance results.",
               "This small development set is not a holdout benchmark and does not establish general accuracy.",
-              "No LLM answer generation, judge, reranker, production embedding migration or automatic tuning was performed.",
+              ("No LLM answer generation, judge, production embedding migration or automatic tuning was performed. "
+               "This run includes the configured reranker." if config.get("reranker_model") else
+               "No LLM answer generation, judge, reranker, production embedding migration or automatic tuning was performed."),
               "Read `retrieval_results.jsonl` and `failures.json` for full ranks, scores, quotes and provenance."]
     (output / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     if rows and "metrics_by_k" in rows[0]:

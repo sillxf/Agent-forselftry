@@ -54,10 +54,14 @@ def test_bm25_recalls_identifiers_when_dense_vectors_are_identical(rag_factory):
     assert {"中文", "告警", "cve-2025-12345"} <= set(tokenize("中文告警 CVE-2025-12345"))
 
 
-def test_identical_source_files_are_indexed_once(rag_factory):
+def test_identical_source_files_keep_separate_managed_identities_and_share_source_bytes(rag_factory):
     add_manual(rag_factory)
     (rag_factory.knowledge / "copy.md").write_bytes((rag_factory.knowledge / "manual.md").read_bytes())
-    assert len(rag_factory().documents) == 1
+    documents = rag_factory().documents
+    assert len(documents) == 2
+    assert len({document.document_id for document in documents}) == 2
+    assert len({document.version_id for document in documents}) == 2
+    assert len({document.source_blob_path for document in documents}) == 1
 
 
 def test_embedding_model_change_builds_a_separate_generation(rag_factory):
