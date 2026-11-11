@@ -2,7 +2,7 @@ services:
   init:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: RAG/docker/Dockerfile
     image: rag-knowledge-service:1.3
     command: ["rag-service", "init"]
     volumes: ["rag-data:/data", "rag-models:/models"]
