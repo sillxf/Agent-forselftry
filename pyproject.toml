@@ -3,13 +3,16 @@ requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "rag-knowledge-service"
-version = "1.0.0"
+version = "1.3.0"
 description = "Independent managed evidence retrieval service with REST and MCP"
 requires-python = ">=3.11"
-dependencies = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "pydantic>=2,<3", "httpx>=0.27,<1", "numpy>=1.26,<3", "sentence-transformers>=5.1,<7", "faiss-cpu>=1.8,<2", "docling>=2.145,<3", "pypdfium2>=5.14,<6", "rank-bm25>=0.2.2,<0.3", "python-docx>=1.2,<2", "filelock>=3.16,<5", "python-dotenv>=1,<2", "openai>=1,<3", "mcp==1.30.0"]
+dependencies = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "pydantic>=2,<3", "httpx>=0.27,<1", "numpy>=1.26,<3", "sentence-transformers>=5.1,<7", "faiss-cpu>=1.8,<2", "docling>=2.145,<3", "pypdfium2>=5.14,<6", "python-docx>=1.2,<2", "filelock>=3.16,<5", "python-dotenv>=1,<2", "openai>=1,<3", "mcp==1.30.0"]
 [project.scripts]
-rag-service = "rag_service.cli:main"
+rag-service = "app.cli:main"
 [tool.setuptools.packages.find]
-include = ["rag_service*"]
+include = ["app*", "mcp_server*", "migrations*", "agent*"]
 [tool.setuptools.package-data]
-rag_service = ["web/*", "web/assets/*"]
+app = ["web/*", "web/assets/*"]
+
+[project.optional-dependencies]
+dev = ["build>=1,<2", "ruff>=0.14,<1"]
