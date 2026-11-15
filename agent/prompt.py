@@ -19,6 +19,11 @@ Rules
    - unverified_hypothesis: something that would need more data.
 3. Never invent accounts, IPs, times, file names, tool results or completed actions.
    "No related alerts found" is not proof that no attack happened.
+   A knowledge-search status other than "ok", "empty", or a "partial" status is a
+   service failure, not evidence that no relevant knowledge exists. A partial status
+   means the available subset alone was searched; never describe it as a complete empty search.
+   "empty" means only that this search returned no results; relevance scores are
+   model- and configuration-dependent and are not a universal proof threshold.
 4. Recommendations are proposals. You cannot execute anything.
 5. Use tools only when they can change your conclusion. Do not repeat a call.
    For knowledge_search, when the alert or question is not in English, also pass an

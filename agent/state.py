@@ -23,15 +23,20 @@ class Step:
     name: str
     status: str
     elapsed_ms: float
+    error_category: str | None = None
     arguments: dict | None = None
     call_id: str | None = None
     note: str | None = None
     usage: dict | None = None
+    call_number: int | None = None
+    diagnostics: dict | None = None
 
 
 @dataclass
 class InvestigationState:
     alert_id: str
+    run_id: str | None = None
+    alert_sha256: str | None = None
     stage: Stage = "RECEIVED"
     steps: list[Step] = field(default_factory=list)
     # Stable source IDs the report may cite: "obs:..." for observations, "ev:..." for
@@ -40,10 +45,14 @@ class InvestigationState:
     evidence: dict[str, dict] = field(default_factory=dict)
     llm_calls: int = 0
     tool_calls: int = 0
+    tool_call_requests: int = 0
     knowledge_searches: int = 0
     report_repairs: int = 0
     fingerprints: dict[str, str] = field(default_factory=dict)
     failure: str | None = None
+    failure_category: str | None = None
+    rule_risk: dict | None = None
+    report_validation: dict | None = None
 
     def record(self, **values):
         step = Step(step_id=len(self.steps) + 1, **values)

@@ -113,6 +113,43 @@ class RetrievalContractTests(unittest.TestCase):
         )
         self.assertEqual(blank.status_code, 422)
 
+    def test_trace_is_correlated_with_citations_and_generation(self):
+        kb = self.base("Trace", {"evidence.md": "stable evidence for tracing"})
+        response = self.search([kb], "stable evidence", top_k=1)
+        self.assertTrue(response["results"])
+        self.assertEqual(response["trace"][0]["request_id"], response["request_id"])
+        trace = response["trace"][0]
+        self.assertEqual(trace["knowledge_base_id"], kb)
+        self.assertEqual(trace["configuration_revision"], response["metadata"]["snapshots"][0]["configuration_revision"])
+        self.assertEqual(trace["generation_id"], response["results"][0]["generation_id"])
+        self.assertEqual(response["results"][0]["citation"]["chunk_id"], response["results"][0]["chunk_id"])
+        self.assertGreaterEqual(trace["candidate_count"], len(response["results"]))
+
+    def test_trace_is_opt_in_and_explains_empty_results(self):
+        kb = self.base("EmptyTrace", {"evidence.md": "stable evidence"})
+        default = self.request("POST", "/search", json={"query": "missing", "knowledge_base_ids": [kb], "top_k": 1})
+        self.assertNotIn("trace", default)
+        traced = self.search([kb], "missing", top_k=1, min_score=0.1)
+        self.assertEqual(traced["results"], [])
+        self.assertEqual(traced["trace"][0]["empty_result_reason"], "no_candidates_after_filters")
+
+    def test_multi_base_trace_distinguishes_response_budget_exclusion(self):
+        narrow = self.base(
+            "NarrowBudget", {"short.md": "unrelated " + "s" * 50}, max_context_tokens=64
+        )
+        wide = self.base(
+            "WideBudget", {"long.md": "alpha " + "w" * 94}, max_context_tokens=200
+        )
+
+        response = self.search([narrow, wide], "alpha", top_k=2, min_score=0.1)
+
+        self.assertEqual(response["results"], [])
+        traces = {trace["knowledge_base_id"]: trace for trace in response["trace"]}
+        self.assertEqual(traces[narrow]["empty_result_reason"], "no_candidates_after_filters")
+        self.assertEqual(traces[wide]["response_candidate_count"], 1)
+        self.assertEqual(traces[wide]["response_budget_excluded_count"], 1)
+        self.assertEqual(traces[wide]["empty_result_reason"], "excluded_by_response_budget")
+
     def test_context_budget_is_counted_in_tokens(self):
         # Fake tokenizer: one token per character. Two 100-token parents.
         kb = self.base(

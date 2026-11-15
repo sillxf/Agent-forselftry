@@ -41,6 +41,7 @@ class RetrievalService:
             self.slots.release()
             raise
         started = perf_counter()
+        request_id = uuid4().hex
         usage = []
         context = usage_context.set(usage)
         try:
@@ -94,7 +95,10 @@ class RetrievalService:
                     )
                 traces.append(
                     dict(
+                        request_id=request_id,
                         knowledge_base_id=identity,
+                        configuration_revision=kb["revision"],
+                        context_result_count=len(output["results"]),
                         routes=pipeline.route_trace,
                         **output["trace"],
                     )
@@ -146,15 +150,64 @@ class RetrievalService:
             )
             # Each base already fitted its own budget; the response uses the strictest.
             budget, results, used = min(budgets), [], 0
+            budget_excluded_by_kb = {}
+            top_k_excluded_by_kb = {}
             for item in candidates:
                 if len(results) >= request.top_k:
-                    break
+                    identity = item["knowledge_base_id"]
+                    top_k_excluded_by_kb[identity] = (
+                        top_k_excluded_by_kb.get(identity, 0) + 1
+                    )
+                    continue
                 if used + item["context_tokens"] <= budget:
                     results.append(item)
                     used += item["context_tokens"]
+                else:
+                    identity = item["knowledge_base_id"]
+                    budget_excluded_by_kb[identity] = (
+                        budget_excluded_by_kb.get(identity, 0) + 1
+                    )
+            selected_by_kb = {}
+            for item in results:
+                selected_by_kb[item["knowledge_base_id"]] = (
+                    selected_by_kb.get(item["knowledge_base_id"], 0) + 1
+                )
+            response_candidates_by_kb = {}
+            for item in candidates:
+                response_candidates_by_kb[item["knowledge_base_id"]] = (
+                    response_candidates_by_kb.get(item["knowledge_base_id"], 0) + 1
+                )
+            for trace in traces:
+                identity = trace["knowledge_base_id"]
+                response_candidate_count = response_candidates_by_kb.get(identity, 0)
+                selected_count = selected_by_kb.get(identity, 0)
+                trace["response_candidate_count"] = response_candidate_count
+                trace["response_selected_count"] = selected_count
+                trace["response_budget_excluded_count"] = budget_excluded_by_kb.get(
+                    identity, 0
+                )
+                trace["response_top_k_excluded_count"] = top_k_excluded_by_kb.get(
+                    identity, 0
+                )
+                if selected_count:
+                    continue
+                if trace["candidate_count"] == 0:
+                    trace["empty_result_reason"] = "no_candidates_after_filters"
+                elif trace["context_result_count"] == 0:
+                    trace["empty_result_reason"] = "excluded_by_context_budget"
+                elif response_candidate_count == 0:
+                    trace["empty_result_reason"] = "no_candidates_after_lifecycle_filter"
+                elif trace["response_budget_excluded_count"] and trace["response_top_k_excluded_count"]:
+                    trace["empty_result_reason"] = "excluded_by_response_limits"
+                elif trace["response_budget_excluded_count"]:
+                    trace["empty_result_reason"] = "excluded_by_response_budget"
+                elif trace["response_top_k_excluded_count"]:
+                    trace["empty_result_reason"] = "excluded_by_top_k"
+                else:
+                    trace["empty_result_reason"] = "no_candidates_after_lifecycle_filter"
             output = dict(
                 schema_version=1,
-                request_id=uuid4().hex,
+                request_id=request_id,
                 query=request.query,
                 results=public(results),
                 metadata=dict(

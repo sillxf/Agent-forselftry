@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/security-benchmark-item-v1.schema.json",
+  "title": "Security benchmark item contract v1",
+  "type": "object",
+  "required": [
+    "contract_version", "id", "task", "answerability", "source_evidence",
+    "required_facts", "acceptable_alternatives", "prohibited_conclusions",
+    "expected_tool_behavior", "difficulty", "category", "query_family", "split",
+    "annotation_provenance", "machine_status", "machine_review", "review_status"
+  ],
+  "properties": {
+    "contract_version": {"const": "security-benchmark-item-v1"},
+    "id": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object", "required": ["kind", "prompt"],
+      "properties": {"kind": {"type": "string"}, "prompt": {"type": "string"}},
+      "additionalProperties": true
+    },
+    "answerability": {"enum": ["answerable", "unanswerable", "unknown"]},
+    "source_evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "required_facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}},
+    "acceptable_alternatives": {"type": "array", "items": {"type": "string"}},
+    "prohibited_conclusions": {"type": "array", "items": {"type": "string"}},
+    "expected_tool_behavior": {"type": ["object", "null"]},
+    "difficulty": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "minLength": 1},
+    "query_family": {"type": "string", "minLength": 1},
+    "split": {"enum": ["development", "regression", "final_holdout"]},
+    "annotation_provenance": {
+      "type": "object", "required": ["origin", "human_reviewed"],
+      "properties": {"origin": {"type": "string"}, "human_reviewed": {"const": false}},
+      "additionalProperties": true
+    },
+    "machine_status": {"enum": ["pending_validation", "machine_validated", "unresolved"]},
+    "machine_review": {"type": "object"},
+    "review_status": {"type": "string"}
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object", "required": ["source", "source_sha256", "text_quote", "evidence_id", "source_block_ids"],
+      "properties": {
+        "source": {"type": "string"}, "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "text_quote": {"type": "string", "minLength": 1}, "evidence_id": {"type": "string"},
+        "source_block_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "page_number": {"type": ["integer", "null"], "minimum": 1}, "section_path": {"type": "array", "items": {"type": "string"}}
+      }, "additionalProperties": true
+    },
+    "fact": {
+      "type": "object", "required": ["fact_id", "statement", "evidence_ids", "label_basis"],
+      "properties": {
+        "fact_id": {"type": "string"}, "statement": {"type": "string"},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}}, "label_basis": {"type": "string"}
+      }, "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

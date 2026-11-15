@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 import tempfile
 import unittest
+from unittest import mock
 
 from benchmark.evaluation import answer_eval
 from RAG.tests.support import FakeEmbedding, Parser
@@ -30,6 +31,33 @@ class AnswerEvalTests(unittest.TestCase):
         summary = answer_eval.summarize(self.questions, list(grades.values()))
         self.assertTrue(summary["unreviewed_warning"])
         self.assertEqual(summary["answerable_correct"], 0.5)
+
+    def test_retrieval_only_cli_writes_report_without_model_or_network(self):
+        class FakeClient:
+            def __init__(self, **kwargs):
+                self.closed = False
+
+            def search_request(self, **kwargs):
+                return {"results": [{"source": "attack_t1110_003.md", "content": "many different accounts lockout"}], "metadata": {"warnings": []}}
+
+            def close(self):
+                self.closed = True
+
+        with tempfile.TemporaryDirectory(prefix="rag-answer-cli-") as temporary:
+            output = Path(temporary) / "run"
+            with mock.patch("app.client.RAGClient", FakeClient), mock.patch.object(
+                answer_eval, "generate", side_effect=AssertionError("model generation must not run")
+            ):
+                answer_eval.main([
+                    "--questions", str(SAMPLES / "sample_questions.jsonl"),
+                    "--knowledge-base", "offline-test-kb",
+                    "--output", str(output),
+                ])
+            self.assertTrue((output / "retrieval.jsonl").is_file())
+            report = json.loads((output / "report.json").read_text(encoding="utf-8"))
+            self.assertEqual(report["summary"]["answered"], 0)
+            self.assertIsNone(report["summary"]["answerable_correct"])
+            self.assertEqual(report["metadata"]["budget"]["paid_calls"], False)
 
     def test_retrieve_generate_grade_against_the_service(self):
         from app.bootstrap import create_services

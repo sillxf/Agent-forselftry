@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from agent.schemas import Downgrade, ModelReport, Report, Verification
 
 FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.I)
+REPORT_VERIFICATION_RULE_VERSION = "1"
 
 
 class ReportFormatError(ValueError):

@@ -33,6 +33,8 @@ import sys
 import unicodedata
 from pathlib import Path
 
+from benchmark.evaluation.contract import CONTRACT_VERSION, run_metadata
+
 REFUSALS = (
     "知识库中没有找到",
     "知识库中未找到",
@@ -76,8 +78,15 @@ def write_jsonl(path, rows):
 
 
 def validate(questions):
+    """Validate legacy inputs and adapt v1 contract rows to the lexical submetric."""
     seen = set()
     for q in questions:
+        if q.get("contract_version") == CONTRACT_VERSION:
+            q.setdefault("question", q.get("task", {}).get("prompt", ""))
+            q.setdefault("answerable", q.get("answerability") == "answerable")
+            q.setdefault("must_include", [f.get("accepted_alternatives") or [f.get("statement", "")] for f in q.get("required_facts", [])])
+            q.setdefault("must_not_include", q.get("prohibited_conclusions", []))
+            q.setdefault("sources", sorted({e.get("source") for e in q.get("source_evidence", []) if e.get("source")}))
         missing = {"id", "question", "answerable"} - q.keys()
         if missing or q["id"] in seen:
             raise ValueError(f"Invalid or duplicate question {q.get('id')}: {missing}")
@@ -170,6 +179,9 @@ def grade(questions, answers, retrieved=None):
             dict(
                 id=q["id"],
                 status="correct" if correct else "incorrect",
+                machine_status=q.get("machine_status", "legacy_unreviewed"),
+                excluded_from_main_quality=(q.get("contract_version") == CONTRACT_VERSION and (q.get("machine_status") == "unresolved" or q.get("machine_review", {}).get("status") not in {"machine_adjudicated"} and q.get("review_status") != "approved")),
+                uncertainty_reasons=q.get("machine_review", {}).get("uncertainty_reasons", []),
                 answerable=q["answerable"],
                 refused=did_refuse,
                 points=points,
@@ -192,26 +204,47 @@ def summarize(questions, grades, retrieved=None):
     graded = [g for g in grades if g["status"] != "no_answer"]
     answerable = [g for g in graded if g["answerable"]]
     unanswerable = [g for g in graded if not g["answerable"]]
+    excluded = {q["id"] for q in questions if q.get("contract_version") == CONTRACT_VERSION and (q.get("machine_status") == "unresolved" or (q.get("machine_review", {}).get("status") != "machine_adjudicated" and q.get("review_status") != "approved"))}
+    eligible = [g for g in graded if g["id"] not in excluded]
+    eligible_answerable = [g for g in eligible if g["answerable"]]
+    eligible_unanswerable = [g for g in eligible if not g["answerable"]]
     summary = dict(
         questions=len(questions),
         approved_questions=len(reviewed),
+        human_reviewed_questions=len(reviewed),
         unreviewed_warning=len(reviewed) < len(questions),
+        machine_validated=sum(q.get("machine_status") == "machine_validated" for q in questions),
+        unresolved=sum(q.get("machine_status") == "unresolved" or q.get("machine_review", {}).get("status") == "unresolved" for q in questions),
+        semantic_review_not_run=sum(q.get("machine_review", {}).get("status") == "not_run" for q in questions),
+        excluded_candidate_items=len(excluded),
+        excluded_from_main_quality=sum(g["id"] in excluded for g in graded),
+        exclusion_rate=round(len(excluded) / len(questions), 4) if questions else None,
         answered=len(graded),
-        answerable_correct=rate(answerable, lambda g: g["status"] == "correct"),
-        answerable_refused=rate(answerable, lambda g: g["refused"]),
-        unanswerable_refused=rate(unanswerable, lambda g: g["refused"]),
+        lexical=dict(
+            answerable_correct=rate(answerable, lambda g: g["status"] == "correct"),
+            answerable_refused=rate(answerable, lambda g: g["refused"]),
+            unanswerable_refused=rate(unanswerable, lambda g: g["refused"]),
+        ),
+        # Compatibility aliases: these remain lexical submetrics, not semantic truth.
+        answerable_correct=rate(eligible_answerable, lambda g: g["status"] == "correct"),
+        answerable_refused=rate(eligible_answerable, lambda g: g["refused"]),
+        unanswerable_refused=rate(eligible_unanswerable, lambda g: g["refused"]),
         forbidden_hits=sum(bool(g["forbidden"]) for g in graded),
         invalid_citations=sum(bool(g["invalid_citations"]) for g in graded),
         needs_review=[g["id"] for g in graded if g["needs_review"]],
+        limitations=["Lexical rules are deterministic submetrics and do not establish semantic correctness.", "Machine-unresolved items are excluded from the main quality aliases but remain in totals."],
     )
     if retrieved:
-        answerable_ids = {q["id"] for q in questions if q["answerable"]}
+        answerable_ids = {q["id"] for q in questions if q["answerable"] and q["id"] not in excluded}
         rows = [r for r in retrieved if r["id"] in answerable_ids]
         summary.update(
-            context_has_all_points=rate(rows, lambda r: bool(r["context_has_all_points"])),
-            source_hit=rate(
-                [r for r in rows if r["source_hit"] is not None], lambda r: r["source_hit"]
+            retrieval=dict(
+                context_has_all_points=rate(rows, lambda r: bool(r["context_has_all_points"])),
+                source_hit=rate([r for r in rows if r["source_hit"] is not None], lambda r: r["source_hit"]),
+                evidence_hit_rate=rate(rows, lambda r: bool(r["source_hit"])),
             ),
+            context_has_all_points=rate(rows, lambda r: bool(r["context_has_all_points"])),
+            source_hit=rate([r for r in rows if r["source_hit"] is not None], lambda r: r["source_hit"]),
         )
     return summary
 
@@ -223,10 +256,17 @@ def main(argv=None):
     parser.add_argument("--knowledge-base", action="append", default=[])
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--answers", help="Grade existing answers instead of generating")
+    parser.add_argument("--machine-review", help="Optional adjudicate.py report.json; only machine_adjudicated items enter the main quality score")
     parser.add_argument("--generate", action="store_true", help="Paid: call LLM_MODEL")
     parser.add_argument("--max-requests", type=int, default=0)
     args = parser.parse_args(argv)
     questions = validate(load_jsonl(args.questions))
+    if args.machine_review:
+        review_report = json.loads(Path(args.machine_review).read_text(encoding="utf-8"))
+        rulings = {row["id"]: row.get("machine_review", {}) for row in review_report.get("ai_rulings", [])}
+        for question in questions:
+            if question["id"] in rulings:
+                question["machine_review"] = rulings[question["id"]]
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)
     retrieved = None
@@ -265,6 +305,7 @@ def main(argv=None):
         answers = generate(questions, retrieved, chat, max_requests=args.max_requests)
         write_jsonl(output / "answers.jsonl", answers)
     summary = {}
+    grades = []
     if answers:
         grades = grade(questions, answers, retrieved)
         write_jsonl(output / "grades.jsonl", grades)
@@ -274,6 +315,31 @@ def main(argv=None):
     (output / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    dataset_path = Path(args.questions)
+    report = {
+        "report_version": "benchmark-run-report-v1",
+        "metadata": run_metadata(
+            dataset_path=dataset_path,
+            dataset_version="unknown-contract-or-supplied-file",
+            code_root=Path(__file__).resolve().parents[2],
+            prompt_version="answer-generation-v1" if args.generate else None,
+            models=[os.getenv("LLM_MODEL")] if args.generate and os.getenv("LLM_MODEL") else [],
+            budget={"generate": args.generate, "max_requests": args.max_requests, "paid_calls": bool(args.generate)},
+            split="all",
+        ),
+        "layers": {"retrieval": {k: summary[k] for k in ("retrieval",) if k in summary}, "answer_lexical": summary.get("lexical", {}), "main_quality": {"answerable_correct": summary.get("answerable_correct"), "excluded": summary.get("excluded_from_main_quality")}},
+        "sample_size": {"questions": len(questions), "graded": summary.get("answered", 0), "included_main_quality": sum(not g.get("excluded_from_main_quality", False) for g in grades if g.get("status") != "no_answer")},
+        "confidence_intervals": {
+            "main_quality_answerable_lexical": __import__("benchmark.evaluation.reporting", fromlist=["proportion_interval"]).proportion_interval(
+                sum(g.get("status") == "correct" and not g.get("excluded_from_main_quality", False) for g in grades if g.get("answerable")),
+                sum(1 for g in grades if g.get("answerable") and not g.get("excluded_from_main_quality", False))),
+            "candidate_lexical_answerable": __import__("benchmark.evaluation.reporting", fromlist=["proportion_interval"]).proportion_interval(
+                sum(g.get("status") == "correct" for g in grades if g.get("answerable")), sum(1 for g in grades if g.get("answerable"))),
+        },
+        "summary": summary,
+        "limitations": summary.get("limitations", []),
+    }
+    (output / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     json.dump(summary, sys.stdout, ensure_ascii=False, indent=2)
     print()
 

@@ -1,0 +1,26 @@
+{
+  "schema_version": 3,
+  "profile": "security-v1",
+  "version": "security-rag-benchmark-v1-100-candidate-r3",
+  "documents_dir": "../documents",
+  "corpus_version": "security-corpus-v1-21",
+  "annotation_status": "Machine-validated candidate data; no human approval claimed; semantic AI review is opt-in.",
+  "legacy_dataset_sha256": "04cadb9bab07b00e64a2e2011274493497dc9e64d4e63ef945a5e60128dee3b7",
+  "data_contract_version": "security-benchmark-item-v1",
+  "split": {
+    "algorithm": "sha256-family-preserved-holdout-two-stage-v1",
+    "salt": "security-v1-family-split-v1",
+    "preserved_holdout": "sha256(holdout-v1:<query_family>) mod 5 == 0",
+    "remaining_partition": "sha256(development-v1:<query_family>) mod 2; 40% development / 40% regression / 20% final_holdout"
+  },
+  "questions_sha256": "eed391cb97591caf128a2ce3e5ac83d57bd3eabe51f1d572ae401e586139145b",
+  "annotation_notice": "Candidate labels are not human-reviewed; deterministic validation checks integrity only; semantic review is opt-in and machine-generated.",
+  "machine_validation": {
+    "validator_version": "deterministic-contract-checker-v1",
+    "status": "machine_validated",
+    "unresolved": 0,
+    "human_reviewed": 0,
+    "semantic_review": "not_run"
+  },
+  "contract_schema": "../../evaluation/schemas/security-benchmark-item-v1.schema.json"
+}

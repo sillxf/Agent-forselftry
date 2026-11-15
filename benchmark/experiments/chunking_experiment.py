@@ -24,8 +24,10 @@ import time
 from pathlib import Path
 from statistics import mean
 
+from benchmark.evaluation.contract import SPLIT_ALGORITHM, SPLIT_SALT
+
 ROOT = Path(__file__).resolve().parents[1]
-BENCHMARK = ROOT / "datasets/security-v1"
+BENCHMARK = ROOT / "datasets/security-v1-r3"
 DEFAULT = (400, 1600, 60)
 CONFIGS = {
     "child200": (200, 1600, 30),
@@ -40,9 +42,8 @@ def normalize(text):
 
 
 def holdout(question):
-    """20% of query families, by stable hash. Variants of one question stay together."""
-    family = question["query_family"]
-    return int(hashlib.sha256(("holdout-v1:" + family).encode()).hexdigest(), 16) % 5 == 0
+    """Compatibility helper: the explicit final_holdout split is authoritative."""
+    return question.get("split") == "final_holdout"
 
 
 def load_benchmark():
@@ -185,7 +186,7 @@ def evaluate(pipeline, names, questions, english, use_english):
             )
             for r in parents
         ]
-        row = dict(id=q["id"], holdout=holdout(q), answerable=q["answerable"], latency_ms=latency)
+        row = dict(id=q["id"], split=q.get("split", "final_holdout" if holdout(q) else "development"), holdout=holdout(q), answerable=q["answerable"], latency_ms=latency)
         if q["answerable"]:
             required = {e["evidence_id"] for e in q["relevant_evidence"] if e["relevance_grade"]}
             locatable = {f for unit in parent_units for f in matched(*unit, q)}
@@ -218,8 +219,9 @@ def summarize(rows):
         return out
 
     return dict(
-        development=side([r for r in rows if not r["holdout"]]),
-        holdout=side([r for r in rows if r["holdout"]]),
+        development=side([r for r in rows if r.get("split") == "development"]),
+        regression=side([r for r in rows if r.get("split") == "regression"]),
+        holdout=side([r for r in rows if r.get("split") == "final_holdout"]),
     )
 
 
@@ -300,6 +302,7 @@ def main():
         ),
         embedding=RAG_EMBEDDING_MODEL,
         configs={k: dict(child=v[0], parent=v[1], overlap=v[2]) for k, v in CONFIGS.items()},
+        split=dict(algorithm=SPLIT_ALGORITHM, salt=SPLIT_SALT, family_grouping=True, holdout_hidden=False),
         stop_rule="Switch only if dev Recall@5 and MRR@5 both improve >=1.0pt and holdout does not drop",
         switch_to=None if args.limit or "child400-default" not in base_only else decide(base_only),
         parse_seconds=round(parse_seconds, 1),
